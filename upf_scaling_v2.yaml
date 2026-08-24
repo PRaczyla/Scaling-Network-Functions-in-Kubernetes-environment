@@ -1,0 +1,1625 @@
+- name: UPF TCP scaling load test with adaptive in-flight UE replacement v13 with idle 25m wait and late-timeout accept
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    k8s_namespace: default
+    iperf_host: "192.168.1.211"
+    iperf_base_port: 5201
+
+    # Limit TCP bitrate per UE.
+    iperf_tcp_bitrate: "1M"
+
+    # Ramp-up między startem kolejnych klientów iperf.
+    iperf_client_start_delay: "0.05"
+
+    # Ile błędnych klientów wypisać szczegółowo w logu scenariusza.
+    failed_clients_log_limit: 10
+
+    test_duration: 80
+    iperf_timeout_extra: 10
+    pause_between: 0
+
+    tunnel_timeout: 20
+    pod_timeout: 20
+
+    required_registered_ues: 50
+    scenarios: "1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35"
+
+    precheck_ports_count: 1
+
+    # In-flight UE replacement. Nie wpływa na deklaracje testu powyżej.
+    ue_connect_timeout: 4
+    ue_stall_seconds: 5
+    ue_replacement_limit_per_scenario: 15
+    ue_replacement_min_remaining_seconds: 0
+    ue_replacement_min_duration: 5
+    ue_adaptive_extension_max: 1
+    # Po planowanym końcu slotu nie robimy już replacementu/stall detection.
+    # Czekamy na realny exit iperf3; fail następuje dopiero po twardym timeout procesu.
+    iperf_exit_grace_seconds: 3
+    supervisor_interval: 1
+    # Nie czekamy po SIGTERM przy podmianie, bo replacement używa innego UE i innego portu.
+    # To usuwa 1 s opóźnienia na każdej podmianie.
+    slot_kill_grace_seconds: 0
+
+    # Jeżeli iperf3 zwróci "server is busy", nie oznaczamy UE jako złe.
+    # To zwykle stan po stronie Windowsowego iperf servera / portu, więc robimy rebind na świeży port.
+    iperf_server_busy_retries: 1
+    iperf_server_busy_retry_delay: 2
+
+    # Po restarcie VPA nie używamy stałego sleep.
+    # Skrypt czeka łopatologicznie, aż request CPU UPF wróci do wartości idle.
+    # Dla tego środowiska idle VPA/request CPU = 25m.
+    upf_vpa_request_change_wait_enabled: 1
+    upf_vpa_request_change_wait_timeout: 180
+    upf_vpa_request_change_wait_interval: 1
+    upf_vpa_idle_request_cpu: "25m"
+
+    # Control-plane observability. Monitoruje UPF i VPA w czasie scenariuszy.
+    # Interwał 1 s daje dobrą korelację czasową dla zmian request/rekomendacji.
+    upf_control_monitor_enabled: 1
+    upf_control_monitor_interval: 1
+    upf_control_history_window_seconds: 5
+
+  tasks:
+    - name: Run UPF TCP scenarios with adaptive in-flight UE replacement
+      ansible.builtin.shell: |
+        set -u
+        set -o pipefail
+
+        NS="{{ k8s_namespace }}"
+
+        IPERF_HOST="{{ iperf_host }}"
+        IPERF_BASE_PORT={{ iperf_base_port }}
+        IPERF_TCP_BITRATE="{{ iperf_tcp_bitrate }}"
+        IPERF_CLIENT_START_DELAY="{{ iperf_client_start_delay }}"
+        FAILED_CLIENTS_LOG_LIMIT={{ failed_clients_log_limit }}
+
+        TEST_DURATION={{ test_duration }}
+        IPERF_TIMEOUT_EXTRA={{ iperf_timeout_extra }}
+        IPERF_TIMEOUT=$((TEST_DURATION + IPERF_TIMEOUT_EXTRA))
+        PAUSE_BETWEEN={{ pause_between }}
+
+        TUNNEL_TIMEOUT={{ tunnel_timeout }}
+        POD_TIMEOUT={{ pod_timeout }}
+
+        REQUIRED_REGISTERED_UES={{ required_registered_ues }}
+        SCENARIOS="{{ scenarios }}"
+
+        PRECHECK_PORTS_COUNT={{ precheck_ports_count }}
+
+        UE_CONNECT_TIMEOUT={{ ue_connect_timeout }}
+        UE_STALL_SECONDS={{ ue_stall_seconds }}
+        UE_REPLACEMENT_LIMIT_PER_SCENARIO={{ ue_replacement_limit_per_scenario }}
+        UE_REPLACEMENT_MIN_REMAINING_SECONDS={{ ue_replacement_min_remaining_seconds }}
+        UE_REPLACEMENT_MIN_DURATION={{ ue_replacement_min_duration }}
+        UE_ADAPTIVE_EXTENSION_MAX={{ ue_adaptive_extension_max }}
+        IPERF_EXIT_GRACE_SECONDS={{ iperf_exit_grace_seconds }}
+        SUPERVISOR_INTERVAL={{ supervisor_interval }}
+        SLOT_KILL_GRACE_SECONDS={{ slot_kill_grace_seconds }}
+        IPERF_SERVER_BUSY_RETRIES={{ iperf_server_busy_retries }}
+        IPERF_SERVER_BUSY_RETRY_DELAY={{ iperf_server_busy_retry_delay }}
+
+        UPF_VPA_REQUEST_CHANGE_WAIT_ENABLED={{ upf_vpa_request_change_wait_enabled }}
+        UPF_VPA_REQUEST_CHANGE_WAIT_TIMEOUT={{ upf_vpa_request_change_wait_timeout }}
+        UPF_VPA_REQUEST_CHANGE_WAIT_INTERVAL={{ upf_vpa_request_change_wait_interval }}
+        UPF_VPA_IDLE_REQUEST_CPU="{{ upf_vpa_idle_request_cpu }}"
+
+        UPF_CONTROL_MONITOR_ENABLED={{ upf_control_monitor_enabled }}
+        UPF_CONTROL_MONITOR_INTERVAL={{ upf_control_monitor_interval }}
+        UPF_CONTROL_HISTORY_WINDOW_SECONDS={{ upf_control_history_window_seconds }}
+
+        # Replacement ports start after the registered UE pool.
+        # For 50 registered UE and base 5201 this starts from 5251.
+        IPERF_REPLACEMENT_BASE_PORT=$((IPERF_BASE_PORT + REQUIRED_REGISTERED_UES))
+
+        ADD_RELEASE="ueransim-gnb-ues"
+        ADD_SELECTOR="app.kubernetes.io/instance=${ADD_RELEASE}"
+
+        UPF_SELECTOR="app.kubernetes.io/instance=open5gs,app.kubernetes.io/name=upf"
+        UPF_VPA_NAME="open5gs-upf-vpa"
+
+        RUN_ID="$(date +%Y%m%d_%H%M%S)"
+        PROGRESS_LOG="$PWD/upf_iperf_per_ue_${RUN_ID}.log"
+        CURRENT_SCENARIO_FILE="$PWD/upf_current_scenario_${RUN_ID}.state"
+        CONTROL_MONITOR_STOP_FILE="$PWD/upf_control_monitor_stop_${RUN_ID}.state"
+        CONTROL_MONITOR_HISTORY_FILE="$PWD/upf_control_monitor_history_${RUN_ID}.state"
+        CONTROL_MONITOR_PID=""
+        UPF_REQUEST_BASELINE_BEFORE_VPA_RESET=""
+
+        ln -sf "$PROGRESS_LOG" "$PWD/upf_iperf_per_ue.log"
+        echo "prechecks" > "$CURRENT_SCENARIO_FILE"
+        rm -f "$CONTROL_MONITOR_STOP_FILE" "$CONTROL_MONITOR_HISTORY_FILE"
+
+        log() {
+          echo "[$(date -Iseconds)] $*" | tee -a "$PROGRESS_LOG" >&2
+        }
+
+        fail_exit() {
+          log "ERROR: $*"
+          exit 1
+        }
+
+        hard_reset_upf_vpa_history() {
+          local label="$1"
+
+          log "================================================================"
+          log "VPA HARD RESET START label=$label timestamp=$(date -Iseconds)"
+          log "================================================================"
+
+          local baseline_pod
+          baseline_pod="$(get_upf_pod 2>/dev/null || true)"
+          if [ -n "$baseline_pod" ]; then
+            UPF_REQUEST_BASELINE_BEFORE_VPA_RESET="$(get_upf_container_resources "$baseline_pod")"
+            log "UPF_REQUEST_BASELINE_BEFORE_VPA_RESET timestamp=$(date -Iseconds) pod=$baseline_pod $UPF_REQUEST_BASELINE_BEFORE_VPA_RESET"
+          else
+            UPF_REQUEST_BASELINE_BEFORE_VPA_RESET="request_cpu=NA request_mem=NA limit_cpu=NA limit_mem=NA"
+            log "UPF_REQUEST_BASELINE_BEFORE_VPA_RESET timestamp=$(date -Iseconds) pod=NA $UPF_REQUEST_BASELINE_BEFORE_VPA_RESET"
+          fi
+
+          log "Scaling vpa-recommender to 0 timestamp=$(date -Iseconds)"
+          kubectl -n kube-system scale deploy/vpa-recommender --replicas=0
+          kubectl -n kube-system rollout status deploy/vpa-recommender --timeout=120s || true
+
+          log "Waiting until vpa-recommender pod is fully removed timestamp=$(date -Iseconds)"
+          while kubectl -n kube-system get pods --no-headers 2>/dev/null | awk '{print $1}' | grep -q '^vpa-recommender-'; do
+            log "Waiting for vpa-recommender pod deletion timestamp=$(date -Iseconds)"
+            sleep 2
+          done
+
+          log "Deleting all VPA checkpoints in namespace=$NS timestamp=$(date -Iseconds)"
+          kubectl -n "$NS" delete verticalpodautoscalercheckpoints.autoscaling.k8s.io --all --ignore-not-found
+
+          log "Current VPA checkpoints after delete timestamp=$(date -Iseconds):"
+          kubectl -n "$NS" get verticalpodautoscalercheckpoints.autoscaling.k8s.io 2>&1 | while read -r line; do
+            log "$line"
+          done
+
+          log "Scaling vpa-recommender back to 1 timestamp=$(date -Iseconds)"
+          kubectl -n kube-system scale deploy/vpa-recommender --replicas=1
+          kubectl -n kube-system rollout status deploy/vpa-recommender --timeout=180s
+
+          log "Fixed post-reset sleep skipped timestamp=$(date -Iseconds); request-change wait will run before scenarios"
+
+          log "VPA status immediately after recommender restart timestamp=$(date -Iseconds):"
+          kubectl -n "$NS" describe vpa "$UPF_VPA_NAME" 2>&1 | sed -n '/Recommendation:/,/Events:/p' | while read -r line; do
+            log "$line"
+          done
+
+          log "VPA checkpoints after recommender restart timestamp=$(date -Iseconds):"
+          kubectl -n "$NS" get verticalpodautoscalercheckpoints.autoscaling.k8s.io 2>&1 | while read -r line; do
+            log "$line"
+          done
+
+          log "================================================================"
+          log "VPA HARD RESET END label=$label timestamp=$(date -Iseconds)"
+          log "================================================================"
+        }
+
+        get_additional_pod() {
+          kubectl -n "$NS" get pod \
+            -l "$ADD_SELECTOR" \
+            -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.phase}{"\n"}{end}' \
+            | awk '$2=="Running" {print $1; exit}'
+        }
+
+        wait_additional_pod() {
+          local timeout_sec="$1"
+          local start
+          local now
+          local pod
+
+          start="$(date +%s)"
+
+          while true; do
+            pod="$(get_additional_pod || true)"
+
+            if [ -n "$pod" ]; then
+              echo "$pod"
+              return 0
+            fi
+
+            now="$(date +%s)"
+
+            if [ $((now - start)) -ge "$timeout_sec" ]; then
+              log "Timeout waiting for existing UE pod timestamp=$(date -Iseconds)"
+              return 1
+            fi
+
+            log "Waiting for existing UE pod timestamp=$(date -Iseconds)"
+            sleep 5
+          done
+        }
+
+        get_upf_pod() {
+          kubectl -n "$NS" get pod \
+            -l "$UPF_SELECTOR" \
+            -o jsonpath='{.items[0].metadata.name}'
+        }
+
+        get_pod_uid() {
+          kubectl -n "$NS" get pod "$1" -o jsonpath='{.metadata.uid}'
+        }
+
+        get_pod_restarts() {
+          kubectl -n "$NS" get pod "$1" -o jsonpath='{.status.containerStatuses[0].restartCount}'
+        }
+
+        get_upf_container_resources() {
+          local pod="$1"
+          local line
+
+          if [ -z "${pod:-}" ]; then
+            echo "request_cpu=NA request_mem=NA limit_cpu=NA limit_mem=NA"
+            return 0
+          fi
+
+          line="$(kubectl -n "$NS" get pod "$pod"             -o jsonpath='{range .spec.containers[*]}{.name}{"|"}{.resources.requests.cpu}{"|"}{.resources.requests.memory}{"|"}{.resources.limits.cpu}{"|"}{.resources.limits.memory}{"\n"}{end}'             2>/dev/null             | awk -F'|' '$1=="open5gs-upf" {print $2"|"$3"|"$4"|"$5; exit}')"
+
+          if [ -z "$line" ]; then
+            echo "request_cpu=NA request_mem=NA limit_cpu=NA limit_mem=NA"
+            return 0
+          fi
+
+          echo "$line" | awk -F'|' '{
+            req_cpu=($1=="" ? "none" : $1);
+            req_mem=($2=="" ? "none" : $2);
+            lim_cpu=($3=="" ? "none" : $3);
+            lim_mem=($4=="" ? "none" : $4);
+            printf "request_cpu=%s request_mem=%s limit_cpu=%s limit_mem=%s", req_cpu, req_mem, lim_cpu, lim_mem
+          }'
+        }
+
+        get_upf_current_usage() {
+          local pod="$1"
+          local line
+
+          if [ -z "${pod:-}" ]; then
+            echo "usage_cpu=NA usage_mem=NA"
+            return 0
+          fi
+
+          line="$(kubectl -n "$NS" top pod "$pod" --containers --no-headers 2>/dev/null             | awk '$2=="open5gs-upf" {print $3"|"$4; exit}')"
+
+          if [ -z "$line" ]; then
+            echo "usage_cpu=NA usage_mem=NA"
+            return 0
+          fi
+
+          echo "$line" | awk -F'|' '{printf "usage_cpu=%s usage_mem=%s", $1, $2}'
+        }
+
+        get_upf_vpa_recommendation() {
+          local line
+
+          line="$(kubectl -n "$NS" get vpa "$UPF_VPA_NAME"             -o jsonpath='{range .status.recommendation.containerRecommendations[*]}{.containerName}{"|"}{.target.cpu}{"|"}{.target.memory}{"|"}{.uncappedTarget.cpu}{"|"}{.uncappedTarget.memory}{"|"}{.lowerBound.cpu}{"|"}{.lowerBound.memory}{"|"}{.upperBound.cpu}{"|"}{.upperBound.memory}{"\n"}{end}'             2>/dev/null             | awk -F'|' '$1=="open5gs-upf" {print $2"|"$3"|"$4"|"$5"|"$6"|"$7"|"$8"|"$9; exit}')"
+
+          if [ -z "$line" ]; then
+            echo "vpa_target_cpu=NA vpa_target_mem=NA vpa_uncapped_cpu=NA vpa_uncapped_mem=NA vpa_lower_cpu=NA vpa_lower_mem=NA vpa_upper_cpu=NA vpa_upper_mem=NA"
+            return 0
+          fi
+
+          echo "$line" | awk -F'|' '{
+            tc=($1=="" ? "NA" : $1); tm=($2=="" ? "NA" : $2);
+            uc=($3=="" ? "NA" : $3); um=($4=="" ? "NA" : $4);
+            lc=($5=="" ? "NA" : $5); lm=($6=="" ? "NA" : $6);
+            pc=($7=="" ? "NA" : $7); pm=($8=="" ? "NA" : $8);
+            printf "vpa_target_cpu=%s vpa_target_mem=%s vpa_uncapped_cpu=%s vpa_uncapped_mem=%s vpa_lower_cpu=%s vpa_lower_mem=%s vpa_upper_cpu=%s vpa_upper_mem=%s", tc, tm, uc, um, lc, lm, pc, pm
+          }'
+        }
+
+        get_control_history_sample_before() {
+          local target_epoch="$1"
+          local sample
+
+          if [ ! -s "$CONTROL_MONITOR_HISTORY_FILE" ]; then
+            echo "NA"
+            return 0
+          fi
+
+          sample="$(awk -F'|' -v target="$target_epoch" 'BEGIN {best=""} $1 <= target {best=$0} END {if (best != "") print best}' "$CONTROL_MONITOR_HISTORY_FILE" 2>/dev/null | sed 's/^[^|]*|//')"
+
+          if [ -z "$sample" ]; then
+            sample="$(head -n 1 "$CONTROL_MONITOR_HISTORY_FILE" 2>/dev/null | sed 's/^[^|]*|//')"
+          fi
+
+          if [ -z "$sample" ]; then
+            echo "NA"
+          else
+            echo "$sample"
+          fi
+        }
+
+        append_control_history_sample() {
+          local sample_epoch="$1"
+          local sample_payload="$2"
+          local min_epoch
+          local tmp_file
+
+          printf '%s|%s\n' "$sample_epoch" "$sample_payload" >> "$CONTROL_MONITOR_HISTORY_FILE"
+
+          min_epoch=$((sample_epoch - 120))
+          tmp_file="${CONTROL_MONITOR_HISTORY_FILE}.tmp"
+          awk -F'|' -v min="$min_epoch" '$1 >= min {print $0}' "$CONTROL_MONITOR_HISTORY_FILE" > "$tmp_file" 2>/dev/null && mv "$tmp_file" "$CONTROL_MONITOR_HISTORY_FILE" || rm -f "$tmp_file"
+        }
+
+        extract_kv_field() {
+          local payload="$1"
+          local field="$2"
+
+          echo "$payload" | tr ' ' '\n' | awk -F'=' -v k="$field" '$1==k {print $2; exit}'
+        }
+
+        get_vpa_checkpoint_count() {
+          kubectl -n "$NS" get verticalpodautoscalercheckpoints.autoscaling.k8s.io --no-headers 2>/dev/null \
+            | awk '$1 ~ /^open5gs-upf-vpa-open5gs-upf/ {c++} END {print c+0}'
+        }
+
+        wait_for_upf_idle_request_after_vpa_reset() {
+          local baseline="$1"
+          local timeout_sec="$2"
+          local interval_sec="$3"
+          local expected_idle_cpu="${UPF_VPA_IDLE_REQUEST_CPU:-25m}"
+          local start_epoch
+          local now_epoch
+          local elapsed
+          local pod
+          local current_resources
+          local current_usage
+          local current_vpa
+          local wait_logged
+          local request_cpu
+
+          if [ "$UPF_VPA_REQUEST_CHANGE_WAIT_ENABLED" != "1" ]; then
+            log "UPF_IDLE_REQUEST_WAIT_DISABLED timestamp=$(date -Iseconds) baseline='$baseline' expected_request_cpu=$expected_idle_cpu"
+            return 0
+          fi
+
+          log "UPF_IDLE_REQUEST_WAIT_START timestamp=$(date -Iseconds) baseline='$baseline' expected_request_cpu=$expected_idle_cpu timeout_s=$timeout_sec interval_s=$interval_sec"
+          start_epoch="$(date +%s)"
+          wait_logged=-1
+
+          while true; do
+            pod="$(get_upf_pod 2>/dev/null || true)"
+            if [ -n "$pod" ]; then
+              current_resources="$(get_upf_container_resources "$pod")"
+              current_usage="$(get_upf_current_usage "$pod")"
+            else
+              current_resources="request_cpu=NA request_mem=NA limit_cpu=NA limit_mem=NA"
+              current_usage="usage_cpu=NA usage_mem=NA"
+            fi
+
+            current_vpa="$(get_upf_vpa_recommendation)"
+            request_cpu="$(extract_kv_field "$current_resources" "request_cpu")"
+            now_epoch="$(date +%s)"
+            elapsed=$((now_epoch - start_epoch))
+
+            if [ "$request_cpu" = "$expected_idle_cpu" ]; then
+              log "UPF_IDLE_REQUEST_WAIT_END timestamp=$(date -Iseconds) result=idle_request_ready elapsed_s=$elapsed pod=${pod:-NA} expected_request_cpu=$expected_idle_cpu baseline='$baseline' current='$current_resources' $current_usage $current_vpa"
+              return 0
+            fi
+
+            if [ "$elapsed" -ge "$timeout_sec" ]; then
+              log "UPF_IDLE_REQUEST_WAIT_TIMEOUT timestamp=$(date -Iseconds) elapsed_s=$elapsed expected_request_cpu=$expected_idle_cpu baseline='$baseline' current='$current_resources' request_cpu=${request_cpu:-NA} pod=${pod:-NA} $current_usage $current_vpa"
+              return 1
+            fi
+
+            if [ $((elapsed % 10)) -eq 0 ] && [ "$wait_logged" != "$elapsed" ]; then
+              log "UPF_IDLE_REQUEST_WAIT_PROGRESS timestamp=$(date -Iseconds) elapsed_s=$elapsed expected_request_cpu=$expected_idle_cpu baseline='$baseline' current='$current_resources' request_cpu=${request_cpu:-NA} pod=${pod:-NA} $current_usage $current_vpa"
+              wait_logged="$elapsed"
+            fi
+
+            sleep "$interval_sec"
+          done
+        }
+        start_upf_control_monitor() {
+          local first_sample="1"
+          local last_request_key=""
+          local last_vpa_key=""
+          local last_pod_key=""
+
+          if [ "$UPF_CONTROL_MONITOR_ENABLED" != "1" ]; then
+            log "UPF_CONTROL_MONITOR_DISABLED timestamp=$(date -Iseconds)"
+            return 0
+          fi
+
+          rm -f "$CONTROL_MONITOR_STOP_FILE"
+
+          (
+            while [ ! -f "$CONTROL_MONITOR_STOP_FILE" ]; do
+              TS_EPOCH="$(date +%s)"
+              TS="$(date -Iseconds)"
+              SCENARIO_LABEL="$(cat "$CURRENT_SCENARIO_FILE" 2>/dev/null || echo unknown)"
+              POD_NAME="$(get_upf_pod 2>/dev/null || true)"
+
+              if [ -n "$POD_NAME" ]; then
+                POD_UID="$(get_pod_uid "$POD_NAME" 2>/dev/null || echo NA)"
+                POD_RESTARTS="$(get_pod_restarts "$POD_NAME" 2>/dev/null || echo NA)"
+                RESOURCES="$(get_upf_container_resources "$POD_NAME")"
+                USAGE="$(get_upf_current_usage "$POD_NAME")"
+              else
+                POD_NAME="NA"
+                POD_UID="NA"
+                POD_RESTARTS="NA"
+                RESOURCES="request_cpu=NA request_mem=NA limit_cpu=NA limit_mem=NA"
+                USAGE="usage_cpu=NA usage_mem=NA"
+              fi
+
+              VPA_RECOMMENDATION="$(get_upf_vpa_recommendation)"
+              REQUEST_KEY="$RESOURCES"
+              VPA_KEY="$VPA_RECOMMENDATION"
+              POD_KEY="pod=$POD_NAME uid=$POD_UID restarts=$POD_RESTARTS"
+              CURRENT_SAMPLE="timestamp=$TS scenario=$SCENARIO_LABEL $POD_KEY $USAGE $RESOURCES $VPA_RECOMMENDATION"
+              HISTORY_TARGET_EPOCH=$((TS_EPOCH - UPF_CONTROL_HISTORY_WINDOW_SECONDS))
+              PREVIOUS_WINDOW_SAMPLE="$(get_control_history_sample_before "$HISTORY_TARGET_EPOCH")"
+
+              if [ "$first_sample" = "1" ]; then
+                log "UPF_REQUEST_OBSERVED timestamp=$TS scenario=$SCENARIO_LABEL $POD_KEY $RESOURCES current_sample='$CURRENT_SAMPLE'"
+                log "VPA_RECOMMENDATION_OBSERVED timestamp=$TS scenario=$SCENARIO_LABEL $VPA_RECOMMENDATION current_sample='$CURRENT_SAMPLE'"
+                last_request_key="$REQUEST_KEY"
+                last_vpa_key="$VPA_KEY"
+                last_pod_key="$POD_KEY"
+                first_sample="0"
+              else
+                if [ "$POD_KEY" != "$last_pod_key" ]; then
+                  log "UPF_POD_OBSERVATION_CHANGE timestamp=$TS scenario=$SCENARIO_LABEL old='$last_pod_key' new='$POD_KEY' previous_${UPF_CONTROL_HISTORY_WINDOW_SECONDS}s_sample='$PREVIOUS_WINDOW_SAMPLE' current_sample='$CURRENT_SAMPLE'"
+                  last_pod_key="$POD_KEY"
+                fi
+
+                if [ "$REQUEST_KEY" != "$last_request_key" ]; then
+                  log "UPF_REQUEST_CHANGE timestamp=$TS scenario=$SCENARIO_LABEL $POD_KEY old='$last_request_key' new='$REQUEST_KEY' previous_${UPF_CONTROL_HISTORY_WINDOW_SECONDS}s_sample='$PREVIOUS_WINDOW_SAMPLE' current_sample='$CURRENT_SAMPLE'"
+                  last_request_key="$REQUEST_KEY"
+                fi
+
+                if [ "$VPA_KEY" != "$last_vpa_key" ]; then
+                  log "VPA_RECOMMENDATION_CHANGE timestamp=$TS scenario=$SCENARIO_LABEL old='$last_vpa_key' new='$VPA_KEY' previous_${UPF_CONTROL_HISTORY_WINDOW_SECONDS}s_sample='$PREVIOUS_WINDOW_SAMPLE' current_sample='$CURRENT_SAMPLE'"
+                  last_vpa_key="$VPA_KEY"
+                fi
+              fi
+
+              log "UPF_CONTROL_SAMPLE $CURRENT_SAMPLE"
+              append_control_history_sample "$TS_EPOCH" "$CURRENT_SAMPLE"
+              sleep "$UPF_CONTROL_MONITOR_INTERVAL"
+            done
+          ) &
+
+          CONTROL_MONITOR_PID="$!"
+          log "UPF_CONTROL_MONITOR_START timestamp=$(date -Iseconds) pid=$CONTROL_MONITOR_PID interval_s=$UPF_CONTROL_MONITOR_INTERVAL"
+        }
+
+        stop_upf_control_monitor() {
+          if [ -n "${CONTROL_MONITOR_PID:-}" ]; then
+            touch "$CONTROL_MONITOR_STOP_FILE" 2>/dev/null || true
+            wait "$CONTROL_MONITOR_PID" 2>/dev/null || true
+            log "UPF_CONTROL_MONITOR_END timestamp=$(date -Iseconds) pid=$CONTROL_MONITOR_PID"
+            CONTROL_MONITOR_PID=""
+          fi
+        }
+
+        cleanup_on_exit() {
+          stop_upf_control_monitor || true
+          rm -f "$CONTROL_MONITOR_STOP_FILE" "$CONTROL_MONITOR_HISTORY_FILE" "$CURRENT_SCENARIO_FILE" 2>/dev/null || true
+        }
+
+        trap cleanup_on_exit EXIT
+
+        count_tunnels() {
+          local pod="$1"
+
+          kubectl -n "$NS" exec "$pod" -- bash -lc \
+            "ip -o -4 addr show | awk '\$2 ~ /^uesimtun/ {print \$4}' | wc -l" \
+            2>/dev/null \
+            | tr -d ' '
+        }
+
+        verify_registered_ues() {
+          local pod="$1"
+          local required="$2"
+          local timeout_sec="$3"
+          local start
+          local now
+          local count
+
+          start="$(date +%s)"
+
+          while true; do
+            count="$(count_tunnels "$pod" || echo 0)"
+            count="${count:-0}"
+
+            if [ "$count" -ge "$required" ]; then
+              log "Required registered UE pool ready timestamp=$(date -Iseconds) count=$count required=$required"
+              return 0
+            fi
+
+            now="$(date +%s)"
+
+            if [ $((now - start)) -ge "$timeout_sec" ]; then
+              log "Required registered UE pool not ready timestamp=$(date -Iseconds) got=$count required=$required"
+              return 1
+            fi
+
+            log "Waiting for required registered UE pool timestamp=$(date -Iseconds) got=$count required=$required"
+            sleep 5
+          done
+        }
+
+        validate_scenarios() {
+          local scenario
+          local max_port
+          local repl_first
+          local repl_last
+
+          repl_first="$IPERF_REPLACEMENT_BASE_PORT"
+          repl_last=$((IPERF_REPLACEMENT_BASE_PORT + UE_REPLACEMENT_LIMIT_PER_SCENARIO - 1))
+
+          for scenario in $SCENARIOS; do
+            if [ "$scenario" -gt "$REQUIRED_REGISTERED_UES" ]; then
+              fail_exit "Scenario UE=$scenario is larger than required registered UE pool=$REQUIRED_REGISTERED_UES"
+            fi
+
+            max_port=$((IPERF_BASE_PORT + scenario - 1))
+            log "Scenario validation timestamp=$(date -Iseconds) active_ue=$scenario requires_iperf_ports=${IPERF_BASE_PORT}-${max_port} replacement_ports=${repl_first}-${repl_last}"
+          done
+        }
+
+        precheck_iperf_ports() {
+          local pod="$1"
+          local check_count="$2"
+          local rc
+          local last_port
+
+          last_port=$((IPERF_BASE_PORT + check_count - 1))
+
+          log "IPERF ports precheck START timestamp=$(date -Iseconds) host=$IPERF_HOST ports=${IPERF_BASE_PORT}-${last_port} bitrate=$IPERF_TCP_BITRATE"
+
+          kubectl -n "$NS" exec -i "$pod" -- env \
+            IPERF_HOST="$IPERF_HOST" \
+            IPERF_BASE_PORT="$IPERF_BASE_PORT" \
+            IPERF_TCP_BITRATE="$IPERF_TCP_BITRATE" \
+            CHECK_COUNT="$check_count" \
+            bash -s <<'REMOTE_PORT_PRECHECK'
+        set -u
+
+        FIRST_LINE="$(ip -o -4 addr show | awk '$2 ~ /^uesimtun/ {split($4,a,"/"); print $2" "a[1]; exit}')"
+
+        if [ -z "$FIRST_LINE" ]; then
+          echo "ERROR: no uesimtun interface found"
+          exit 10
+        fi
+
+        UE_IF="$(echo "$FIRST_LINE" | awk '{print $1}')"
+        UE_IP="$(echo "$FIRST_LINE" | awk '{print $2}')"
+
+        echo "PORT_PRECHECK_SOURCE timestamp=$(date -Iseconds) ue_if=$UE_IF ue_ip=$UE_IP"
+
+        i=0
+
+        while [ "$i" -lt "$CHECK_COUNT" ]; do
+          PORT=$((IPERF_BASE_PORT + i))
+
+          echo "PORT_PRECHECK_START timestamp=$(date -Iseconds) ue_ip=$UE_IP target=${IPERF_HOST}:${PORT}"
+
+          timeout 20 \
+            iperf3 \
+            -c "$IPERF_HOST" \
+            -p "$PORT" \
+            -t 3 \
+            -i 1 \
+            -B "$UE_IP" \
+            -b "$IPERF_TCP_BITRATE" \
+            >/tmp/iperf_port_precheck_${PORT}.log 2>&1
+
+          RC="$?"
+
+          echo "PORT_PRECHECK_END timestamp=$(date -Iseconds) target=${IPERF_HOST}:${PORT} rc=$RC"
+
+          if [ "$RC" -ne 0 ]; then
+            echo "ERROR: port precheck failed target=${IPERF_HOST}:${PORT} rc=$RC"
+            echo "ERROR: precheck log below"
+            cat /tmp/iperf_port_precheck_${PORT}.log || true
+            exit "$RC"
+          fi
+
+          i=$((i + 1))
+        done
+
+        exit 0
+        REMOTE_PORT_PRECHECK
+
+          rc="$?"
+          log "IPERF ports precheck END timestamp=$(date -Iseconds) rc=$rc"
+          return "$rc"
+        }
+
+        start_iperf_per_ue() {
+          local pod="$1"
+          local tag="$2"
+          local active_ues="$3"
+
+          kubectl -n "$NS" exec -i "$pod" -- env \
+            RUN_ID="$RUN_ID" \
+            TAG="$tag" \
+            ACTIVE_UES="$active_ues" \
+            IPERF_HOST="$IPERF_HOST" \
+            IPERF_BASE_PORT="$IPERF_BASE_PORT" \
+            IPERF_REPLACEMENT_BASE_PORT="$IPERF_REPLACEMENT_BASE_PORT" \
+            IPERF_TCP_BITRATE="$IPERF_TCP_BITRATE" \
+            IPERF_CLIENT_START_DELAY="$IPERF_CLIENT_START_DELAY" \
+            FAILED_CLIENTS_LOG_LIMIT="$FAILED_CLIENTS_LOG_LIMIT" \
+            TEST_DURATION="$TEST_DURATION" \
+            IPERF_TIMEOUT_EXTRA="$IPERF_TIMEOUT_EXTRA" \
+            UE_CONNECT_TIMEOUT="$UE_CONNECT_TIMEOUT" \
+            UE_STALL_SECONDS="$UE_STALL_SECONDS" \
+            UE_REPLACEMENT_LIMIT_PER_SCENARIO="$UE_REPLACEMENT_LIMIT_PER_SCENARIO" \
+            UE_REPLACEMENT_MIN_REMAINING_SECONDS="$UE_REPLACEMENT_MIN_REMAINING_SECONDS" \
+            UE_REPLACEMENT_MIN_DURATION="$UE_REPLACEMENT_MIN_DURATION" \
+            UE_ADAPTIVE_EXTENSION_MAX="$UE_ADAPTIVE_EXTENSION_MAX" \
+            IPERF_EXIT_GRACE_SECONDS="$IPERF_EXIT_GRACE_SECONDS" \
+            SUPERVISOR_INTERVAL="$SUPERVISOR_INTERVAL" \
+            SLOT_KILL_GRACE_SECONDS="$SLOT_KILL_GRACE_SECONDS" \
+            IPERF_SERVER_BUSY_RETRIES="$IPERF_SERVER_BUSY_RETRIES" \
+            IPERF_SERVER_BUSY_RETRY_DELAY="$IPERF_SERVER_BUSY_RETRY_DELAY" \
+            bash -s <<'REMOTE_SCRIPT'
+        set +e
+        
+        # Safety fallbacks. These must be passed from the outer script, but keeping defaults
+        # prevents empty variables from breaking arithmetic tests inside the pod.
+        IPERF_EXIT_GRACE_SECONDS="${IPERF_EXIT_GRACE_SECONDS:-3}"
+        IPERF_SERVER_BUSY_RETRIES="${IPERF_SERVER_BUSY_RETRIES:-4}"
+        IPERF_SERVER_BUSY_RETRY_DELAY="${IPERF_SERVER_BUSY_RETRY_DELAY:-2}"
+        SLOT_KILL_GRACE_SECONDS="${SLOT_KILL_GRACE_SECONDS:-0}"
+        SUPERVISOR_INTERVAL="${SUPERVISOR_INTERVAL:-1}"
+        UE_REPLACEMENT_MIN_REMAINING_SECONDS="${UE_REPLACEMENT_MIN_REMAINING_SECONDS:-0}"
+        
+        is_nonnegative_int() {
+          case "$1" in
+            ''|*[!0-9]*) return 1 ;;
+            *) return 0 ;;
+          esac
+        }
+        
+        for REQUIRED_NUMERIC_VAR in \
+          ACTIVE_UES TEST_DURATION IPERF_TIMEOUT_EXTRA UE_CONNECT_TIMEOUT UE_STALL_SECONDS \
+          UE_REPLACEMENT_LIMIT_PER_SCENARIO UE_REPLACEMENT_MIN_REMAINING_SECONDS \
+          UE_REPLACEMENT_MIN_DURATION UE_ADAPTIVE_EXTENSION_MAX IPERF_EXIT_GRACE_SECONDS \
+          SUPERVISOR_INTERVAL SLOT_KILL_GRACE_SECONDS IPERF_SERVER_BUSY_RETRIES; do
+          VALUE="${!REQUIRED_NUMERIC_VAR:-}"
+          if ! is_nonnegative_int "$VALUE"; then
+            echo "ERROR: invalid numeric variable name=$REQUIRED_NUMERIC_VAR value='$VALUE'"
+            exit 90
+          fi
+        done
+        
+        WORK="/tmp/upf_iperf_adaptive_${RUN_ID}_${TAG}"
+        GLOBAL_BAD_UE_FILE="/tmp/upf_iperf_global_suspect_ues_${RUN_ID}.txt"
+        SCENARIO_BAD_UE_FILE="$WORK/scenario_bad_ues.txt"
+        USED_UE_FILE="$WORK/used_ues.txt"
+        ALL_TUNNELS_FILE="$WORK/all_tunnels.txt"
+        
+        rm -rf "$WORK"
+        mkdir -p "$WORK"
+        touch "$GLOBAL_BAD_UE_FILE" "$SCENARIO_BAD_UE_FILE" "$USED_UE_FILE" "$ALL_TUNNELS_FILE"
+        
+        # Kill only stale iperf3 clients left by an interrupted previous run in this UE pod.
+        # This is done before a scenario starts, never during a running scenario.
+        STALE_PIDS="$(pgrep -f "iperf3 .* -c ${IPERF_HOST}" 2>/dev/null || true)"
+        if [ -n "$STALE_PIDS" ]; then
+          echo "REMOTE_STRAY_IPERF_CLEANUP timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES pids=$(echo "$STALE_PIDS" | tr '\n' ',')"
+          pkill -f "iperf3 .* -c ${IPERF_HOST}" 2>/dev/null || true
+          sleep 1
+        fi
+        
+        declare -a POOL_IDX
+        declare -a POOL_IF
+        declare -a POOL_IP
+        POOL_SIZE=0
+        
+        declare -A USED_UE
+        declare -A SCENARIO_BAD_UE
+        declare -A GLOBAL_BAD_UE
+        
+        declare -A SLOT_STATE
+        declare -A SLOT_PID
+        declare -A SLOT_UE_IDX
+        declare -A SLOT_UE_IF
+        declare -A SLOT_UE_IP
+        declare -A SLOT_PORT
+        declare -A SLOT_LOG
+        declare -A SLOT_RCFILE
+        declare -A SLOT_STARTED_EPOCH
+        declare -A SLOT_END_EPOCH
+        declare -A SLOT_HARD_END_EPOCH
+        declare -A SLOT_ATTEMPT
+        declare -A SLOT_FINAL_RC
+        declare -A SLOT_REPLACEMENTS
+        declare -A SLOT_FAILURE_REASON
+        declare -A SLOT_LAST_RX
+        declare -A SLOT_LAST_RX_EPOCH
+        declare -A SLOT_SEEN_RX
+        declare -A SLOT_EXTENSION_USED
+        declare -A SLOT_SERVER_BUSY_RETRIES
+        declare -A SLOT_STALL_DEFERRED
+        
+        REPLACEMENT_PORT_COUNTER=0
+        REPLACEMENTS_TOTAL=0
+        PROBLEMATIC_TOTAL=0
+        STALL_TOTAL=0
+        CONNECT_TIMEOUT_TOTAL=0
+        PROCESS_FAILURE_TOTAL=0
+        SERVER_BUSY_RETRY_TOTAL=0
+        SERVER_BUSY_FAILURE_TOTAL=0
+        DEFERRED_STALL_TOTAL=0
+        LATE_TIMEOUT_ACCEPTED_TOTAL=0
+        FAILED_PRINTED=0
+        STARTED_SLOTS=0
+        
+        now_epoch() {
+          date +%s
+        }
+        
+        unique_sort_file() {
+          local file="$1"
+          sort -n -u "$file" -o "$file" 2>/dev/null || true
+        }
+        
+        get_if_rx_bytes() {
+          cat "/sys/class/net/$1/statistics/rx_bytes" 2>/dev/null || echo 0
+        }
+        
+        load_global_bad_ues() {
+          local idx
+          while read -r idx; do
+            [ -n "${idx:-}" ] || continue
+            GLOBAL_BAD_UE[$idx]=1
+          done < "$GLOBAL_BAD_UE_FILE"
+        }
+        
+        build_tunnel_pool() {
+          local idx
+          local ifname
+          local ipaddr
+        
+          POOL_SIZE=0
+          ip -o -4 addr show \
+            | awk '$2 ~ /^uesimtun/ {idx=$2; sub(/^uesimtun/,"",idx); split($4,a,"/"); print idx" "$2" "a[1]}' \
+            | sort -n \
+            > "$ALL_TUNNELS_FILE"
+        
+          while read -r idx ifname ipaddr; do
+            [ -n "${idx:-}" ] || continue
+            POOL_IDX[$POOL_SIZE]="$idx"
+            POOL_IF[$POOL_SIZE]="$ifname"
+            POOL_IP[$POOL_SIZE]="$ipaddr"
+            POOL_SIZE=$((POOL_SIZE + 1))
+          done < "$ALL_TUNNELS_FILE"
+        }
+        
+        mark_used() {
+          local idx="$1"
+          USED_UE[$idx]=1
+          echo "$idx" >> "$USED_UE_FILE"
+        }
+        
+        mark_bad() {
+          local idx="$1"
+          local reason="${2:-unknown}"
+          SCENARIO_BAD_UE[$idx]=1
+          GLOBAL_BAD_UE[$idx]=1
+          echo "$idx" >> "$SCENARIO_BAD_UE_FILE"
+          echo "$idx" >> "$GLOBAL_BAD_UE_FILE"
+          echo "UE_MARKED_PROBLEMATIC timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES ue_idx=$idx reason=$reason scope=scenario_and_global_suspect"
+        }
+        
+        pick_next_ue() {
+          local allow_global
+          local n
+          local idx
+          local ifname
+          local ipaddr
+        
+          # First pass: avoid UE suspected in previous scenarios of this run.
+          # Second pass: reuse global suspects if avoiding them would exhaust the pool.
+          # Scenario-bad UE are never reused inside the same scenario.
+          for allow_global in 0 1; do
+            n=0
+            while [ "$n" -lt "$POOL_SIZE" ]; do
+              idx="${POOL_IDX[$n]}"
+              ifname="${POOL_IF[$n]}"
+              ipaddr="${POOL_IP[$n]}"
+        
+              if [ -n "${USED_UE[$idx]+x}" ]; then
+                n=$((n + 1))
+                continue
+              fi
+        
+              if [ -n "${SCENARIO_BAD_UE[$idx]+x}" ]; then
+                n=$((n + 1))
+                continue
+              fi
+        
+              if [ "$allow_global" -eq 0 ] && [ -n "${GLOBAL_BAD_UE[$idx]+x}" ]; then
+                n=$((n + 1))
+                continue
+              fi
+        
+              echo "$idx $ifname $ipaddr $allow_global"
+              return 0
+            done
+          done
+        
+          return 1
+        }
+        
+        print_short_failure_log() {
+          local slot="$1"
+          local logfile="$2"
+        
+          if [ "$FAILED_PRINTED" -lt "$FAILED_CLIENTS_LOG_LIMIT" ]; then
+            FAILED_PRINTED=$((FAILED_PRINTED + 1))
+            echo "FAILED_CLIENT_LOG_BEGIN slot=$slot logfile=$logfile"
+            sed -n '1,16p' "$logfile" 2>/dev/null || true
+            echo "FAILED_CLIENT_LOG_END slot=$slot logfile=$logfile"
+          fi
+        }
+        
+        kill_slot_process() {
+          local slot="$1"
+          local pid="${SLOT_PID[$slot]:-}"
+        
+          if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+            kill "$pid" 2>/dev/null || true
+            sleep "$SLOT_KILL_GRACE_SECONDS"
+            if kill -0 "$pid" 2>/dev/null; then
+              kill -9 "$pid" 2>/dev/null || true
+            fi
+          fi
+        }
+        
+        is_server_busy_log() {
+          local logfile="$1"
+          grep -qi 'server is busy' "$logfile" 2>/dev/null
+        }
+        
+        start_slot_attempt() {
+          local slot="$1"
+          local ue_idx="$2"
+          local ue_if="$3"
+          local ue_ip="$4"
+          local port="$5"
+          local duration="$6"
+          local planned_end="$7"
+          local attempt="$8"
+          local prefix
+          local logfile
+          local rcfile
+          local started
+          local client_timeout
+          local pid
+          local rx_now
+        
+          if [ "$duration" -le 0 ]; then
+            echo "UE_SLOT_START_SKIPPED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=$ue_idx ue_if=$ue_if ue_ip=$ue_ip port=$port duration=$duration reason=no_remaining_time"
+            return 1
+          fi
+        
+          prefix="$WORK/slot_${slot}_attempt_${attempt}_ue_${ue_idx}_port_${port}"
+          logfile="${prefix}.log"
+          rcfile="${prefix}.rc"
+          started="$(now_epoch)"
+          client_timeout=$((duration + IPERF_TIMEOUT_EXTRA))
+          rx_now="$(get_if_rx_bytes "$ue_if")"
+          rx_now="${rx_now:-0}"
+        
+          : > "$logfile"
+          rm -f "$rcfile"
+        
+          SLOT_STATE[$slot]="running"
+          SLOT_UE_IDX[$slot]="$ue_idx"
+          SLOT_UE_IF[$slot]="$ue_if"
+          SLOT_UE_IP[$slot]="$ue_ip"
+          SLOT_PORT[$slot]="$port"
+          SLOT_LOG[$slot]="$logfile"
+          SLOT_RCFILE[$slot]="$rcfile"
+          SLOT_STARTED_EPOCH[$slot]="$started"
+          SLOT_END_EPOCH[$slot]="$planned_end"
+          SLOT_HARD_END_EPOCH[$slot]=$((started + client_timeout + 5))
+          SLOT_ATTEMPT[$slot]="$attempt"
+          SLOT_FINAL_RC[$slot]=""
+          SLOT_FAILURE_REASON[$slot]=""
+          SLOT_LAST_RX[$slot]="$rx_now"
+          SLOT_LAST_RX_EPOCH[$slot]="$started"
+          SLOT_SEEN_RX[$slot]="0"
+          SLOT_STALL_DEFERRED[$slot]="0"
+        
+          echo "UE_SLOT_START timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=$attempt ue_idx=$ue_idx ue_if=$ue_if ue_ip=$ue_ip target=${IPERF_HOST}:${port} bitrate=$IPERF_TCP_BITRATE duration_s=$duration planned_end_epoch=$planned_end timeout_s=$client_timeout hard_timeout_epoch=${SLOT_HARD_END_EPOCH[$slot]} start_rx_bytes=$rx_now"
+        
+          (
+            timeout "$client_timeout" \
+              iperf3 \
+              -c "$IPERF_HOST" \
+              -p "$port" \
+              -t "$duration" \
+              -i 1 \
+              -B "$ue_ip" \
+              -b "$IPERF_TCP_BITRATE" \
+              > "$logfile" 2>&1
+        
+            rc="$?"
+            echo "$rc" > "$rcfile"
+          ) &
+        
+          pid="$!"
+          SLOT_PID[$slot]="$pid"
+        
+          echo "UE_SLOT_PID timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=$attempt ue_idx=$ue_idx pid=$pid"
+        
+          return 0
+        }
+        
+        rebind_slot_after_server_busy() {
+          local slot="$1"
+          local now
+          local planned_end
+          local remaining
+          local rebinds
+          local new_attempt
+          local old_port
+          local new_port
+
+          now="$(now_epoch)"
+          planned_end="${SLOT_END_EPOCH[$slot]}"
+          remaining=$((planned_end - now))
+          rebinds="${SLOT_SERVER_BUSY_RETRIES[$slot]:-0}"
+          old_port="${SLOT_PORT[$slot]}"
+
+          if [ "$now" -ge "$planned_end" ]; then
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="server_busy_after_planned_end"
+            SLOT_FINAL_RC[$slot]="server_busy_after_planned_end"
+            SERVER_BUSY_FAILURE_TOTAL=$((SERVER_BUSY_FAILURE_TOTAL + 1))
+            echo "UE_SLOT_SERVER_BUSY_FAILURE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=${SLOT_UE_IDX[$slot]} port=$old_port reason=after_planned_end remaining_s=$remaining"
+            return 1
+          fi
+
+          if [ "$remaining" -lt "$UE_REPLACEMENT_MIN_DURATION" ]; then
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="server_busy_not_enough_remaining_time"
+            SLOT_FINAL_RC[$slot]="server_busy_not_enough_remaining_time"
+            SERVER_BUSY_FAILURE_TOTAL=$((SERVER_BUSY_FAILURE_TOTAL + 1))
+            echo "UE_SLOT_SERVER_BUSY_FAILURE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=${SLOT_UE_IDX[$slot]} port=$old_port reason=not_enough_remaining_time remaining_s=$remaining minimum_s=$UE_REPLACEMENT_MIN_DURATION"
+            return 1
+          fi
+
+          if [ "$rebinds" -ge "$IPERF_SERVER_BUSY_RETRIES" ]; then
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="server_busy_rebinds_exceeded"
+            SLOT_FINAL_RC[$slot]="server_busy_rebinds_exceeded"
+            SERVER_BUSY_FAILURE_TOTAL=$((SERVER_BUSY_FAILURE_TOTAL + 1))
+            echo "UE_SLOT_SERVER_BUSY_FAILURE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=${SLOT_UE_IDX[$slot]} port=$old_port reason=rebinds_exceeded rebinds=$rebinds limit=$IPERF_SERVER_BUSY_RETRIES remaining_s=$remaining"
+            return 1
+          fi
+
+          if [ "$REPLACEMENT_PORT_COUNTER" -ge "$UE_REPLACEMENT_LIMIT_PER_SCENARIO" ]; then
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="server_busy_no_fresh_rebind_port"
+            SLOT_FINAL_RC[$slot]="server_busy_no_fresh_rebind_port"
+            SERVER_BUSY_FAILURE_TOTAL=$((SERVER_BUSY_FAILURE_TOTAL + 1))
+            echo "UE_SLOT_SERVER_BUSY_FAILURE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=${SLOT_UE_IDX[$slot]} port=$old_port reason=no_fresh_rebind_port used_replacement_ports=$REPLACEMENT_PORT_COUNTER limit=$UE_REPLACEMENT_LIMIT_PER_SCENARIO"
+            return 1
+          fi
+
+          rebinds=$((rebinds + 1))
+          SLOT_SERVER_BUSY_RETRIES[$slot]="$rebinds"
+          SERVER_BUSY_RETRY_TOTAL=$((SERVER_BUSY_RETRY_TOTAL + 1))
+          REPLACEMENT_PORT_COUNTER=$((REPLACEMENT_PORT_COUNTER + 1))
+          new_port=$((IPERF_REPLACEMENT_BASE_PORT + REPLACEMENT_PORT_COUNTER - 1))
+          new_attempt=$(( ${SLOT_ATTEMPT[$slot]} + 1 ))
+
+          echo "UE_SLOT_SERVER_BUSY_PORT_REBIND timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=${SLOT_UE_IDX[$slot]} ue_if=${SLOT_UE_IF[$slot]} ue_ip=${SLOT_UE_IP[$slot]} old_port=$old_port new_port=$new_port rebind=$rebinds limit=$IPERF_SERVER_BUSY_RETRIES remaining_s=$remaining note=same_ue_no_blacklist_no_ue_replacement"
+
+          start_slot_attempt "$slot" "${SLOT_UE_IDX[$slot]}" "${SLOT_UE_IF[$slot]}" "${SLOT_UE_IP[$slot]}" "$new_port" "$remaining" "$planned_end" "$new_attempt"
+          return "$?"
+        }
+
+        should_continue_instead_of_kill_stall() {
+          local slot="$1"
+          local reason="$2"
+        
+          case "$reason" in
+            rx_stall*) return 0 ;;
+            *) return 1 ;;
+          esac
+        }
+        
+        replace_slot() {
+          local slot="$1"
+          local reason="$2"
+          local now
+          local planned_end
+          local remaining
+          local old_ue_idx
+          local old_ue_if
+          local old_ue_ip
+          local old_port
+          local old_attempt
+          local candidate
+          local new_ue_idx
+          local new_ue_if
+          local new_ue_ip
+          local candidate_reused_global
+          local new_port
+          local new_attempt
+          local current_extension
+          local extension_needed
+          local extension_available
+          local extension_add
+          local can_defer_stall=1
+        
+          now="$(now_epoch)"
+          planned_end="${SLOT_END_EPOCH[$slot]}"
+          remaining=$((planned_end - now))
+        
+          old_ue_idx="${SLOT_UE_IDX[$slot]}"
+          old_ue_if="${SLOT_UE_IF[$slot]}"
+          old_ue_ip="${SLOT_UE_IP[$slot]}"
+          old_port="${SLOT_PORT[$slot]}"
+          old_attempt="${SLOT_ATTEMPT[$slot]}"
+        
+          if should_continue_instead_of_kill_stall "$slot" "$reason"; then
+            can_defer_stall=0
+          fi
+        
+          echo "UE_SLOT_PROBLEM_DETECTED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=$old_attempt ue_idx=$old_ue_idx ue_if=$old_ue_if ue_ip=$old_ue_ip port=$old_port reason=$reason remaining_s=$remaining"
+        
+          if [ "$now" -ge "$planned_end" ]; then
+            if [ "$can_defer_stall" -eq 0 ]; then
+              SLOT_STALL_DEFERRED[$slot]="1"
+              DEFERRED_STALL_TOTAL=$((DEFERRED_STALL_TOTAL + 1))
+              echo "UE_SLOT_STALL_DEFERRED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=$old_ue_idx reason=$reason remaining_s=$remaining action=continue_until_iperf_exit note=late_replacement_after_end_disabled"
+              return 0
+            fi
+        
+            mark_bad "$old_ue_idx" "$reason"
+            kill_slot_process "$slot"
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="no_remaining_time_after_${reason}"
+            SLOT_FINAL_RC[$slot]="no_remaining_time"
+            echo "UE_SLOT_REPLACE_SKIPPED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot old_ue_idx=$old_ue_idx reason=no_remaining_time remaining_s=$remaining"
+            return 1
+          fi
+        
+          current_extension="${SLOT_EXTENSION_USED[$slot]:-0}"
+        
+          if [ "$remaining" -lt "$UE_REPLACEMENT_MIN_DURATION" ]; then
+            extension_needed=$((UE_REPLACEMENT_MIN_DURATION - remaining))
+            extension_available=$((UE_ADAPTIVE_EXTENSION_MAX - current_extension))
+        
+            if [ "$extension_available" -gt 0 ]; then
+              if [ "$extension_needed" -le "$extension_available" ]; then
+                extension_add="$extension_needed"
+              else
+                extension_add="$extension_available"
+              fi
+        
+              planned_end=$((planned_end + extension_add))
+              remaining=$((remaining + extension_add))
+              SLOT_END_EPOCH[$slot]="$planned_end"
+              SLOT_EXTENSION_USED[$slot]=$((current_extension + extension_add))
+        
+              echo "UE_SLOT_ADAPTIVE_EXTENSION timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot reason=$reason old_ue_idx=$old_ue_idx extension_add_s=$extension_add extension_used_s=${SLOT_EXTENSION_USED[$slot]} extension_limit_s=$UE_ADAPTIVE_EXTENSION_MAX remaining_after_extension_s=$remaining replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION"
+            else
+              echo "UE_SLOT_ADAPTIVE_EXTENSION_SKIPPED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot reason=$reason old_ue_idx=$old_ue_idx remaining_s=$remaining extension_used_s=$current_extension extension_limit_s=$UE_ADAPTIVE_EXTENSION_MAX"
+            fi
+          fi
+        
+          if [ "$remaining" -lt "$UE_REPLACEMENT_MIN_DURATION" ]; then
+            if [ "$can_defer_stall" -eq 0 ]; then
+              SLOT_STALL_DEFERRED[$slot]="1"
+              DEFERRED_STALL_TOTAL=$((DEFERRED_STALL_TOTAL + 1))
+              echo "UE_SLOT_STALL_DEFERRED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=$old_ue_idx reason=$reason remaining_s=$remaining replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION action=continue_until_iperf_exit note=not_killing_late_stall"
+              return 0
+            fi
+        
+            mark_bad "$old_ue_idx" "$reason"
+            kill_slot_process "$slot"
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="not_enough_replacement_duration_after_${reason}"
+            SLOT_FINAL_RC[$slot]="not_enough_replacement_duration"
+            echo "UE_SLOT_REPLACE_SKIPPED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot old_ue_idx=$old_ue_idx reason=not_enough_replacement_duration remaining_s=$remaining minimum_s=$UE_REPLACEMENT_MIN_DURATION extension_used_s=${SLOT_EXTENSION_USED[$slot]:-0} extension_limit_s=$UE_ADAPTIVE_EXTENSION_MAX"
+            return 1
+          fi
+        
+          if [ "$REPLACEMENTS_TOTAL" -ge "$UE_REPLACEMENT_LIMIT_PER_SCENARIO" ]; then
+            if [ "$can_defer_stall" -eq 0 ]; then
+              SLOT_STALL_DEFERRED[$slot]="1"
+              DEFERRED_STALL_TOTAL=$((DEFERRED_STALL_TOTAL + 1))
+              echo "UE_SLOT_STALL_DEFERRED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=$old_ue_idx reason=$reason action=continue_until_iperf_exit note=replacement_limit_reached limit=$UE_REPLACEMENT_LIMIT_PER_SCENARIO"
+              return 0
+            fi
+        
+            mark_bad "$old_ue_idx" "$reason"
+            kill_slot_process "$slot"
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="replacement_limit_reached_after_${reason}"
+            SLOT_FINAL_RC[$slot]="replacement_limit"
+            echo "UE_SLOT_REPLACE_SKIPPED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot old_ue_idx=$old_ue_idx reason=replacement_limit_reached limit=$UE_REPLACEMENT_LIMIT_PER_SCENARIO"
+            return 1
+          fi
+        
+          candidate="$(pick_next_ue || true)"
+        
+          if [ -z "$candidate" ]; then
+            if [ "$can_defer_stall" -eq 0 ]; then
+              SLOT_STALL_DEFERRED[$slot]="1"
+              DEFERRED_STALL_TOTAL=$((DEFERRED_STALL_TOTAL + 1))
+              echo "UE_SLOT_STALL_DEFERRED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot ue_idx=$old_ue_idx reason=$reason action=continue_until_iperf_exit note=no_candidate_but_current_iperf_still_running"
+              return 0
+            fi
+        
+            mark_bad "$old_ue_idx" "$reason"
+            kill_slot_process "$slot"
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="no_candidate_ue_after_${reason}"
+            SLOT_FINAL_RC[$slot]="no_candidate"
+            echo "UE_SLOT_REPLACE_SKIPPED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot old_ue_idx=$old_ue_idx reason=no_candidate_ue"
+            return 1
+          fi
+        
+          # From this point replacement is guaranteed; now it is safe to mark and kill the old UE.
+          mark_bad "$old_ue_idx" "$reason"
+          kill_slot_process "$slot"
+        
+          PROBLEMATIC_TOTAL=$((PROBLEMATIC_TOTAL + 1))
+        
+          case "$reason" in
+            no_rx_after_connect_timeout*) CONNECT_TIMEOUT_TOTAL=$((CONNECT_TIMEOUT_TOTAL + 1)) ;;
+            rx_stall*) STALL_TOTAL=$((STALL_TOTAL + 1)) ;;
+            process_failure*) PROCESS_FAILURE_TOTAL=$((PROCESS_FAILURE_TOTAL + 1)) ;;
+          esac
+        
+          new_ue_idx="$(echo "$candidate" | awk '{print $1}')"
+          new_ue_if="$(echo "$candidate" | awk '{print $2}')"
+          new_ue_ip="$(echo "$candidate" | awk '{print $3}')"
+          candidate_reused_global="$(echo "$candidate" | awk '{print $4}')"
+        
+          mark_used "$new_ue_idx"
+        
+          REPLACEMENT_PORT_COUNTER=$((REPLACEMENT_PORT_COUNTER + 1))
+          REPLACEMENTS_TOTAL=$((REPLACEMENTS_TOTAL + 1))
+          new_port=$((IPERF_REPLACEMENT_BASE_PORT + REPLACEMENT_PORT_COUNTER - 1))
+          new_attempt=$((old_attempt + 1))
+          SLOT_REPLACEMENTS[$slot]=$(( ${SLOT_REPLACEMENTS[$slot]:-0} + 1 ))
+          SLOT_SERVER_BUSY_RETRIES[$slot]=0
+        
+          echo "UE_SLOT_REPLACE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot reason=$reason old_attempt=$old_attempt old_ue_idx=$old_ue_idx old_ue_if=$old_ue_if old_ue_ip=$old_ue_ip old_port=$old_port new_attempt=$new_attempt new_ue_idx=$new_ue_idx new_ue_if=$new_ue_if new_ue_ip=$new_ue_ip new_port=$new_port remaining_s=$remaining extension_used_s=${SLOT_EXTENSION_USED[$slot]:-0} extension_limit_s=$UE_ADAPTIVE_EXTENSION_MAX candidate_reused_global_suspect=$candidate_reused_global replacements_total=$REPLACEMENTS_TOTAL"
+        
+          start_slot_attempt "$slot" "$new_ue_idx" "$new_ue_if" "$new_ue_ip" "$new_port" "$remaining" "$planned_end" "$new_attempt"
+          return "$?"
+        }
+        
+        is_acceptable_late_timeout_log() {
+          local logfile="$1"
+
+          # Accept only post-duration timeout of a client that really connected and
+          # produced iperf interval output. This prevents a false FAIL when GNU timeout
+          # kills iperf3 during/after teardown, while still rejecting real connection
+          # errors and server-side failures.
+          if [ ! -s "$logfile" ]; then
+            return 1
+          fi
+
+          grep -q ' connected to ' "$logfile" 2>/dev/null || return 1
+          grep -Eq '[0-9]+\.[0-9]+-[0-9]+\.[0-9]+[[:space:]]+sec' "$logfile" 2>/dev/null || return 1
+
+          if grep -Eqi 'server is busy|unable to connect|Connection refused|No route to host|Network is unreachable|iperf3: error -' "$logfile" 2>/dev/null; then
+            return 1
+          fi
+
+          return 0
+        }
+
+        monitor_slot() {
+          local slot="$1"
+          local state="${SLOT_STATE[$slot]:-unset}"
+          local rcfile
+          local logfile
+          local rc
+          local now
+          local started
+          local elapsed
+          local planned_end
+          local end_overrun
+          local ue_if
+          local rx_now
+          local rx_last
+          local rx_idle
+        
+          if [ "$state" != "running" ]; then
+            return 0
+          fi
+        
+          rcfile="${SLOT_RCFILE[$slot]}"
+          logfile="${SLOT_LOG[$slot]}"
+          now="$(now_epoch)"
+          started="${SLOT_STARTED_EPOCH[$slot]}"
+          planned_end="${SLOT_END_EPOCH[$slot]}"
+          elapsed=$((now - started))
+          end_overrun=$((now - planned_end))
+          ue_if="${SLOT_UE_IF[$slot]}"
+        
+          if [ -f "$rcfile" ]; then
+            rc="$(cat "$rcfile" 2>/dev/null || echo ERR)"
+        
+            if [ "$rc" = "0" ]; then
+              SLOT_STATE[$slot]="done"
+              SLOT_FINAL_RC[$slot]="0"
+              echo "UE_SLOT_DONE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=${SLOT_ATTEMPT[$slot]} ue_idx=${SLOT_UE_IDX[$slot]} ue_if=${SLOT_UE_IF[$slot]} ue_ip=${SLOT_UE_IP[$slot]} port=${SLOT_PORT[$slot]} rc=0 replacements_for_slot=${SLOT_REPLACEMENTS[$slot]:-0} server_busy_retries_for_slot=${SLOT_SERVER_BUSY_RETRIES[$slot]:-0}"
+              return 0
+            fi
+        
+            echo "UE_SLOT_PROCESS_FAILURE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=${SLOT_ATTEMPT[$slot]} ue_idx=${SLOT_UE_IDX[$slot]} ue_if=${SLOT_UE_IF[$slot]} ue_ip=${SLOT_UE_IP[$slot]} port=${SLOT_PORT[$slot]} rc=$rc elapsed_s=$elapsed end_overrun_s=$end_overrun"
+            print_short_failure_log "$slot" "$logfile"
+        
+            if is_server_busy_log "$logfile" && [ "$now" -lt "$planned_end" ]; then
+              rebind_slot_after_server_busy "$slot"
+              return 0
+            fi
+        
+            if [ "$now" -ge "$planned_end" ]; then
+              if [ "$rc" = "124" ] && [ "$elapsed" -ge "$TEST_DURATION" ] && [ "${SLOT_SEEN_RX[$slot]:-0}" = "1" ] && is_acceptable_late_timeout_log "$logfile"; then
+                SLOT_STATE[$slot]="done"
+                SLOT_FINAL_RC[$slot]="accepted_late_timeout_rc_124"
+                LATE_TIMEOUT_ACCEPTED_TOTAL=$((LATE_TIMEOUT_ACCEPTED_TOTAL + 1))
+                echo "UE_SLOT_LATE_TIMEOUT_ACCEPTED timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=${SLOT_ATTEMPT[$slot]} ue_idx=${SLOT_UE_IDX[$slot]} ue_if=${SLOT_UE_IF[$slot]} ue_ip=${SLOT_UE_IP[$slot]} port=${SLOT_PORT[$slot]} rc=$rc elapsed_s=$elapsed end_overrun_s=$end_overrun seen_rx=${SLOT_SEEN_RX[$slot]:-0} reason=post_duration_timeout_with_valid_iperf_output action=count_slot_done note=timeout_killed_iperf_after_test_duration_not_traffic_failure"
+                return 0
+              fi
+
+              kill_slot_process "$slot"
+              PROCESS_FAILURE_TOTAL=$((PROCESS_FAILURE_TOTAL + 1))
+              SLOT_STATE[$slot]="failed"
+              SLOT_FAILURE_REASON[$slot]="late_process_failure_rc_${rc}"
+              SLOT_FINAL_RC[$slot]="late_process_failure_rc_${rc}"
+              echo "UE_SLOT_LATE_PROCESS_FAILURE timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=${SLOT_ATTEMPT[$slot]} ue_idx=${SLOT_UE_IDX[$slot]} ue_if=${SLOT_UE_IF[$slot]} ue_ip=${SLOT_UE_IP[$slot]} port=${SLOT_PORT[$slot]} rc=$rc elapsed_s=$elapsed end_overrun_s=$end_overrun late_replacement_after_end=disabled"
+              return 0
+            fi
+        
+            replace_slot "$slot" "process_failure_rc_${rc}"
+            return 0
+          fi
+        
+          if [ "$now" -ge "$planned_end" ]; then
+            # Po planowanym końcu slotu nie robimy już stall detection ani replacementu.
+            # iperf3 może potrzebować kilku sekund na zamknięcie sesji i zapis rcfile.
+            # Nie traktujemy tego jako błąd testu. Błąd jest dopiero wtedy, gdy minie
+            # twardy timeout procesu: duration + iperf_timeout_extra + 5 s bufora.
+            if [ "$now" -lt "${SLOT_HARD_END_EPOCH[$slot]}" ]; then
+              return 0
+            fi
+
+            kill_slot_process "$slot"
+            SLOT_STATE[$slot]="failed"
+            SLOT_FAILURE_REASON[$slot]="no_rc_after_iperf_timeout"
+            SLOT_FINAL_RC[$slot]="no_rc_after_iperf_timeout"
+            echo "UE_SLOT_NO_RC_AFTER_TIMEOUT timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$slot attempt=${SLOT_ATTEMPT[$slot]} ue_idx=${SLOT_UE_IDX[$slot]} ue_if=${SLOT_UE_IF[$slot]} ue_ip=${SLOT_UE_IP[$slot]} port=${SLOT_PORT[$slot]} end_overrun_s=$end_overrun hard_timeout_epoch=${SLOT_HARD_END_EPOCH[$slot]} late_replacement_after_end=disabled"
+            print_short_failure_log "$slot" "$logfile"
+            return 0
+          fi
+
+          rx_now="$(get_if_rx_bytes "$ue_if")"
+          rx_now="${rx_now:-0}"
+          rx_last="${SLOT_LAST_RX[$slot]:-0}"
+        
+          if [ "$rx_now" -gt "$rx_last" ]; then
+            SLOT_LAST_RX[$slot]="$rx_now"
+            SLOT_LAST_RX_EPOCH[$slot]="$now"
+            SLOT_SEEN_RX[$slot]="1"
+            SLOT_STALL_DEFERRED[$slot]="0"
+          fi
+        
+          if [ "${SLOT_SEEN_RX[$slot]:-0}" = "0" ]; then
+            if [ "$elapsed" -ge "$UE_CONNECT_TIMEOUT" ]; then
+              print_short_failure_log "$slot" "$logfile"
+              replace_slot "$slot" "no_rx_after_connect_timeout_${UE_CONNECT_TIMEOUT}s"
+            fi
+            return 0
+          fi
+        
+          rx_idle=$((now - ${SLOT_LAST_RX_EPOCH[$slot]}))
+        
+          if [ "$rx_idle" -ge "$UE_STALL_SECONDS" ]; then
+            if [ "${SLOT_STALL_DEFERRED[$slot]:-0}" = "1" ]; then
+              return 0
+            fi
+            print_short_failure_log "$slot" "$logfile"
+            replace_slot "$slot" "rx_stall_${UE_STALL_SECONDS}s"
+          fi
+        
+          return 0
+        }
+        
+        monitor_started_slots_once() {
+          local slot
+          local max_slot=$((STARTED_SLOTS - 1))
+        
+          if [ "$STARTED_SLOTS" -le 0 ]; then
+            return 0
+          fi
+        
+          for slot in $(seq 0 "$max_slot"); do
+            monitor_slot "$slot"
+          done
+        }
+        
+        count_states() {
+          local desired="$1"
+          local count=0
+          local slot
+        
+          for slot in $(seq 0 $((ACTIVE_UES - 1))); do
+            if [ "${SLOT_STATE[$slot]:-unset}" = "$desired" ]; then
+              count=$((count + 1))
+            fi
+          done
+        
+          echo "$count"
+        }
+        
+        cleanup_running_slots() {
+          local slot
+        
+          for slot in $(seq 0 $((ACTIVE_UES - 1))); do
+            if [ "${SLOT_STATE[$slot]:-unset}" = "running" ]; then
+              kill_slot_process "$slot"
+            fi
+          done
+        }
+        
+        echo "REMOTE_IPERF_PER_UE_START timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES tag=$TAG iperf_host=$IPERF_HOST base_port=$IPERF_BASE_PORT replacement_base_port=$IPERF_REPLACEMENT_BASE_PORT duration=$TEST_DURATION bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY detection=no_rx_counter connect_timeout_s=$UE_CONNECT_TIMEOUT stall_seconds=$UE_STALL_SECONDS replacement_limit=$UE_REPLACEMENT_LIMIT_PER_SCENARIO replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max_s=$UE_ADAPTIVE_EXTENSION_MAX iperf_exit_grace_s=$IPERF_EXIT_GRACE_SECONDS server_busy_port_rebinds=$IPERF_SERVER_BUSY_RETRIES late_replacement_after_end=disabled wait_for_iperf_exit=until_timeout global_suspect_policy=soft_reuse ramp_supervision=after_initial_start"
+        
+        load_global_bad_ues
+        build_tunnel_pool
+        
+        REGISTERED_TUNNELS="$POOL_SIZE"
+        unique_sort_file "$GLOBAL_BAD_UE_FILE"
+        EXISTING_GLOBAL_SUSPECTS="$(wc -l < "$GLOBAL_BAD_UE_FILE" | tr -d ' ')"
+        
+        if [ "$REGISTERED_TUNNELS" -lt "$ACTIVE_UES" ]; then
+          echo "ERROR: not enough UE tunnels timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS"
+          exit 10
+        fi
+        
+        echo "UE_POOL_STATUS timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS existing_global_suspect_ues=$EXISTING_GLOBAL_SUSPECTS used_ues=0 policy=soft_reuse_global_suspects"
+        
+        SLOT=0
+        
+        while [ "$SLOT" -lt "$ACTIVE_UES" ]; do
+          CANDIDATE="$(pick_next_ue || true)"
+        
+          if [ -z "$CANDIDATE" ]; then
+            echo "ERROR: no initial UE candidate timestamp=$(date -Iseconds) slot=$SLOT active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS used_ues=$(wc -l < "$USED_UE_FILE" | tr -d ' ') scenario_bad_ues=$(wc -l < "$SCENARIO_BAD_UE_FILE" | tr -d ' ') global_suspect_ues=$(wc -l < "$GLOBAL_BAD_UE_FILE" | tr -d ' ')"
+            cleanup_running_slots
+            exit 11
+          fi
+        
+          UE_IDX="$(echo "$CANDIDATE" | awk '{print $1}')"
+          UE_IF="$(echo "$CANDIDATE" | awk '{print $2}')"
+          UE_IP="$(echo "$CANDIDATE" | awk '{print $3}')"
+          CANDIDATE_REUSED_GLOBAL="$(echo "$CANDIDATE" | awk '{print $4}')"
+          PORT=$((IPERF_BASE_PORT + SLOT))
+          PLANNED_END=$(( $(now_epoch) + TEST_DURATION ))
+        
+          mark_used "$UE_IDX"
+          SLOT_REPLACEMENTS[$SLOT]=0
+          SLOT_EXTENSION_USED[$SLOT]=0
+          SLOT_SERVER_BUSY_RETRIES[$SLOT]=0
+          SLOT_STALL_DEFERRED[$SLOT]=0
+        
+          echo "UE_SLOT_ASSIGN timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES slot=$SLOT ue_idx=$UE_IDX ue_if=$UE_IF ue_ip=$UE_IP candidate_reused_global_suspect=$CANDIDATE_REUSED_GLOBAL"
+        
+          start_slot_attempt "$SLOT" "$UE_IDX" "$UE_IF" "$UE_IP" "$PORT" "$TEST_DURATION" "$PLANNED_END" 1
+        
+          STARTED_SLOTS=$((STARTED_SLOTS + 1))
+          SLOT=$((SLOT + 1))
+        
+          if [ "$IPERF_CLIENT_START_DELAY" != "0" ]; then
+            sleep "$IPERF_CLIENT_START_DELAY"
+          fi
+        done
+        
+        FIRST_PORT="$IPERF_BASE_PORT"
+        LAST_INITIAL_PORT=$((IPERF_BASE_PORT + ACTIVE_UES - 1))
+        LAST_REPLACEMENT_PORT=$((IPERF_REPLACEMENT_BASE_PORT + UE_REPLACEMENT_LIMIT_PER_SCENARIO - 1))
+        
+        echo "IPERF_MAPPING_SUMMARY timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS initial_ports=${FIRST_PORT}-${LAST_INITIAL_PORT} replacement_ports=${IPERF_REPLACEMENT_BASE_PORT}-${LAST_REPLACEMENT_PORT} bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY detection=no_rx_counter replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max_s=$UE_ADAPTIVE_EXTENSION_MAX iperf_exit_grace_s=$IPERF_EXIT_GRACE_SECONDS server_busy_port_rebinds=$IPERF_SERVER_BUSY_RETRIES late_replacement_after_end=disabled wait_for_iperf_exit=until_timeout global_suspect_policy=soft_reuse ramp_supervision=after_initial_start"
+        
+        LOOP_GUARD_START="$(now_epoch)"
+        LOOP_GUARD_LIMIT=$((TEST_DURATION + IPERF_TIMEOUT_EXTRA + UE_CONNECT_TIMEOUT + UE_ADAPTIVE_EXTENSION_MAX + IPERF_EXIT_GRACE_SECONDS + (IPERF_SERVER_BUSY_RETRIES * IPERF_SERVER_BUSY_RETRY_DELAY) + 30))
+        
+        while true; do
+          DONE_COUNT="$(count_states done)"
+          FAILED_COUNT="$(count_states failed)"
+          RUNNING_COUNT="$(count_states running)"
+        
+          if [ "$RUNNING_COUNT" -eq 0 ]; then
+            break
+          fi
+        
+          NOW="$(now_epoch)"
+          if [ $((NOW - LOOP_GUARD_START)) -gt "$LOOP_GUARD_LIMIT" ]; then
+            echo "ERROR: supervisor loop guard reached timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES done=$DONE_COUNT failed=$FAILED_COUNT running=$RUNNING_COUNT limit_s=$LOOP_GUARD_LIMIT"
+            for SLOT in $(seq 0 $((ACTIVE_UES - 1))); do
+              if [ "${SLOT_STATE[$SLOT]:-unset}" = "running" ]; then
+                SLOT_STATE[$SLOT]="failed"
+                SLOT_FAILURE_REASON[$SLOT]="supervisor_loop_guard"
+                SLOT_FINAL_RC[$SLOT]="loop_guard"
+              fi
+            done
+            cleanup_running_slots
+            break
+          fi
+        
+          monitor_started_slots_once
+          sleep "$SUPERVISOR_INTERVAL"
+        done
+        
+        COMPLETED_SLOTS="$(count_states done)"
+        FINAL_FAILED_SLOTS="$(count_states failed)"
+        unique_sort_file "$GLOBAL_BAD_UE_FILE"
+        unique_sort_file "$SCENARIO_BAD_UE_FILE"
+        GLOBAL_SUSPECT_UES="$(wc -l < "$GLOBAL_BAD_UE_FILE" | tr -d ' ')"
+        SCENARIO_BAD_UES="$(wc -l < "$SCENARIO_BAD_UE_FILE" | tr -d ' ')"
+        unique_sort_file "$USED_UE_FILE"
+        USED_UES="$(wc -l < "$USED_UE_FILE" | tr -d ' ')"
+        
+        if [ "$FINAL_FAILED_SLOTS" -ne 0 ]; then
+          echo "FAILED_SLOT_SUMMARY_BEGIN timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES"
+          for SLOT in $(seq 0 $((ACTIVE_UES - 1))); do
+            if [ "${SLOT_STATE[$SLOT]:-unset}" = "failed" ]; then
+              echo "FAILED_SLOT slot=$SLOT last_ue_idx=${SLOT_UE_IDX[$SLOT]:-none} last_ue_if=${SLOT_UE_IF[$SLOT]:-none} last_ue_ip=${SLOT_UE_IP[$SLOT]:-none} last_port=${SLOT_PORT[$SLOT]:-none} reason=${SLOT_FAILURE_REASON[$SLOT]:-unknown} final_rc=${SLOT_FINAL_RC[$SLOT]:-unknown} replacements_for_slot=${SLOT_REPLACEMENTS[$SLOT]:-0} server_busy_retries_for_slot=${SLOT_SERVER_BUSY_RETRIES[$SLOT]:-0}"
+            fi
+          done
+          echo "FAILED_SLOT_SUMMARY_END timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES"
+        fi
+        
+        echo "TRAFFIC_SUMMARY timestamp=$(date -Iseconds) registered_tunnels=$REGISTERED_TUNNELS active_ues=$ACTIVE_UES target_slots=$ACTIVE_UES completed_slots=$COMPLETED_SLOTS final_failed_slots=$FINAL_FAILED_SLOTS replacements=$REPLACEMENTS_TOTAL problematic_ues=$PROBLEMATIC_TOTAL zombie_ues=$PROBLEMATIC_TOTAL connect_timeouts=$CONNECT_TIMEOUT_TOTAL stalls=$STALL_TOTAL deferred_stalls=$DEFERRED_STALL_TOTAL process_failures=$PROCESS_FAILURE_TOTAL server_busy_retries=$SERVER_BUSY_RETRY_TOTAL server_busy_failures=$SERVER_BUSY_FAILURE_TOTAL late_timeouts_accepted=$LATE_TIMEOUT_ACCEPTED_TOTAL scenario_bad_ues=$SCENARIO_BAD_UES global_suspect_ues=$GLOBAL_SUSPECT_UES used_ues=$USED_UES target_host=$IPERF_HOST initial_ports=${FIRST_PORT}-${LAST_INITIAL_PORT} replacement_ports=${IPERF_REPLACEMENT_BASE_PORT}-${LAST_REPLACEMENT_PORT} bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY detection=no_rx_counter replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max_s=$UE_ADAPTIVE_EXTENSION_MAX iperf_exit_grace_s=$IPERF_EXIT_GRACE_SECONDS server_busy_retries_limit=$IPERF_SERVER_BUSY_RETRIES server_busy_retry_delay_s=$IPERF_SERVER_BUSY_RETRY_DELAY late_replacement_after_end=disabled wait_for_iperf_exit=until_timeout global_suspect_policy=soft_reuse ramp_supervision=after_initial_start"
+        
+        echo "UE_POOL_SCENARIO_BAD_CURRENT timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES indexes=$(tr '\n' ',' < "$SCENARIO_BAD_UE_FILE" | sed 's/,$//')"
+        echo "UE_POOL_GLOBAL_SUSPECT_CURRENT timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES indexes=$(tr '\n' ',' < "$GLOBAL_BAD_UE_FILE" | sed 's/,$//')"
+        
+        rm -rf "$WORK"
+        
+        if [ "$FINAL_FAILED_SLOTS" -ne 0 ]; then
+          echo "REMOTE_IPERF_PER_UE_END timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES tag=$TAG final_rc=20"
+          exit 20
+        fi
+        
+        echo "REMOTE_IPERF_PER_UE_END timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES tag=$TAG final_rc=0 completed_slots=$COMPLETED_SLOTS replacements=$REPLACEMENTS_TOTAL problematic_ues=$PROBLEMATIC_TOTAL server_busy_retries=$SERVER_BUSY_RETRY_TOTAL deferred_stalls=$DEFERRED_STALL_TOTAL late_timeouts_accepted=$LATE_TIMEOUT_ACCEPTED_TOTAL"
+        exit 0
+        REMOTE_SCRIPT
+        }
+
+        log "================================================================"
+        log "TEST START run_id=$RUN_ID timestamp=$(date -Iseconds)"
+        log "================================================================"
+
+        log "Pre-checks START timestamp=$(date -Iseconds)"
+
+        UE_POD="$(wait_additional_pod "$POD_TIMEOUT")" || fail_exit "Existing UE pod not found for selector=$ADD_SELECTOR"
+        log "Using existing UE pod timestamp=$(date -Iseconds) pod=$UE_POD"
+
+        verify_registered_ues "$UE_POD" "$REQUIRED_REGISTERED_UES" "$TUNNEL_TIMEOUT" || fail_exit "Required $REQUIRED_REGISTERED_UES registered UE tunnels not available. Test will not start."
+
+        validate_scenarios
+
+        if [ "$PRECHECK_PORTS_COUNT" -gt 0 ]; then
+          precheck_iperf_ports "$UE_POD" "$PRECHECK_PORTS_COUNT" || fail_exit "IPERF port precheck failed"
+        else
+          log "IPERF ports precheck skipped timestamp=$(date -Iseconds) PRECHECK_PORTS_COUNT=0"
+        fi
+
+        UPF_POD="$(get_upf_pod)"
+        UPF_UID_BEFORE_ALL="$(get_pod_uid "$UPF_POD")"
+        UPF_RESTARTS_BEFORE_ALL="$(get_pod_restarts "$UPF_POD")"
+
+        log "UPF pod timestamp=$(date -Iseconds) pod=$UPF_POD uid=$UPF_UID_BEFORE_ALL restarts=$UPF_RESTARTS_BEFORE_ALL"
+        log "IMPORTANT: this script does not register or unregister UE during scenarios"
+        log "IMPORTANT: existing registered UE pool is reused for all scenarios"
+        log "IMPORTANT: no ping is used"
+        log "IMPORTANT: every active slot runs its own iperf3 client"
+        log "IMPORTANT: zombie UE are replaced in-flight, without repeating the scenario"
+        log "IMPORTANT: zombie detection uses uesimtun RX counters, not buffered iperf stdout"
+        log "IMPORTANT: each zombie/replacement is logged as diagnostic event"
+        log "IMPORTANT: target_host=$IPERF_HOST base_port=$IPERF_BASE_PORT replacement_base_port=$IPERF_REPLACEMENT_BASE_PORT tcp_bitrate_per_ue=$IPERF_TCP_BITRATE"
+        log "IMPORTANT: iperf client start delay is $IPERF_CLIENT_START_DELAY seconds"
+        log "IMPORTANT: connect timeout is $UE_CONNECT_TIMEOUT seconds; stall detection is $UE_STALL_SECONDS seconds without RX progress"
+        log "IMPORTANT: replacement minimum duration is $UE_REPLACEMENT_MIN_DURATION seconds; adaptive extension limit is $UE_ADAPTIVE_EXTENSION_MAX seconds per slot"
+        log "IMPORTANT: after planned slot end, late replacement is disabled and script waits for real iperf exit until process timeout"
+        log "IMPORTANT: post-duration iperf timeout rc=124 is accepted only when the client had RX and valid iperf output, and is logged as UE_SLOT_LATE_TIMEOUT_ACCEPTED"
+        log "IMPORTANT: iperf server-busy port rebind is enabled rebinds=$IPERF_SERVER_BUSY_RETRIES; server-busy does not blacklist UE"
+        log "IMPORTANT: global UE suspect list is soft; suspected UE are avoided first, but reused if the pool would otherwise be exhausted"
+        log "IMPORTANT: initial ramp-up starts all slots first; supervisor/replacement starts after initial slots are launched"
+        log "IMPORTANT: VPA hard reset is executed once before all scenarios"
+        log "IMPORTANT: after VPA restart there is no fixed sleep; script waits until UPF request_cpu equals idle value $UPF_VPA_IDLE_REQUEST_CPU before traffic"
+        log "IMPORTANT: UPF/VPA control monitor logs request changes, VPA recommendation changes, current usage and previous ${UPF_CONTROL_HISTORY_WINDOW_SECONDS}s sample every ${UPF_CONTROL_MONITOR_INTERVAL}s"
+        log "IMPORTANT: Metrics are still collected externally by Prometheus and Grafana"
+        log "Pre-checks END timestamp=$(date -Iseconds)"
+
+        hard_reset_upf_vpa_history "before_test_run"
+
+        start_upf_control_monitor
+        echo "vpa_idle_request_wait" > "$CURRENT_SCENARIO_FILE"
+        wait_for_upf_idle_request_after_vpa_reset "$UPF_REQUEST_BASELINE_BEFORE_VPA_RESET" "$UPF_VPA_REQUEST_CHANGE_WAIT_TIMEOUT" "$UPF_VPA_REQUEST_CHANGE_WAIT_INTERVAL" || fail_exit "UPF request_cpu did not reach idle value $UPF_VPA_IDLE_REQUEST_CPU after VPA reset before scenarios"
+
+        log "SCENARIO LOOP START timestamp=$(date -Iseconds) scenarios=\"$SCENARIOS\""
+
+        for ACTIVE_UE in $SCENARIOS; do
+          echo "ue_${ACTIVE_UE}" > "$CURRENT_SCENARIO_FILE"
+          log "================================================================"
+          log "SCENARIO START timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE registered_ue_pool=$REQUIRED_REGISTERED_UES target_host=$IPERF_HOST ports=${IPERF_BASE_PORT}-$((IPERF_BASE_PORT + ACTIVE_UE - 1)) replacement_ports=${IPERF_REPLACEMENT_BASE_PORT}-$((IPERF_REPLACEMENT_BASE_PORT + UE_REPLACEMENT_LIMIT_PER_SCENARIO - 1)) bitrate_per_ue=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY replacement_min_duration=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max=$UE_ADAPTIVE_EXTENSION_MAX"
+          log "================================================================"
+
+          CURRENT_TUNNELS="$(count_tunnels "$UE_POD" || echo 0)"
+          CURRENT_TUNNELS="${CURRENT_TUNNELS:-0}"
+          log "SCENARIO TUNNEL CHECK timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE current_tunnels=$CURRENT_TUNNELS required=$REQUIRED_REGISTERED_UES"
+
+          if [ "$CURRENT_TUNNELS" -lt "$REQUIRED_REGISTERED_UES" ]; then
+            fail_exit "Tunnel count dropped before scenario active_ue=$ACTIVE_UE current=$CURRENT_TUNNELS required=$REQUIRED_REGISTERED_UES"
+          fi
+
+          UPF_POD_BEFORE="$(get_upf_pod)"
+          UPF_UID_BEFORE="$(get_pod_uid "$UPF_POD_BEFORE")"
+          UPF_RESTARTS_BEFORE="$(get_pod_restarts "$UPF_POD_BEFORE")"
+
+          log "SCENARIO UPF BEFORE timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE pod=$UPF_POD_BEFORE uid=$UPF_UID_BEFORE restarts=$UPF_RESTARTS_BEFORE"
+
+          set +e
+          start_iperf_per_ue "$UE_POD" "ue_${ACTIVE_UE}" "$ACTIVE_UE" 2>&1 | while IFS= read -r line; do
+            log "$line"
+          done
+          TRAFFIC_RC="${PIPESTATUS[0]}"
+          set -u
+
+          log "SCENARIO TRAFFIC COMMAND END timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE rc=$TRAFFIC_RC"
+
+          UPF_POD_AFTER="$(get_upf_pod)"
+          UPF_UID_AFTER="$(get_pod_uid "$UPF_POD_AFTER")"
+          UPF_RESTARTS_AFTER="$(get_pod_restarts "$UPF_POD_AFTER")"
+
+          log "SCENARIO UPF AFTER timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE pod=$UPF_POD_AFTER uid=$UPF_UID_AFTER restarts=$UPF_RESTARTS_AFTER"
+
+          if [ "$UPF_UID_BEFORE" != "$UPF_UID_AFTER" ]; then
+            fail_exit "UPF pod UID changed during scenario active_ue=$ACTIVE_UE before=$UPF_UID_BEFORE after=$UPF_UID_AFTER"
+          fi
+
+          if [ "$UPF_RESTARTS_BEFORE" != "$UPF_RESTARTS_AFTER" ]; then
+            fail_exit "UPF restart count changed during scenario active_ue=$ACTIVE_UE before=$UPF_RESTARTS_BEFORE after=$UPF_RESTARTS_AFTER"
+          fi
+
+          if [ "$TRAFFIC_RC" -ne 0 ]; then
+            fail_exit "Traffic failed to maintain required active slots active_ue=$ACTIVE_UE rc=$TRAFFIC_RC"
+          fi
+
+          log "SCENARIO END timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE rc=$TRAFFIC_RC"
+          echo "between_scenarios_after_ue_${ACTIVE_UE}" > "$CURRENT_SCENARIO_FILE"
+
+          if [ "$PAUSE_BETWEEN" -gt 0 ]; then
+            log "Pause between scenarios START timestamp=$(date -Iseconds) seconds=$PAUSE_BETWEEN"
+            sleep "$PAUSE_BETWEEN"
+            log "Pause between scenarios END timestamp=$(date -Iseconds) seconds=$PAUSE_BETWEEN"
+          fi
+        done
+
+        echo "post_scenarios" > "$CURRENT_SCENARIO_FILE"
+        stop_upf_control_monitor
+
+        UPF_POD_AFTER_ALL="$(get_upf_pod)"
+        UPF_UID_AFTER_ALL="$(get_pod_uid "$UPF_POD_AFTER_ALL")"
+        UPF_RESTARTS_AFTER_ALL="$(get_pod_restarts "$UPF_POD_AFTER_ALL")"
+
+        log "================================================================"
+        log "TEST END timestamp=$(date -Iseconds) run_id=$RUN_ID upf_pod_before=$UPF_POD uid_before=$UPF_UID_BEFORE_ALL restarts_before=$UPF_RESTARTS_BEFORE_ALL upf_pod_after=$UPF_POD_AFTER_ALL uid_after=$UPF_UID_AFTER_ALL restarts_after=$UPF_RESTARTS_AFTER_ALL"
+        log "PROGRESS_LOG=$PROGRESS_LOG"
+        log "================================================================"
+      args:
+        executable: /bin/bash

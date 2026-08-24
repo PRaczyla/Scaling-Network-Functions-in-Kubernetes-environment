@@ -1,0 +1,86 @@
+MONGO_POD=$(kubectl -n default get pod | awk '/open5gs-mongodb/ {print $1; exit}')
+
+kubectl -n default exec -i "$MONGO_POD" -- mongo open5gs --quiet <<'JS'
+const K = "465B5CE8B199B49FAA5F0A2EE238A6BC";
+const OPC = "E8ED289DEBA952E4283B54E88E6183CA";
+const SUBSCRIBER_COUNT = 50;
+
+for (let i = 1; i <= SUBSCRIBER_COUNT; i++) {
+  const imsi = "99970" + String(i).padStart(10, "0");
+
+  db.subscribers.replaceOne(
+    { imsi: imsi },
+    {
+      schema_version: NumberInt(1),
+      imsi: imsi,
+      msisdn: [],
+      imeisv: [],
+      mme_host: [],
+      mme_realm: [],
+      purge_flag: [],
+      security: {
+        k: K,
+        op: null,
+        opc: OPC,
+        amf: "8000",
+        sqn: NumberLong(0)
+      },
+      ambr: {
+        downlink: {
+          value: NumberInt(1000000000),
+          unit: NumberInt(0)
+        },
+        uplink: {
+          value: NumberInt(1000000000),
+          unit: NumberInt(0)
+        }
+      },
+      slice: [
+        {
+          _id: ObjectId(),
+          sst: NumberInt(1),
+          sd: "111111",
+          default_indicator: true,
+          session: [
+            {
+              _id: ObjectId(),
+              name: "internet",
+              type: NumberInt(3),
+              pcc_rule: [],
+              ambr: {
+                downlink: {
+                  value: NumberInt(1000000000),
+                  unit: NumberInt(0)
+                },
+                uplink: {
+                  value: NumberInt(1000000000),
+                  unit: NumberInt(0)
+                }
+              },
+              qos: {
+                index: NumberInt(9),
+                arp: {
+                  priority_level: NumberInt(8),
+                  pre_emption_capability: NumberInt(1),
+                  pre_emption_vulnerability: NumberInt(2)
+                }
+              }
+            }
+          ]
+        }
+      ],
+      access_restriction_data: NumberInt(32),
+      network_access_mode: NumberInt(0),
+      subscriber_status: NumberInt(0),
+      operator_determined_barring: NumberInt(0),
+      subscribed_rau_tau_timer: NumberInt(12),
+      __v: NumberInt(0)
+    },
+    { upsert: true }
+  );
+
+  print("upserted " + imsi);
+}
+
+print("Total subscribers in database: " + db.subscribers.count());
+JS
