@@ -1,0 +1,43 @@
+default	iperf3-server-747f565b8b-glz8n	networkstatic/iperf3:latest 
+default	nat-setup-hostnet	nicolaka/netshoot 
+default	open5gs-amf-86fdc78b7-sfllw	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-ausf-9fb8579c6-xxl6w	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-bsf-7cf8867c96-qwjq9	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-mongodb-5b4cd4946b-g6p2m	docker.io/dburszty/mongodb-raspberrypi:7.0.14 
+default	open5gs-nrf-9b889c6dc-j4r5f	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-nssf-586ccf6cd8-m6jrt	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-pcf-7c48d88dfb-b7w7c	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-scp-774bfb7564-xc95p	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-smf-7c5f645bcd-dz65d	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-udm-8445899f4b-5p98q	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-udr-77497dbb99-ckvcl	docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-upf-5b9db6d44-nsbqz	docker.io/gradiant/open5gs:2.7.2 docker.io/gradiant/open5gs:2.7.2 
+default	open5gs-webui-76c5475c97-nm99d	dburszty/mongodb-raspberrypi:7.0.14 docker.io/gradiant/open5gs-webui:2.7.2 
+default	ueransim-gnb-5f74f979bb-xgjm9	docker.io/gradiant/ueransim:3.2.6 
+default	ueransim-gnb-ues-69bc49bf9c-7l8lt	docker.io/gradiant/ueransim:3.2.6 
+kube-system	coredns-7f496c8d7d-mcnqm	rancher/mirrored-coredns-coredns:1.13.1 
+kube-system	local-path-provisioner-578895bd58-5fx6d	rancher/local-path-provisioner:v0.0.32 
+kube-system	metrics-server-7b9c9c4b9c-ssj5q	rancher/mirrored-metrics-server:v0.8.0 
+kube-system	traefik-6d98778dfc-sq6xm	rancher/mirrored-library-traefik:3.5.1 
+kube-system	vpa-admission-controller-7d977b5d75-lr9k2	registry.k8s.io/autoscaling/vpa-admission-controller:1.5.1 
+kube-system	vpa-recommender-5f4f956944-9h9dj	registry.k8s.io/autoscaling/vpa-recommender:1.5.1 
+kube-system	vpa-updater-5f6f58cd5-sfb2k	registry.k8s.io/autoscaling/vpa-updater:1.5.1 
+metallb-system	controller-bb5f47665-5zlql	quay.io/metallb/controller:v0.14.9 
+metallb-system	speaker-5dq72	quay.io/metallb/speaker:v0.14.9 
+metallb-system	speaker-hc4r4	quay.io/metallb/speaker:v0.14.9 
+metallb-system	speaker-lmhcv	quay.io/metallb/speaker:v0.14.9 
+monitoring	alertmanager-main-0	quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 quay.io/prometheus/alertmanager:v0.28.0 quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 
+monitoring	alertmanager-main-1	quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 quay.io/prometheus/alertmanager:v0.28.0 quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 
+monitoring	alertmanager-main-2	quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 quay.io/prometheus/alertmanager:v0.28.0 quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 
+monitoring	blackbox-exporter-69bdcc6fc7-qppcj	quay.io/prometheus/blackbox-exporter:v0.25.0 ghcr.io/jimmidyson/configmap-reload:v0.14.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	grafana-d8ddf6c68-45bcw	grafana/grafana:11.5.2 
+monitoring	kube-state-metrics-5f96f94459-8t6t2	registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.15.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	node-exporter-kk2b6	quay.io/prometheus/node-exporter:v1.9.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	node-exporter-ktgf7	quay.io/prometheus/node-exporter:v1.9.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	node-exporter-mwpcz	quay.io/prometheus/node-exporter:v1.9.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	node-exporter-rfk96	quay.io/prometheus/node-exporter:v1.9.0 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	prometheus-adapter-599c88b6c4-7b9lf	registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0 
+monitoring	prometheus-adapter-599c88b6c4-ghqcw	registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0 
+monitoring	prometheus-k8s-0	quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 quay.io/prometheus/prometheus:v3.2.0 quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1 
+monitoring	prometheus-operator-68dbcbf4cc-tkq2t	quay.io/prometheus-operator/prometheus-operator:v0.80.1 quay.io/brancz/kube-rbac-proxy:v0.19.0 
+monitoring	vpa-exporter-6497875df5-6cn4t	python:3.12-alpine 
