@@ -1,0 +1,2 @@
+REVISION	UPDATED                 	STATUS  	CHART             	APP VERSION	DESCRIPTION     
+1       	Fri Jul 17 00:08:50 2026	deployed	ueransim-gnb-0.2.6	3.2.6      	Install complete

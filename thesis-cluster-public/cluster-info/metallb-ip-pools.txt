@@ -1,0 +1,2 @@
+NAMESPACE        NAME         AUTO ASSIGN   AVOID BUGGY IPS   ADDRESSES
+metallb-system   first-pool   true          false             ["192.168.1.200-192.168.1.254"]

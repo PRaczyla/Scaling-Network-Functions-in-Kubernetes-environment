@@ -1,0 +1,120 @@
+apiVersion: v1
+items:
+- apiVersion: policy/v1
+  kind: PodDisruptionBudget
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"policy/v1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"alert-router","app.kubernetes.io/instance":"main","app.kubernetes.io/name":"alertmanager","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.28.0"},"name":"alertmanager-main","namespace":"monitoring"},"spec":{"maxUnavailable":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"alert-router","app.kubernetes.io/instance":"main","app.kubernetes.io/name":"alertmanager","app.kubernetes.io/part-of":"kube-prometheus"}}}}
+    creationTimestamp: "2025-03-19T22:24:18Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/instance: main
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.28.0
+    name: alertmanager-main
+    namespace: monitoring
+    resourceVersion: "15369429"
+    uid: afc7483b-7457-4bca-a04f-5b43e54a8dc3
+  spec:
+    maxUnavailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: alert-router
+        app.kubernetes.io/instance: main
+        app.kubernetes.io/name: alertmanager
+        app.kubernetes.io/part-of: kube-prometheus
+  status:
+    conditions:
+    - lastTransitionTime: "2026-08-23T22:53:48Z"
+      message: ""
+      observedGeneration: 1
+      reason: SufficientPods
+      status: "True"
+      type: DisruptionAllowed
+    currentHealthy: 3
+    desiredHealthy: 2
+    disruptionsAllowed: 1
+    expectedPods: 3
+    observedGeneration: 1
+- apiVersion: policy/v1
+  kind: PodDisruptionBudget
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"policy/v1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"metrics-adapter","app.kubernetes.io/name":"prometheus-adapter","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.12.0"},"name":"prometheus-adapter","namespace":"monitoring"},"spec":{"minAvailable":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"metrics-adapter","app.kubernetes.io/name":"prometheus-adapter","app.kubernetes.io/part-of":"kube-prometheus"}}}}
+    creationTimestamp: "2025-03-19T22:24:23Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: metrics-adapter
+      app.kubernetes.io/name: prometheus-adapter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.12.0
+    name: prometheus-adapter
+    namespace: monitoring
+    resourceVersion: "15369217"
+    uid: 24124219-a4e9-439f-9cf9-22293e2efa60
+  spec:
+    minAvailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: metrics-adapter
+        app.kubernetes.io/name: prometheus-adapter
+        app.kubernetes.io/part-of: kube-prometheus
+  status:
+    conditions:
+    - lastTransitionTime: "2026-08-23T22:53:02Z"
+      message: ""
+      observedGeneration: 1
+      reason: SufficientPods
+      status: "True"
+      type: DisruptionAllowed
+    currentHealthy: 2
+    desiredHealthy: 1
+    disruptionsAllowed: 1
+    expectedPods: 2
+    observedGeneration: 1
+- apiVersion: policy/v1
+  kind: PodDisruptionBudget
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"policy/v1","kind":"PodDisruptionBudget","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"monitoring"},"spec":{"minAvailable":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus"}}}}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: monitoring
+    resourceVersion: "15369504"
+    uid: d457416c-6eae-4404-a994-2ae8af71ba9e
+  spec:
+    minAvailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: prometheus
+        app.kubernetes.io/instance: k8s
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/part-of: kube-prometheus
+  status:
+    conditions:
+    - lastTransitionTime: "2025-08-06T18:23:33Z"
+      message: ""
+      observedGeneration: 1
+      reason: InsufficientPods
+      status: "False"
+      type: DisruptionAllowed
+    currentHealthy: 1
+    desiredHealthy: 1
+    disruptionsAllowed: 0
+    expectedPods: 1
+    observedGeneration: 1
+kind: List
+metadata:
+  resourceVersion: ""

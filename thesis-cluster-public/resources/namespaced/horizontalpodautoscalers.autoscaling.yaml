@@ -1,0 +1,500 @@
+apiVersion: v1
+items:
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-amf
+    namespace: default
+    resourceVersion: "15369155"
+    uid: 72ddb9b6-d73f-4848-9a06-90091eb959cb
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-amf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-08-21T19:28:39Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-amf of Pod open5gs-amf-86fdc78b7-sfllw'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-ausf
+    namespace: default
+    resourceVersion: "15369163"
+    uid: d4235b4a-67de-4ce5-8110-7c57aed6bccf
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-ausf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-ausf of Pod open5gs-ausf-9fb8579c6-xxl6w'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-bsf
+    namespace: default
+    resourceVersion: "15369160"
+    uid: 983af1e7-f0af-4946-9917-470cb6f530bf
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-bsf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-08-21T19:28:39Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-bsf of Pod open5gs-bsf-7cf8867c96-qwjq9'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-nrf
+    namespace: default
+    resourceVersion: "15369177"
+    uid: 1fb79934-2f04-44ae-82a0-6310149cc8d9
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-nrf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-05-04T19:55:18Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-nrf of Pod open5gs-nrf-9b889c6dc-j4r5f'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-nssf
+    namespace: default
+    resourceVersion: "15369154"
+    uid: b2e78ae8-83a8-4e3d-903b-20d312c480f2
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-nssf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-05-04T19:55:18Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-nssf of Pod open5gs-nssf-586ccf6cd8-m6jrt'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-pcf
+    namespace: default
+    resourceVersion: "15369226"
+    uid: 30ea1b62-d532-4976-b81a-7f7119b128c1
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-pcf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-pcf of Pod open5gs-pcf-7c48d88dfb-b7w7c'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-scp
+    namespace: default
+    resourceVersion: "15369171"
+    uid: 4d9dfa22-f750-441a-bf32-669a4369d579
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-scp
+  status:
+    conditions:
+    - lastTransitionTime: "2026-08-21T19:28:39Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-scp of Pod open5gs-scp-774bfb7564-xc95p'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-smf
+    namespace: default
+    resourceVersion: "15369168"
+    uid: a012f766-d428-4976-ae20-456e966483f3
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-smf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-smf of Pod open5gs-smf-7c5f645bcd-dz65d'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-udm
+    namespace: default
+    resourceVersion: "15369247"
+    uid: 1100a077-26fd-4e0e-8138-37ebf39e2dc5
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-udm
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-20T19:37:04Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-udm of Pod open5gs-udm-8445899f4b-5p98q'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-udr
+    namespace: default
+    resourceVersion: "15369180"
+    uid: ab4b3eb7-0496-4041-b9d7-a725b040fef4
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-udr
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: the HPA controller was able to get the target's current scale
+      reason: SucceededGetScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-01-19T23:55:18Z"
+      message: 'the HPA was unable to compute the replica count: failed to get cpu
+        utilization: missing request for cpu in container open5gs-udr of Pod open5gs-udr-77497dbb99-ckvcl'
+      reason: FailedGetResourceMetric
+      status: "False"
+      type: ScalingActive
+    currentMetrics:
+    - type: ""
+    currentReplicas: 1
+    desiredReplicas: 0
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      app.kubernetes.io/managed-by: Helm
+    name: open5gs-upf
+    namespace: default
+    resourceVersion: "15369254"
+    uid: 6a33f7a5-f892-4fc8-a6eb-cbdda0d44fdf
+  spec:
+    maxReplicas: 1
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: open5gs-upf
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:17Z"
+      message: recent recommendations were higher than current one, applying the highest
+        recent recommendation
+      reason: ScaleDownStabilized
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-08-23T22:53:04Z"
+      message: the HPA was able to successfully calculate a replica count from cpu
+        resource utilization (percentage of request)
+      reason: ValidMetricFound
+      status: "True"
+      type: ScalingActive
+    - lastTransitionTime: "2026-08-23T22:53:04Z"
+      message: the desired count is within the acceptable range
+      reason: DesiredWithinRange
+      status: "False"
+      type: ScalingLimited
+    currentMetrics:
+    - resource:
+        current:
+          averageUtilization: 0
+          averageValue: 1m
+        name: cpu
+      type: Resource
+    currentReplicas: 1
+    desiredReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""

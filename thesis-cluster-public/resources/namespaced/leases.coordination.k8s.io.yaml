@@ -1,0 +1,100 @@
+apiVersion: v1
+items:
+- apiVersion: coordination.k8s.io/v1
+  kind: Lease
+  metadata:
+    creationTimestamp: "2025-03-19T21:28:40Z"
+    name: rpimaster
+    namespace: kube-node-lease
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpimaster
+      uid: c8b671b0-f7a8-48b9-b963-43afc3eda106
+    resourceVersion: "15369605"
+    uid: def1d59e-e83a-45c3-ae47-346d74d57440
+  spec:
+    holderIdentity: rpimaster
+    leaseDurationSeconds: 40
+    renewTime: "2026-08-23T22:54:53.923129Z"
+- apiVersion: coordination.k8s.io/v1
+  kind: Lease
+  metadata:
+    creationTimestamp: "2025-03-19T21:38:45Z"
+    name: rpislave2
+    namespace: kube-node-lease
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpislave2
+      uid: 4505f73c-5738-4780-9a1d-d7ba456825a8
+    resourceVersion: "15369602"
+    uid: eaaa6f3e-3659-4f09-9ccc-859ea7229018
+  spec:
+    holderIdentity: rpislave2
+    leaseDurationSeconds: 40
+    renewTime: "2026-08-23T22:54:51.195798Z"
+- apiVersion: coordination.k8s.io/v1
+  kind: Lease
+  metadata:
+    creationTimestamp: "2025-03-19T21:38:55Z"
+    name: rpislave3
+    namespace: kube-node-lease
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpislave3
+      uid: f3895f27-2787-4752-bd98-50c650fdafeb
+    resourceVersion: "15369585"
+    uid: 0e91a2c9-4a91-498f-9e43-83b632ff2de5
+  spec:
+    holderIdentity: rpislave3
+    leaseDurationSeconds: 40
+    renewTime: "2026-08-23T22:54:49.360917Z"
+- apiVersion: coordination.k8s.io/v1
+  kind: Lease
+  metadata:
+    creationTimestamp: "2025-03-19T21:38:41Z"
+    name: rpislave4
+    namespace: kube-node-lease
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpislave4
+      uid: f8d74a77-8f91-45ad-9223-39178b1e2611
+    resourceVersion: "15369579"
+    uid: 28a19e34-f877-4477-bc0f-230f00c93c46
+  spec:
+    holderIdentity: rpislave4
+    leaseDurationSeconds: 40
+    renewTime: "2026-08-23T22:54:49.255247Z"
+- apiVersion: coordination.k8s.io/v1
+  kind: Lease
+  metadata:
+    creationTimestamp: "2026-08-22T01:05:42Z"
+    labels:
+      apiserver.kubernetes.io/identity: kube-apiserver
+      kubernetes.io/hostname: rpimaster
+    name: apiserver-vpdoeaxin7d22q3zlkqnv6d5yy
+    namespace: kube-system
+    resourceVersion: "15369589"
+    uid: df3bbc31-5bed-4325-b616-10bbd8da2cfa
+  spec:
+    holderIdentity: apiserver-vpdoeaxin7d22q3zlkqnv6d5yy_846337e6-fb82-4c25-9693-9553a723c7d6
+    leaseDurationSeconds: 3600
+    renewTime: "2026-08-23T22:54:49.392138Z"
+- apiVersion: coordination.k8s.io/v1
+  kind: Lease
+  metadata:
+    creationTimestamp: "2025-08-13T20:40:15Z"
+    name: vpa-admission-controller
+    namespace: kube-system
+    resourceVersion: "15369576"
+    uid: 5bfb01e3-8bb7-4962-ba4a-d1b931e2d237
+  spec:
+    holderIdentity: vpa-admission-controller-7d977b5d75-lr9k2
+    leaseDurationSeconds: 10
+    renewTime: "2026-08-23T22:54:47.429311Z"
+kind: List
+metadata:
+  resourceVersion: ""

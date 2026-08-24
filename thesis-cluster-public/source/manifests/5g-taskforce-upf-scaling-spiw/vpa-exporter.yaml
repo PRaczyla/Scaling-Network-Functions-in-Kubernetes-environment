@@ -1,0 +1,312 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpa-exporter
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vpa-exporter
+rules:
+  - apiGroups:
+      - autoscaling.k8s.io
+    resources:
+      - verticalpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vpa-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vpa-exporter
+subjects:
+  - kind: ServiceAccount
+    name: vpa-exporter
+    namespace: monitoring
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpa-exporter-script
+  namespace: monitoring
+data:
+  exporter.py: |
+    import json
+    import os
+    import ssl
+    import time
+    import urllib.request
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    KUBE_HOST = os.environ.get("KUBERNETES_SERVICE_HOST", "kubernetes.default.svc")
+    KUBE_PORT = os.environ.get("KUBERNETES_SERVICE_PORT", "443")
+    API_URL = f"https://{KUBE_HOST}:{KUBE_PORT}/apis/autoscaling.k8s.io/v1/verticalpodautoscalers"
+
+    TOKEN_PATH = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+    CA_PATH = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
+    def read_token():
+        with open(TOKEN_PATH, "r") as f:
+            return f.read().strip()
+
+    def quantity_cpu_to_cores(value):
+        if value is None:
+            return None
+        value = str(value).strip()
+        if value.endswith("m"):
+            return float(value[:-1]) / 1000.0
+        if value.endswith("n"):
+            return float(value[:-1]) / 1000000000.0
+        if value.endswith("u"):
+            return float(value[:-1]) / 1000000.0
+        return float(value)
+
+    def quantity_mem_to_bytes(value):
+        if value is None:
+            return None
+        value = str(value).strip()
+
+        units = {
+            "Ki": 1024,
+            "Mi": 1024 ** 2,
+            "Gi": 1024 ** 3,
+            "Ti": 1024 ** 4,
+            "K": 1000,
+            "M": 1000 ** 2,
+            "G": 1000 ** 3,
+            "T": 1000 ** 4,
+        }
+
+        for suffix, multiplier in units.items():
+            if value.endswith(suffix):
+                return float(value[:-len(suffix)]) * multiplier
+
+        return float(value)
+
+    def prom_escape(value):
+        return str(value).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+    def fetch_vpas():
+        token = read_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/json",
+        }
+
+        context = ssl.create_default_context(cafile=CA_PATH)
+        request = urllib.request.Request(API_URL, headers=headers)
+
+        with urllib.request.urlopen(request, context=context, timeout=10) as response:
+            return json.loads(response.read().decode("utf-8"))
+
+    def build_metrics():
+        lines = []
+
+        lines.append("# HELP vpa_recommendation_cpu_cores VPA CPU recommendation in CPU cores.")
+        lines.append("# TYPE vpa_recommendation_cpu_cores gauge")
+        lines.append("# HELP vpa_recommendation_memory_bytes VPA memory recommendation in bytes.")
+        lines.append("# TYPE vpa_recommendation_memory_bytes gauge")
+        lines.append("# HELP vpa_info VPA metadata.")
+        lines.append("# TYPE vpa_info gauge")
+
+        data = fetch_vpas()
+
+        for item in data.get("items", []):
+            metadata = item.get("metadata", {})
+            spec = item.get("spec", {})
+            status = item.get("status", {})
+
+            namespace = metadata.get("namespace", "")
+            vpa_name = metadata.get("name", "")
+
+            target_ref = spec.get("targetRef", {})
+            target_kind = target_ref.get("kind", "")
+            target_name = target_ref.get("name", "")
+            target_api_version = target_ref.get("apiVersion", "")
+
+            update_policy = spec.get("updatePolicy", {})
+            update_mode = update_policy.get("updateMode", "")
+
+            base_labels = (
+                f'namespace="{prom_escape(namespace)}",'
+                f'vpa="{prom_escape(vpa_name)}",'
+                f'target_api_version="{prom_escape(target_api_version)}",'
+                f'target_kind="{prom_escape(target_kind)}",'
+                f'target_name="{prom_escape(target_name)}",'
+                f'update_mode="{prom_escape(update_mode)}"'
+            )
+
+            lines.append(f"vpa_info{{{base_labels}}} 1")
+
+            recommendations = status.get("recommendation", {}).get("containerRecommendations", [])
+
+            for rec in recommendations:
+                container = rec.get("containerName", "")
+
+                bounds = {
+                    "lower_bound": rec.get("lowerBound", {}),
+                    "target": rec.get("target", {}),
+                    "upper_bound": rec.get("upperBound", {}),
+                    "uncapped_target": rec.get("uncappedTarget", {}),
+                }
+
+                for bound_name, values in bounds.items():
+                    labels = (
+                        f'{base_labels},'
+                        f'container="{prom_escape(container)}",'
+                        f'bound="{prom_escape(bound_name)}"'
+                    )
+
+                    cpu = values.get("cpu")
+                    memory = values.get("memory")
+
+                    if cpu is not None:
+                        try:
+                            cpu_cores = quantity_cpu_to_cores(cpu)
+                            lines.append(f"vpa_recommendation_cpu_cores{{{labels}}} {cpu_cores}")
+                        except Exception:
+                            pass
+
+                    if memory is not None:
+                        try:
+                            memory_bytes = quantity_mem_to_bytes(memory)
+                            lines.append(f"vpa_recommendation_memory_bytes{{{labels}}} {memory_bytes}")
+                        except Exception:
+                            pass
+
+        return "\n".join(lines) + "\n"
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path == "/healthz":
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"ok\n")
+                return
+
+            if self.path != "/metrics":
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"not found\n")
+                return
+
+            try:
+                metrics = build_metrics().encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
+                self.send_header("Content-Length", str(len(metrics)))
+                self.end_headers()
+                self.wfile.write(metrics)
+            except Exception as e:
+                body = f"error: {e}\n".encode("utf-8")
+                self.send_response(500)
+                self.send_header("Content-Type", "text/plain")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+        def log_message(self, fmt, *args):
+            return
+
+    if __name__ == "__main__":
+        port = int(os.environ.get("PORT", "9108"))
+        server = HTTPServer(("0.0.0.0", port), Handler)
+        print(f"Starting VPA exporter on port {port}", flush=True)
+        server.serve_forever()
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vpa-exporter
+  namespace: monitoring
+  labels:
+    app: vpa-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vpa-exporter
+  template:
+    metadata:
+      labels:
+        app: vpa-exporter
+    spec:
+      serviceAccountName: vpa-exporter
+      containers:
+        - name: vpa-exporter
+          image: python:3.12-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - python
+            - /app/exporter.py
+          ports:
+            - name: metrics
+              containerPort: 9108
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: metrics
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: script
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: script
+          configMap:
+            name: vpa-exporter-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vpa-exporter
+  namespace: monitoring
+  labels:
+    app: vpa-exporter
+spec:
+  selector:
+    app: vpa-exporter
+  ports:
+    - name: metrics
+      port: 9108
+      targetPort: metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: vpa-exporter
+  namespace: monitoring
+  labels:
+    app: vpa-exporter
+spec:
+  selector:
+    matchLabels:
+      app: vpa-exporter
+  namespaceSelector:
+    matchNames:
+      - monitoring
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s

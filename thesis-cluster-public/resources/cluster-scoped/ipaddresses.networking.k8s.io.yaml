@@ -1,0 +1,590 @@
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.0.1
+    resourceVersion: "2166502"
+    uid: 1b7c2cd3-3020-403c-9696-9ae49dde53ee
+  spec:
+    parentRef:
+      name: kubernetes
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.0.10
+    resourceVersion: "2166508"
+    uid: 6589f1b5-8670-41a9-80db-76ee4de812b2
+  spec:
+    parentRef:
+      name: kube-dns
+      namespace: kube-system
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.103.207
+    resourceVersion: "2166518"
+    uid: c08f95c2-4cbd-487f-9226-b2dd7d2289bf
+  spec:
+    parentRef:
+      name: alertmanager-main
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.109.36
+    resourceVersion: "2589312"
+    uid: 2e2f0a3a-fc49-4543-8996-0456bdf0a232
+  spec:
+    parentRef:
+      name: open5gs-pcf-metrics
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.13.68
+    resourceVersion: "2166510"
+    uid: 8c199c3b-73d1-4434-a177-6181378c7a67
+  spec:
+    parentRef:
+      name: metrics-server
+      namespace: kube-system
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.137.67
+    resourceVersion: "2589255"
+    uid: 44194f98-983a-4391-b72e-0f2c1d225b52
+  spec:
+    parentRef:
+      name: open5gs-smf-pfcp
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.148.246
+    resourceVersion: "2589241"
+    uid: a02016a4-573e-4f05-8c88-eaba809a2047
+  spec:
+    parentRef:
+      name: open5gs-webui
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.151.146
+    resourceVersion: "2589304"
+    uid: 0488a14e-b096-49f2-b82b-f44c0e3a4dd6
+  spec:
+    parentRef:
+      name: open5gs-nssf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.163.236
+    resourceVersion: "2589285"
+    uid: ea10bdfb-f7db-407c-9a90-68a31e38d7b8
+  spec:
+    parentRef:
+      name: open5gs-nrf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.165.88
+    resourceVersion: "2166500"
+    uid: 703658c6-f642-45c7-9544-c7e5f4788faa
+  spec:
+    parentRef:
+      name: iperf3-server
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.176.75
+    resourceVersion: "2166494"
+    uid: daf37bad-01d5-4555-b6b8-8a0403b8669a
+  spec:
+    parentRef:
+      name: vpa-webhook
+      namespace: kube-system
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.179.48
+    resourceVersion: "2589239"
+    uid: e4314d48-5fe6-4cc6-bc6f-7b2e2dbc76aa
+  spec:
+    parentRef:
+      name: open5gs-pcf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.187.0
+    resourceVersion: "2589247"
+    uid: 8716bb8e-4dc3-42c2-862e-b10134c96daf
+  spec:
+    parentRef:
+      name: open5gs-amf-metrics
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.194.194
+    resourceVersion: "2589320"
+    uid: fae7d546-c326-4953-a8b7-f201095750ee
+  spec:
+    parentRef:
+      name: open5gs-mongodb
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.194.244
+    resourceVersion: "2589269"
+    uid: 1d513277-3c30-4bec-bbc4-e24033bf3d68
+  spec:
+    parentRef:
+      name: open5gs-smf-gtpc
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.195.79
+    resourceVersion: "2166506"
+    uid: ddde7b99-38a3-4f6d-9df2-e6a8438e3fb7
+  spec:
+    parentRef:
+      name: iperf3
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.196.72
+    resourceVersion: "2166496"
+    uid: 859cfb15-8544-4e32-b736-d7967b9c4c24
+  spec:
+    parentRef:
+      name: blackbox-exporter
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.203.172
+    resourceVersion: "2589263"
+    uid: 682983a7-59ea-4133-91e8-16aabb109c1e
+  spec:
+    parentRef:
+      name: open5gs-smf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.209.232
+    resourceVersion: "2589308"
+    uid: cd8a9e6b-e2db-4421-a0af-c7157eae866f
+  spec:
+    parentRef:
+      name: open5gs-upf-gtpu
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.209.55
+    resourceVersion: "2166504"
+    uid: 86eb2385-d1ad-4e95-9b32-189eb91d8460
+  spec:
+    parentRef:
+      name: grafana-ext
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.212.218
+    resourceVersion: "2589315"
+    uid: c8a36aed-f9fc-4051-8d66-095efe575ab4
+  spec:
+    parentRef:
+      name: open5gs-smf-metrics
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.212.93
+    resourceVersion: "2166516"
+    uid: ecb7d098-ad6d-4a0b-8bb2-72048108f42d
+  spec:
+    parentRef:
+      name: metallb-webhook-service
+      namespace: metallb-system
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.229.63
+    resourceVersion: "2166514"
+    uid: 4ca9b285-b207-4833-9ae6-b0da5fd6b778
+  spec:
+    parentRef:
+      name: vpa-admission-controller
+      namespace: kube-system
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.233.58
+    resourceVersion: "2589260"
+    uid: 163bb0c7-738a-4f0c-997d-823482c2d577
+  spec:
+    parentRef:
+      name: open5gs-amf-ngap
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.243.32
+    resourceVersion: "2589297"
+    uid: af9dcd5b-dead-4d5e-a4ce-28404f7a2539
+  spec:
+    parentRef:
+      name: open5gs-bsf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.25.141
+    resourceVersion: "2166522"
+    uid: c341e31d-0cbd-4a45-8fdb-ec159c6edabb
+  spec:
+    parentRef:
+      name: prometheus-k8s-ext
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.31.50
+    resourceVersion: "2589289"
+    uid: 1fce6c07-129e-4968-b166-5bef6e9432ac
+  spec:
+    parentRef:
+      name: open5gs-udm-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.33.11
+    resourceVersion: "2589277"
+    uid: 6726a8bd-08c6-435e-a041-d67ada31c579
+  spec:
+    parentRef:
+      name: open5gs-amf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-05-20T19:29:48Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.39.57
+    resourceVersion: "9762467"
+    uid: 0cad5485-fae8-47d2-a947-b9d3f51eebc7
+  spec:
+    parentRef:
+      name: vpa-exporter
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.55.199
+    resourceVersion: "2166512"
+    uid: ea456288-42be-4a13-86e4-f42695911340
+  spec:
+    parentRef:
+      name: prometheus-adapter
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.62.31
+    resourceVersion: "2589251"
+    uid: 91c515f1-59b2-4cf4-a6dd-f4e569e17563
+  spec:
+    parentRef:
+      name: open5gs-upf-metrics
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.63.110
+    resourceVersion: "2166491"
+    uid: 33689335-a22e-4653-8a48-31cddb2a2a8c
+  spec:
+    parentRef:
+      name: traefik
+      namespace: kube-system
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.63.229
+    resourceVersion: "2589280"
+    uid: f284b85e-dcd0-409e-a8a3-5e2ca5504e90
+  spec:
+    parentRef:
+      name: open5gs-ausf-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.66.169
+    resourceVersion: "2166519"
+    uid: 913e3347-f934-4a3f-a07d-0ab07a7262a8
+  spec:
+    parentRef:
+      name: prometheus-k8s
+      namespace: monitoring
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.69.138
+    resourceVersion: "2589272"
+    uid: 8cfbc458-aab5-4414-ad18-1a4103a1e7de
+  spec:
+    parentRef:
+      name: open5gs-upf-pfcp
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.7.6
+    resourceVersion: "2589300"
+    uid: 53983d6f-ebfd-40bc-97c5-fe11426a2419
+  spec:
+    parentRef:
+      name: open5gs-smf-gtpu
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.78.52
+    resourceVersion: "2589243"
+    uid: ebcdbe1f-1f00-432a-a9fd-0ea65c81af69
+  spec:
+    parentRef:
+      name: open5gs-scp-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.87.206
+    resourceVersion: "2589293"
+    uid: 4bad94ea-3042-4aa8-a026-0b85c4e0c3a3
+  spec:
+    parentRef:
+      name: open5gs-udr-sbi
+      namespace: default
+      resource: services
+- apiVersion: networking.k8s.io/v1
+  kind: IPAddress
+  metadata:
+    creationTimestamp: "2026-01-12T23:53:46Z"
+    labels:
+      ipaddress.kubernetes.io/ip-family: IPv4
+      ipaddress.kubernetes.io/managed-by: ipallocator.k8s.io
+    name: 10.43.91.19
+    resourceVersion: "2166498"
+    uid: 7e588272-e940-44e9-9636-fd4c0e44793c
+  spec:
+    parentRef:
+      name: grafana
+      namespace: monitoring
+      resource: services
+kind: List
+metadata:
+  resourceVersion: ""

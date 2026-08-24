@@ -1,0 +1,165 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      local.path.provisioner/selected-node: rpislave2
+      pv.kubernetes.io/provisioned-by: rancher.io/local-path
+    creationTimestamp: "2025-03-23T21:52:03Z"
+    finalizers:
+    - kubernetes.io/pv-protection
+    name: pvc-08584c2b-c2a9-4150-a733-28e392d8136f
+    resourceVersion: "41341"
+    uid: b8bf915c-283d-45aa-a4dc-b6105ec01f40
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 2Gi
+    claimRef:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      name: prometheus-k8s-db-prometheus-k8s-1
+      namespace: monitoring
+      resourceVersion: "41303"
+      uid: 08584c2b-c2a9-4150-a733-28e392d8136f
+    local:
+      path: /var/lib/rancher/k3s/storage/pvc-08584c2b-c2a9-4150-a733-28e392d8136f_monitoring_prometheus-k8s-db-prometheus-k8s-1
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - rpislave2
+    persistentVolumeReclaimPolicy: Delete
+    storageClassName: local-path
+    volumeMode: Filesystem
+  status:
+    lastPhaseTransitionTime: "2025-03-23T21:52:03Z"
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      local.path.provisioner/selected-node: rpislave4
+      pv.kubernetes.io/provisioned-by: rancher.io/local-path
+    creationTimestamp: "2026-01-19T23:55:08Z"
+    finalizers:
+    - kubernetes.io/pv-protection
+    name: pvc-0a7b4af4-41ab-4b13-9294-417f294bed87
+    resourceVersion: "2589609"
+    uid: 90d7c752-aade-4fda-a0f2-5edecb729380
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 8Gi
+    claimRef:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      name: open5gs-mongodb
+      namespace: default
+      resourceVersion: "2589386"
+      uid: 0a7b4af4-41ab-4b13-9294-417f294bed87
+    local:
+      path: /var/lib/rancher/k3s/storage/pvc-0a7b4af4-41ab-4b13-9294-417f294bed87_default_open5gs-mongodb
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - rpislave4
+    persistentVolumeReclaimPolicy: Delete
+    storageClassName: local-path
+    volumeMode: Filesystem
+  status:
+    lastPhaseTransitionTime: "2026-01-19T23:55:08Z"
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      local.path.provisioner/selected-node: rpislave2
+      pv.kubernetes.io/provisioned-by: rancher.io/local-path
+    creationTimestamp: "2025-03-23T21:52:03Z"
+    finalizers:
+    - kubernetes.io/pv-protection
+    name: pvc-59512779-fcc6-4f18-84be-e5a637b8ab28
+    resourceVersion: "41337"
+    uid: e7e05d74-676f-47a1-837f-de5c8977ef32
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 2Gi
+    claimRef:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      name: prometheus-k8s-db-prometheus-k8s-0
+      namespace: monitoring
+      resourceVersion: "41304"
+      uid: 59512779-fcc6-4f18-84be-e5a637b8ab28
+    local:
+      path: /var/lib/rancher/k3s/storage/pvc-59512779-fcc6-4f18-84be-e5a637b8ab28_monitoring_prometheus-k8s-db-prometheus-k8s-0
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - rpislave2
+    persistentVolumeReclaimPolicy: Delete
+    storageClassName: local-path
+    volumeMode: Filesystem
+  status:
+    lastPhaseTransitionTime: "2025-03-23T21:52:03Z"
+    phase: Bound
+- apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    annotations:
+      local.path.provisioner/selected-node: rpislave3
+      pv.kubernetes.io/provisioned-by: rancher.io/local-path
+    creationTimestamp: "2025-03-23T20:35:26Z"
+    finalizers:
+    - kubernetes.io/pv-protection
+    name: pvc-9cb3103f-383d-45b3-8e74-506a22feb0a2
+    resourceVersion: "16898"
+    uid: 40b75ce1-2002-47e9-a104-037796997c5a
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 500Mi
+    claimRef:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      name: grafana-local-path-pvc
+      namespace: monitoring
+      resourceVersion: "16870"
+      uid: 9cb3103f-383d-45b3-8e74-506a22feb0a2
+    local:
+      path: /var/lib/rancher/k3s/storage/pvc-9cb3103f-383d-45b3-8e74-506a22feb0a2_monitoring_grafana-local-path-pvc
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - rpislave3
+    persistentVolumeReclaimPolicy: Delete
+    storageClassName: local-path
+    volumeMode: Filesystem
+  status:
+    lastPhaseTransitionTime: "2025-03-23T20:35:26Z"
+    phase: Bound
+kind: List
+metadata:
+  resourceVersion: ""

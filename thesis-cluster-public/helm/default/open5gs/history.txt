@@ -1,0 +1,3 @@
+REVISION	UPDATED                 	STATUS    	CHART        	APP VERSION	DESCRIPTION     
+1       	Tue Jan 20 00:54:58 2026	superseded	open5gs-2.2.6	2.7.2      	Install complete
+2       	Tue Jul 21 00:47:58 2026	deployed  	open5gs-2.2.6	2.7.2      	Upgrade complete

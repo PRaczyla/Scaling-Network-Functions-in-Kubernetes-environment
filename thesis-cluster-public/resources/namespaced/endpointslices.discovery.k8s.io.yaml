@@ -1,0 +1,2154 @@
+apiVersion: v1
+items:
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.126
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: iperf3-server-747f565b8b-glz8n
+      namespace: default
+      uid: 4a637abf-12e2-4507-88dd-72a1805344af
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:39Z"
+    creationTimestamp: "2025-08-28T09:58:12Z"
+    generateName: iperf3-
+    generation: 104
+    labels:
+      app: iperf3-server
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: iperf3
+    name: iperf3-gl82j
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: iperf3
+      uid: 9da4048e-bf24-45e3-b6aa-0e0680b8f1bf
+    resourceVersion: "15369079"
+    uid: 30ecc794-2902-457f-a30d-4669d8f73d60
+  ports:
+  - name: tcp
+    port: 5201
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.126
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: iperf3-server-747f565b8b-glz8n
+      namespace: default
+      uid: 4a637abf-12e2-4507-88dd-72a1805344af
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:39Z"
+    creationTimestamp: "2025-12-14T03:11:26Z"
+    generateName: iperf3-server-
+    generation: 85
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: iperf3-server
+    name: iperf3-server-wcckg
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: iperf3-server
+      uid: 3aeb5860-aaed-4a54-8cb6-53ef2cae1163
+    resourceVersion: "15369078"
+    uid: 4b8adc35-990c-4444-94bb-a46c59e553c3
+  ports:
+  - name: iperf
+    port: 5201
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 192.168.1.101
+    conditions:
+      ready: true
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    generation: 1
+    labels:
+      kubernetes.io/service-name: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "197"
+    uid: f719c668-39b4-4487-ba77-13d1515f64a6
+  ports:
+  - name: https
+    port: 6443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.203
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-amf-86fdc78b7-sfllw
+      namespace: default
+      uid: 700ec493-5dac-4852-8b3c-feec09cfad18
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:55Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-amf-metrics-
+    generation: 170
+    labels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: amf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: amf-2.2.5
+      kubernetes.io/service-name: open5gs-amf-metrics
+    name: open5gs-amf-metrics-pbvnk
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-amf-metrics
+      uid: 56339325-5297-42ad-8081-dd289c3dba10
+    resourceVersion: "15369197"
+    uid: 7bd131af-5902-4b51-bc13-7d64b8c7da0a
+  ports:
+  - name: metrics
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.203
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-amf-86fdc78b7-sfllw
+      namespace: default
+      uid: 700ec493-5dac-4852-8b3c-feec09cfad18
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:55Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-amf-ngap-
+    generation: 170
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: amf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: amf-2.2.5
+      kubernetes.io/service-name: open5gs-amf-ngap
+    name: open5gs-amf-ngap-rwkch
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-amf-ngap
+      uid: a0f21f29-ca8d-463c-be48-127a5d114c8c
+    resourceVersion: "15369195"
+    uid: ead0a68a-b271-4219-98a5-86dca410e5cc
+  ports:
+  - name: ngap
+    port: 38412
+    protocol: SCTP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.203
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-amf-86fdc78b7-sfllw
+      namespace: default
+      uid: 700ec493-5dac-4852-8b3c-feec09cfad18
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:55Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-amf-sbi-
+    generation: 170
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: amf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: amf-2.2.5
+      kubernetes.io/service-name: open5gs-amf-sbi
+    name: open5gs-amf-sbi-4fwpj
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-amf-sbi
+      uid: 96a3fc46-53dd-43cd-b6b5-830a21c2cfe6
+    resourceVersion: "15369196"
+    uid: 3dd079e2-ef32-4458-84b2-514af56765c3
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.131
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-ausf-9fb8579c6-xxl6w
+      namespace: default
+      uid: 3c901886-2ebc-4067-b72a-15e1f6986020
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:06Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-ausf-sbi-
+    generation: 114
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ausf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: ausf-2.2.5
+      kubernetes.io/service-name: open5gs-ausf-sbi
+    name: open5gs-ausf-sbi-h5vj9
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-ausf-sbi
+      uid: e6afa6a4-3805-4e88-84fc-61dcaa35ca78
+    resourceVersion: "15369263"
+    uid: eeb9b877-db18-4579-9968-5667892feca6
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.127
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-bsf-7cf8867c96-qwjq9
+      namespace: default
+      uid: 1a373527-cb0e-4933-a261-15eb54b7b53c
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:03Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-bsf-sbi-
+    generation: 76
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: bsf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: bsf-2.2.5
+      kubernetes.io/service-name: open5gs-bsf-sbi
+    name: open5gs-bsf-sbi-7c4mj
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-bsf-sbi
+      uid: ac185c66-0d8a-4391-b01a-d4b7f4b3dbd4
+    resourceVersion: "15369230"
+    uid: 9b822ccf-74ce-4aab-9135-fa290318895c
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.206
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-mongodb-5b4cd4946b-g6p2m
+      namespace: default
+      uid: 80bce5e5-8163-4f66-974f-aadf5c0f2abb
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:25Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-mongodb-
+    generation: 608
+    labels:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: mongodb
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: mongodb-12.1.31
+      kubernetes.io/service-name: open5gs-mongodb
+    name: open5gs-mongodb-986mt
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-mongodb
+      uid: c798cd28-7ca0-4241-880b-0ed900172e5a
+    resourceVersion: "15368802"
+    uid: 45018dfe-d435-445c-aad1-9f7746d345e3
+  ports:
+  - name: mongodb
+    port: 27017
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.125
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-nrf-9b889c6dc-j4r5f
+      namespace: default
+      uid: bdebf761-3cd7-4194-81bb-b02df18e0a6a
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:03Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-nrf-sbi-
+    generation: 82
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nrf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: nrf-2.2.5
+      kubernetes.io/service-name: open5gs-nrf-sbi
+    name: open5gs-nrf-sbi-mqcdg
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-nrf-sbi
+      uid: b1f7cc79-7a81-4e13-bbe1-99e5ca2e4f4b
+    resourceVersion: "15369224"
+    uid: 508dd8fe-55e7-4f42-b932-f7d1199cebad
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.129
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-nssf-586ccf6cd8-m6jrt
+      namespace: default
+      uid: 9885a762-dd01-4536-a693-fdc3fde827ca
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:06Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-nssf-sbi-
+    generation: 77
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nssf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: nssf-2.2.5
+      kubernetes.io/service-name: open5gs-nssf-sbi
+    name: open5gs-nssf-sbi-48m8j
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-nssf-sbi
+      uid: e3f6bd34-d723-4d6e-96fb-94dba807dfc5
+    resourceVersion: "15369266"
+    uid: fe85b480-b29a-4deb-acfb-56242fd49584
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.202
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-pcf-7c48d88dfb-b7w7c
+      namespace: default
+      uid: c76f0207-1204-4739-b043-41d42812ce14
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:08Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-pcf-metrics-
+    generation: 117
+    labels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: pcf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: pcf-2.2.5
+      kubernetes.io/service-name: open5gs-pcf-metrics
+    name: open5gs-pcf-metrics-7gkwz
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-pcf-metrics
+      uid: 212243be-2c53-4211-ba37-d1bb86d833f1
+    resourceVersion: "15369275"
+    uid: e94a2868-8a9d-4629-a30b-f4169243f0db
+  ports:
+  - name: metrics
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.202
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-pcf-7c48d88dfb-b7w7c
+      namespace: default
+      uid: c76f0207-1204-4739-b043-41d42812ce14
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:08Z"
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    generateName: open5gs-pcf-sbi-
+    generation: 117
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: pcf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: pcf-2.2.5
+      kubernetes.io/service-name: open5gs-pcf-sbi
+    name: open5gs-pcf-sbi-7qp9d
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-pcf-sbi
+      uid: 67bc6b05-7a7f-4c1a-895a-92a7dcb9dacd
+    resourceVersion: "15369276"
+    uid: e90c5512-4acd-48ca-9b4a-b19d66144e82
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.133
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-scp-774bfb7564-xc95p
+      namespace: default
+      uid: dae16417-7095-4be1-966a-cc3bd367e885
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:06Z"
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    generateName: open5gs-scp-sbi-
+    generation: 88
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: scp
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: scp-2.2.5
+      kubernetes.io/service-name: open5gs-scp-sbi
+    name: open5gs-scp-sbi-qbgtk
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-scp-sbi
+      uid: 5cb00369-f463-4fc9-954b-a3872d1ef1cc
+    resourceVersion: "15369258"
+    uid: c1d9c6a8-b3b6-45d4-80e1-8d435bb9070a
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.200
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-smf-7c5f645bcd-dz65d
+      namespace: default
+      uid: a5bcefbf-132d-4482-9ab4-538cdd5ede9b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:53Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-smf-gtpc-
+    generation: 149
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: smf-2.2.6
+      kubernetes.io/service-name: open5gs-smf-gtpc
+    name: open5gs-smf-gtpc-dvk8k
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-smf-gtpc
+      uid: f4489d0c-abe9-455c-b37d-b7d0afc17e0f
+    resourceVersion: "15369191"
+    uid: 586fd9f7-32e0-474c-a0ea-736054f77b1b
+  ports:
+  - name: gtpc
+    port: 2123
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.200
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-smf-7c5f645bcd-dz65d
+      namespace: default
+      uid: a5bcefbf-132d-4482-9ab4-538cdd5ede9b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:53Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-smf-gtpu-
+    generation: 149
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: smf-2.2.6
+      kubernetes.io/service-name: open5gs-smf-gtpu
+    name: open5gs-smf-gtpu-nvzr6
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-smf-gtpu
+      uid: f6179be4-7435-482c-bd85-aa185c335c34
+    resourceVersion: "15369187"
+    uid: 97ff7bd4-7d81-4430-b325-4074d4f31d5e
+  ports:
+  - name: gtpu
+    port: 2152
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.200
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-smf-7c5f645bcd-dz65d
+      namespace: default
+      uid: a5bcefbf-132d-4482-9ab4-538cdd5ede9b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:53Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-smf-metrics-
+    generation: 149
+    labels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: smf-2.2.6
+      kubernetes.io/service-name: open5gs-smf-metrics
+    name: open5gs-smf-metrics-g66zj
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-smf-metrics
+      uid: 3ce1178a-446a-4c0b-8445-590bb41c7d76
+    resourceVersion: "15369190"
+    uid: efa69eb8-37d6-4874-a49c-23dae607e8c8
+  ports:
+  - name: metrics
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.200
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-smf-7c5f645bcd-dz65d
+      namespace: default
+      uid: a5bcefbf-132d-4482-9ab4-538cdd5ede9b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:53Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-smf-pfcp-
+    generation: 149
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: smf-2.2.6
+      kubernetes.io/service-name: open5gs-smf-pfcp
+    name: open5gs-smf-pfcp-dmmlk
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-smf-pfcp
+      uid: e005203b-c6b2-48e1-8a0f-71f496e77d4a
+    resourceVersion: "15369188"
+    uid: f57a4d77-2039-4db4-a726-9110425d1d8b
+  ports:
+  - name: pfcp
+    port: 8805
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.200
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: open5gs-smf-7c5f645bcd-dz65d
+      namespace: default
+      uid: a5bcefbf-132d-4482-9ab4-538cdd5ede9b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:53Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-smf-sbi-
+    generation: 149
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: smf-2.2.6
+      kubernetes.io/service-name: open5gs-smf-sbi
+    name: open5gs-smf-sbi-psltr
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-smf-sbi
+      uid: 6a508180-8ca5-475d-ae10-847c481f38be
+    resourceVersion: "15369192"
+    uid: d248609f-93aa-4122-acaa-d337c4aca808
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.43
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: open5gs-udm-8445899f4b-5p98q
+      namespace: default
+      uid: b13deab9-b522-41d5-ba62-778100df83b4
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:57Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-udm-sbi-
+    generation: 108
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udm
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: udm-2.2.5
+      kubernetes.io/service-name: open5gs-udm-sbi
+    name: open5gs-udm-sbi-9567k
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-udm-sbi
+      uid: e2dd3b00-2fd7-42c5-8651-4267fbed9dad
+    resourceVersion: "15369206"
+    uid: 4d54c60b-5ecd-4021-a7fe-8ca47af0d9c9
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.124
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-udr-77497dbb99-ckvcl
+      namespace: default
+      uid: 1cf6d9bd-1084-4f45-bf09-9a72410c0c8f
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:03Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-udr-sbi-
+    generation: 106
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udr
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: udr-2.2.5
+      kubernetes.io/service-name: open5gs-udr-sbi
+    name: open5gs-udr-sbi-gxfjh
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-udr-sbi
+      uid: 04318ea7-93a7-4f2c-813c-4886f7c18769
+    resourceVersion: "15369237"
+    uid: 2825e4c7-480d-4778-8001-6d5b2f034ae2
+  ports:
+  - name: sbi
+    port: 7777
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.135
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-upf-5b9db6d44-nsbqz
+      namespace: default
+      uid: 7b5b8ef7-a2a2-4fe9-a3e1-74acd17bd88f
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:41Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-upf-gtpu-
+    generation: 126
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: upf-2.2.6
+      kubernetes.io/service-name: open5gs-upf-gtpu
+    name: open5gs-upf-gtpu-vnbrx
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-upf-gtpu
+      uid: 9b5386cc-deb7-46cb-a1a5-9488d1ded297
+    resourceVersion: "15369104"
+    uid: d32ecaaf-af81-4184-b80a-399eecd71091
+  ports:
+  - name: gtpu
+    port: 2152
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.135
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-upf-5b9db6d44-nsbqz
+      namespace: default
+      uid: 7b5b8ef7-a2a2-4fe9-a3e1-74acd17bd88f
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:41Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-upf-metrics-
+    generation: 126
+    labels:
+      app.kubernetes.io/component: metrics
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: upf-2.2.6
+      kubernetes.io/service-name: open5gs-upf-metrics
+    name: open5gs-upf-metrics-zl4vj
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-upf-metrics
+      uid: 69bd7c7c-72ed-462d-9245-6424d3b32d53
+    resourceVersion: "15369106"
+    uid: 9c4239e5-a108-47d9-a674-5c71e7541636
+  ports:
+  - name: metrics
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.135
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: open5gs-upf-5b9db6d44-nsbqz
+      namespace: default
+      uid: 7b5b8ef7-a2a2-4fe9-a3e1-74acd17bd88f
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:41Z"
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generateName: open5gs-upf-pfcp-
+    generation: 126
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: upf-2.2.6
+      kubernetes.io/service-name: open5gs-upf-pfcp
+    name: open5gs-upf-pfcp-5v46s
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-upf-pfcp
+      uid: e02c43a5-f285-4ac1-af19-3707d3afc846
+    resourceVersion: "15369105"
+    uid: 452352bf-2754-4145-a7be-661542946f4d
+  ports:
+  - name: pfcp
+    port: 8805
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.46
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: open5gs-webui-76c5475c97-nm99d
+      namespace: default
+      uid: 6a9d13da-ab85-4b70-95ed-d7aec7195142
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:16Z"
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    generateName: open5gs-webui-
+    generation: 60
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: webui
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: webui-2.2.5
+      kubernetes.io/service-name: open5gs-webui
+    name: open5gs-webui-t5g64
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: open5gs-webui
+      uid: 53bc7434-c415-42d3-930a-fae8df935050
+    resourceVersion: "15369283"
+    uid: 0e358cf3-87a3-4de9-8880-1c87563bc3c3
+  ports:
+  - name: http
+    port: 9999
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.39
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: ueransim-gnb-5f74f979bb-xgjm9
+      namespace: default
+      uid: e622ce91-4ff2-40ee-8cd2-b42d954baf46
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:36Z"
+    creationTimestamp: "2026-07-16T22:08:51Z"
+    generateName: ueransim-gnb-
+    generation: 209
+    labels:
+      app.kubernetes.io/component: gnb
+      app.kubernetes.io/instance: ueransim-gnb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-gnb
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: ueransim-gnb-0.2.6
+      kubernetes.io/service-name: ueransim-gnb
+      service.kubernetes.io/headless: ""
+    name: ueransim-gnb-n8pt4
+    namespace: default
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: ueransim-gnb
+      uid: 7fccd5c6-843e-478f-a590-60b4bbc5dbbf
+    resourceVersion: "15369027"
+    uid: 4fe86f69-4033-499e-bbff-7cfb3ff86960
+  ports:
+  - name: gnb-upf
+    port: 2152
+    protocol: UDP
+  - name: gnb-ue
+    port: 4997
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.0.59
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpimaster
+    targetRef:
+      kind: Pod
+      name: coredns-7f496c8d7d-mcnqm
+      namespace: kube-system
+      uid: 19dee9cf-4422-4e41-afef-c6963b8b89f0
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-22T01:05:59Z"
+    creationTimestamp: "2025-03-19T21:28:36Z"
+    generateName: kube-dns-
+    generation: 188
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      k8s-app: kube-dns
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: CoreDNS
+      kubernetes.io/service-name: kube-dns
+      objectset.rio.cattle.io/hash: bce283298811743a0386ab510f2f67ef74240c57
+    name: kube-dns-th5ft
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: kube-dns
+      uid: 31e2ffb0-3d66-4692-99a1-5f3c2d2ca7a5
+    resourceVersion: "15368389"
+    uid: 536f2c2d-7341-4e0b-bb2a-76e6b47e3fb0
+  ports:
+  - name: dns
+    port: 53
+    protocol: UDP
+  - name: dns-tcp
+    port: 53
+    protocol: TCP
+  - name: metrics
+    port: 9153
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 192.168.1.101
+    conditions:
+      ready: true
+    nodeName: rpimaster
+    targetRef:
+      kind: Node
+      name: rpimaster
+      uid: c8b671b0-f7a8-48b9-b963-43afc3eda106
+  - addresses:
+    - 192.168.1.102
+    conditions:
+      ready: true
+    nodeName: rpislave2
+    targetRef:
+      kind: Node
+      name: rpislave2
+      uid: 4505f73c-5738-4780-9a1d-d7ba456825a8
+  - addresses:
+    - 192.168.1.103
+    conditions:
+      ready: true
+    nodeName: rpislave3
+    targetRef:
+      kind: Node
+      name: rpislave3
+      uid: f3895f27-2787-4752-bd98-50c650fdafeb
+  - addresses:
+    - 192.168.1.104
+    conditions:
+      ready: true
+    nodeName: rpislave4
+    targetRef:
+      kind: Node
+      name: rpislave4
+      uid: f8d74a77-8f91-45ad-9223-39178b1e2611
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2025-03-19T22:25:53Z"
+    generateName: kubelet-
+    generation: 1
+    labels:
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: kubelet
+      endpointslice.kubernetes.io/managed-by: endpointslicemirroring-controller.k8s.io
+      k8s-app: kubelet
+      kubernetes.io/service-name: kubelet
+    name: kubelet-pvgb6
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Endpoints
+      name: kubelet
+      uid: 582fa6d4-6ee6-4264-a85d-42ea56e9eca6
+    resourceVersion: "3123"
+    uid: ee053493-7548-4866-acb0-62f2b118482f
+  ports:
+  - name: http-metrics
+    port: 10255
+    protocol: TCP
+  - name: https-metrics
+    port: 10250
+    protocol: TCP
+  - name: cadvisor
+    port: 4194
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.0.60
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpimaster
+    targetRef:
+      kind: Pod
+      name: metrics-server-7b9c9c4b9c-ssj5q
+      namespace: kube-system
+      uid: b8d57ef9-8f97-411b-895a-bb8f7c61d2ab
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-22T01:06:03Z"
+    creationTimestamp: "2025-03-19T21:28:36Z"
+    generateName: metrics-server-
+    generation: 200
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Metrics-server
+      kubernetes.io/service-name: metrics-server
+      objectset.rio.cattle.io/hash: a5d3bc601c871e123fa32b27f549b6ea770bcf4a
+    name: metrics-server-8cssj
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: metrics-server
+      uid: ea4853f9-0211-48e5-acf1-f7fd7839dc96
+    resourceVersion: "15368441"
+    uid: ba579c81-694c-4495-8c31-6c599518794b
+  ports:
+  - name: https
+    port: 10250
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.0.58
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpimaster
+    targetRef:
+      kind: Pod
+      name: traefik-6d98778dfc-sq6xm
+      namespace: kube-system
+      uid: a1383b97-bec8-4e0e-acd6-6e9d8be2888b
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:18Z"
+    creationTimestamp: "2025-03-19T21:39:43Z"
+    generateName: traefik-
+    generation: 205
+    labels:
+      app.kubernetes.io/instance: traefik-kube-system
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: traefik
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      helm.sh/chart: traefik-37.1.1_up37.1.0
+      kubernetes.io/service-name: traefik
+    name: traefik-98qrk
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: traefik
+      uid: 4dded252-289a-4782-8442-9276a5825108
+    resourceVersion: "15368533"
+    uid: b96713a9-d2cf-4fbc-b54a-fda576ac1eae
+  ports:
+  - name: websecure
+    port: 8443
+    protocol: TCP
+  - name: web
+    port: 8000
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.130
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: vpa-admission-controller-7d977b5d75-lr9k2
+      namespace: kube-system
+      uid: 92314afc-81f5-4bd3-9edd-5db4478da1af
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:34Z"
+    creationTimestamp: "2025-08-10T15:45:32Z"
+    generateName: vpa-admission-controller-
+    generation: 299
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: vpa-admission-controller
+    name: vpa-admission-controller-4zldb
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: vpa-admission-controller
+      uid: 9f6da7b8-30ec-43c8-8a75-1b9ee3d5546a
+    resourceVersion: "15369000"
+    uid: cbf60e65-430d-4fb6-bac7-e0bebe1869c0
+  ports:
+  - name: https
+    port: 8944
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.130
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: vpa-admission-controller-7d977b5d75-lr9k2
+      namespace: kube-system
+      uid: 92314afc-81f5-4bd3-9edd-5db4478da1af
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:34Z"
+    creationTimestamp: "2025-08-10T16:21:36Z"
+    generateName: vpa-webhook-
+    generation: 301
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: vpa-webhook
+    name: vpa-webhook-7nw6d
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: vpa-webhook
+      uid: f5f4a7eb-282b-4b31-8912-a29f71661146
+    resourceVersion: "15368997"
+    uid: 92989632-8229-4984-ac34-4ce61161817d
+  ports:
+  - name: https
+    port: 8000
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.40
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: controller-bb5f47665-5zlql
+      namespace: metallb-system
+      uid: 7a3d9322-095e-4557-8975-411dac980a00
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:38Z"
+    creationTimestamp: "2025-03-22T15:56:58Z"
+    generateName: metallb-webhook-service-
+    generation: 233
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: metallb-webhook-service
+    name: metallb-webhook-service-kfbt5
+    namespace: metallb-system
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: metallb-webhook-service
+      uid: f6d66a3e-caf6-4f04-b8d0-504b563df49b
+    resourceVersion: "15369051"
+    uid: fe86d8d7-a361-46c0-a697-ae14518934b2
+  ports:
+  - name: ""
+    port: 9443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.194
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: alertmanager-main-2
+      namespace: monitoring
+      uid: 17a4cb15-3c75-4ea7-91a5-679efa005d7c
+  - addresses:
+    - 10.42.3.47
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: alertmanager-main-0
+      namespace: monitoring
+      uid: 7002a457-0e5c-443f-84aa-88afbbdd20bb
+  - addresses:
+    - 10.42.2.134
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: alertmanager-main-1
+      namespace: monitoring
+      uid: 87de6160-9203-49ae-8013-7c3d09fae124
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:48Z"
+    creationTimestamp: "2025-03-19T22:24:18Z"
+    generateName: alertmanager-main-
+    generation: 1261
+    labels:
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/instance: main
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.28.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: alertmanager-main
+    name: alertmanager-main-f7zlb
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: alertmanager-main
+      uid: 52705780-5894-4ec9-b950-5f97872d7ea5
+    resourceVersion: "15369430"
+    uid: 795c266e-d602-4ae2-a907-f7235ebb72a0
+  ports:
+  - name: reloader-web
+    port: 8080
+    protocol: TCP
+  - name: web
+    port: 9093
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.1.194
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    hostname: alertmanager-main-2
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: alertmanager-main-2
+      namespace: monitoring
+      uid: 17a4cb15-3c75-4ea7-91a5-679efa005d7c
+  - addresses:
+    - 10.42.3.47
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    hostname: alertmanager-main-0
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: alertmanager-main-0
+      namespace: monitoring
+      uid: 7002a457-0e5c-443f-84aa-88afbbdd20bb
+  - addresses:
+    - 10.42.2.134
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    hostname: alertmanager-main-1
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: alertmanager-main-1
+      namespace: monitoring
+      uid: 87de6160-9203-49ae-8013-7c3d09fae124
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:48Z"
+    creationTimestamp: "2025-03-19T22:28:44Z"
+    generateName: alertmanager-operated-
+    generation: 1261
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: alertmanager-operated
+      managed-by: prometheus-operator
+      operated-alertmanager: "true"
+      service.kubernetes.io/headless: ""
+    name: alertmanager-operated-96gt9
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: alertmanager-operated
+      uid: b75cad0a-c1b2-40a6-9f95-215d8fba57fd
+    resourceVersion: "15369431"
+    uid: 55ad1f61-64c4-4185-a170-c119eeae91de
+  ports:
+  - name: tcp-mesh
+    port: 9094
+    protocol: TCP
+  - name: web
+    port: 9093
+    protocol: TCP
+  - name: udp-mesh
+    port: 9094
+    protocol: UDP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.45
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: blackbox-exporter-69bdcc6fc7-qppcj
+      namespace: monitoring
+      uid: b1726829-8479-4059-b3f5-e3a490d4bb6e
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:44Z"
+    creationTimestamp: "2025-03-19T22:24:18Z"
+    generateName: blackbox-exporter-
+    generation: 148
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: blackbox-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.25.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: blackbox-exporter
+    name: blackbox-exporter-7nxr9
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: blackbox-exporter
+      uid: c0a51126-25c8-4af7-8a16-795c61ebfe71
+    resourceVersion: "15369129"
+    uid: b6c4e39d-b99c-45bc-b3dd-6bdba2d43f21
+  ports:
+  - name: probe
+    port: 19115
+    protocol: TCP
+  - name: https
+    port: 9115
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.41
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: grafana-d8ddf6c68-45bcw
+      namespace: monitoring
+      uid: bdfba037-7494-4869-9de2-1f317028e07a
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:27Z"
+    creationTimestamp: "2025-03-23T20:34:03Z"
+    generateName: grafana-ext-
+    generation: 323
+    labels:
+      app.kubernetes.io/component: grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 11.5.2
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: grafana-ext
+    name: grafana-ext-b8fm5
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: grafana-ext
+      uid: 5c7ab48f-e02a-48f2-a85b-a805c9b095da
+    resourceVersion: "15369342"
+    uid: de534390-612e-4b39-a0e6-4cd6914c95c7
+  ports:
+  - name: http
+    port: 3000
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.41
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: grafana-d8ddf6c68-45bcw
+      namespace: monitoring
+      uid: bdfba037-7494-4869-9de2-1f317028e07a
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:27Z"
+    creationTimestamp: "2025-03-19T22:24:20Z"
+    generateName: grafana-
+    generation: 331
+    labels:
+      app.kubernetes.io/component: grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 11.5.2
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: grafana
+    name: grafana-p9lwt
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: grafana
+      uid: 11a486ee-9480-48d0-8b74-bf608dcdb1ae
+    resourceVersion: "15369341"
+    uid: 13978279-ad72-478b-ade7-0fa71e74e8c3
+  ports:
+  - name: http
+    port: 3000
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.42
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: kube-state-metrics-5f96f94459-8t6t2
+      namespace: monitoring
+      uid: 9ee39b6b-984f-403e-89d6-fefe8c2ecd2a
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:43Z"
+    creationTimestamp: "2025-03-19T22:24:21Z"
+    generateName: kube-state-metrics-
+    generation: 147
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: kube-state-metrics
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 2.15.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: kube-state-metrics
+      service.kubernetes.io/headless: ""
+    name: kube-state-metrics-8dhtz
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: kube-state-metrics
+      uid: 6880ae55-0150-411c-bb35-874edf71be01
+    resourceVersion: "15369116"
+    uid: 3b742e46-e633-4017-9dc6-80b949586121
+  ports:
+  - name: https-main
+    port: 8443
+    protocol: TCP
+  - name: https-self
+    port: 9443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 192.168.1.101
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpimaster
+    targetRef:
+      kind: Pod
+      name: node-exporter-ktgf7
+      namespace: monitoring
+      uid: 4f2ccd84-5d82-4555-bc6c-0b9e32c8e0ab
+  - addresses:
+    - 192.168.1.104
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave4
+    targetRef:
+      kind: Pod
+      name: node-exporter-kk2b6
+      namespace: monitoring
+      uid: 1a337451-ff34-4b88-99e6-1703e559abbe
+  - addresses:
+    - 192.168.1.102
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: node-exporter-rfk96
+      namespace: monitoring
+      uid: 2d6b28a8-32b7-4859-b1a4-9ed5c1d9118e
+  - addresses:
+    - 192.168.1.103
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: node-exporter-mwpcz
+      namespace: monitoring
+      uid: efbd5747-02b9-4d2e-b111-776cf4f94c12
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:40Z"
+    creationTimestamp: "2025-03-19T22:24:21Z"
+    generateName: node-exporter-
+    generation: 928
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 1.9.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: node-exporter
+      service.kubernetes.io/headless: ""
+    name: node-exporter-frpvk
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: node-exporter
+      uid: 5b9d9492-bb45-4525-83b5-eabb0a602273
+    resourceVersion: "15369097"
+    uid: 693df306-6f27-4e57-a42d-a72fc8fd0124
+  ports:
+  - name: https
+    port: 9100
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.49
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: prometheus-adapter-599c88b6c4-7b9lf
+      namespace: monitoring
+      uid: 15387fe3-5f97-4855-9721-211ebd2249e8
+  - addresses:
+    - 10.42.2.128
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: prometheus-adapter-599c88b6c4-ghqcw
+      namespace: monitoring
+      uid: 8228fd0d-4fa5-43b5-b5cd-4380d9a98db6
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:02Z"
+    creationTimestamp: "2025-03-19T22:24:23Z"
+    generateName: prometheus-adapter-
+    generation: 470
+    labels:
+      app.kubernetes.io/component: metrics-adapter
+      app.kubernetes.io/name: prometheus-adapter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.12.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: prometheus-adapter
+    name: prometheus-adapter-dst9r
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: prometheus-adapter
+      uid: 3b497a01-f08a-4397-a440-5c8fd437af18
+    resourceVersion: "15369216"
+    uid: 1fceb69e-e683-4244-85cb-2a2122662245
+  ports:
+  - name: https
+    port: 6443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.136
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: prometheus-k8s-0
+      namespace: monitoring
+      uid: 0a4f57a6-0a9a-401f-8ad9-f5c042d87c47
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:54:10Z"
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    generateName: prometheus-k8s-
+    generation: 380
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: prometheus-k8s
+    name: prometheus-k8s-96bqw
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: prometheus-k8s
+      uid: 44098840-9138-4779-8085-fedf2bf4ae60
+    resourceVersion: "15369498"
+    uid: 07c2c187-9435-433b-92e3-7e6cf32e9853
+  ports:
+  - name: reloader-web
+    port: 8080
+    protocol: TCP
+  - name: web
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.136
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: prometheus-k8s-0
+      namespace: monitoring
+      uid: 0a4f57a6-0a9a-401f-8ad9-f5c042d87c47
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:54:10Z"
+    creationTimestamp: "2025-03-22T16:56:49Z"
+    generateName: prometheus-k8s-ext-
+    generation: 370
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: prometheus-k8s-ext
+    name: prometheus-k8s-ext-mvzzw
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: prometheus-k8s-ext
+      uid: 8404984c-d92e-4a26-a772-27d4655c9b0d
+    resourceVersion: "15369502"
+    uid: dca6b99f-ad9f-4abc-847c-e2bd5c10aa59
+  ports:
+  - name: reloader-web
+    port: 8080
+    protocol: TCP
+  - name: web
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.136
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    hostname: prometheus-k8s-0
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: prometheus-k8s-0
+      namespace: monitoring
+      uid: 0a4f57a6-0a9a-401f-8ad9-f5c042d87c47
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:54:10Z"
+    creationTimestamp: "2025-03-19T22:29:03Z"
+    generateName: prometheus-operated-
+    generation: 380
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: prometheus-operated
+      managed-by: prometheus-operator
+      operated-prometheus: "true"
+      service.kubernetes.io/headless: ""
+    name: prometheus-operated-h2qmv
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: prometheus-operated
+      uid: 0e9204f4-302e-4e1d-9694-43812c4cd2fa
+    resourceVersion: "15369501"
+    uid: b678fdd1-92bc-46c3-959d-8a3ff2221549
+  ports:
+  - name: web
+    port: 9090
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.3.44
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave3
+    targetRef:
+      kind: Pod
+      name: prometheus-operator-68dbcbf4cc-tkq2t
+      namespace: monitoring
+      uid: 4c2cf28f-d7b4-4904-89ff-d64c50f6520d
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:52:35Z"
+    creationTimestamp: "2025-03-19T22:24:24Z"
+    generateName: prometheus-operator-
+    generation: 192
+    labels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/name: prometheus-operator
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.80.1
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: prometheus-operator
+      service.kubernetes.io/headless: ""
+    name: prometheus-operator-59x95
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: prometheus-operator
+      uid: 941c1607-1bad-4f94-b5f1-e0d46e5799b6
+    resourceVersion: "15369009"
+    uid: 47641f80-8d16-4011-9e1f-b94c85e59f9f
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.42.2.132
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: rpislave2
+    targetRef:
+      kind: Pod
+      name: vpa-exporter-6497875df5-6cn4t
+      namespace: monitoring
+      uid: 27bdcb75-7179-47cd-9fd1-7554eaf5ed4a
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-08-23T22:53:19Z"
+    creationTimestamp: "2026-05-20T19:29:48Z"
+    generateName: vpa-exporter-
+    generation: 36
+    labels:
+      app: vpa-exporter
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: vpa-exporter
+    name: vpa-exporter-vcxdd
+    namespace: monitoring
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: vpa-exporter
+      uid: 046b376f-7c7c-4f57-b3dd-6e86665f76bb
+    resourceVersion: "15369316"
+    uid: 86657f16-e772-47e1-ac8a-350aed61cf00
+  ports:
+  - name: metrics
+    port: 9108
+    protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""

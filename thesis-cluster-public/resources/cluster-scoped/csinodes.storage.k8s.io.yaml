@@ -1,0 +1,69 @@
+apiVersion: v1
+items:
+- apiVersion: storage.k8s.io/v1
+  kind: CSINode
+  metadata:
+    annotations:
+      storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/azure-file,kubernetes.io/cinder,kubernetes.io/gce-pd,kubernetes.io/portworx-volume,kubernetes.io/vsphere-volume
+    creationTimestamp: "2025-03-19T21:28:31Z"
+    name: rpimaster
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpimaster
+      uid: c8b671b0-f7a8-48b9-b963-43afc3eda106
+    resourceVersion: "224"
+    uid: 45aa50b2-bd06-49c1-8927-25e18873737c
+  spec:
+    drivers: null
+- apiVersion: storage.k8s.io/v1
+  kind: CSINode
+  metadata:
+    annotations:
+      storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/azure-file,kubernetes.io/cinder,kubernetes.io/gce-pd,kubernetes.io/portworx-volume,kubernetes.io/vsphere-volume
+    creationTimestamp: "2025-03-19T21:38:45Z"
+    name: rpislave2
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpislave2
+      uid: 4505f73c-5738-4780-9a1d-d7ba456825a8
+    resourceVersion: "832"
+    uid: ae0cd777-5a8e-45eb-abba-582ceebfc2e0
+  spec:
+    drivers: null
+- apiVersion: storage.k8s.io/v1
+  kind: CSINode
+  metadata:
+    annotations:
+      storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/azure-file,kubernetes.io/cinder,kubernetes.io/gce-pd,kubernetes.io/portworx-volume,kubernetes.io/vsphere-volume
+    creationTimestamp: "2025-03-19T21:38:45Z"
+    name: rpislave3
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpislave3
+      uid: f3895f27-2787-4752-bd98-50c650fdafeb
+    resourceVersion: "848"
+    uid: 766f0ccb-6890-4a8a-9ba3-b42a24599b02
+  spec:
+    drivers: null
+- apiVersion: storage.k8s.io/v1
+  kind: CSINode
+  metadata:
+    annotations:
+      storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/azure-file,kubernetes.io/cinder,kubernetes.io/gce-pd,kubernetes.io/portworx-volume,kubernetes.io/vsphere-volume
+    creationTimestamp: "2025-03-19T21:38:31Z"
+    name: rpislave4
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: rpislave4
+      uid: f8d74a77-8f91-45ad-9223-39178b1e2611
+    resourceVersion: "795"
+    uid: 3410638e-391b-4ef4-a525-b52607b4bf66
+  spec:
+    drivers: null
+kind: List
+metadata:
+  resourceVersion: ""

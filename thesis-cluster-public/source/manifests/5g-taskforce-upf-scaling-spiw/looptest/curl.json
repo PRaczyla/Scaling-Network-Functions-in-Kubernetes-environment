@@ -1,0 +1,26 @@
+[
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "__name__": "amf_session",
+          "container": "open5gs-amf",
+          "endpoint": "metrics",
+          "instance": "10.42.1.41:9090",
+          "job": "open5gs-amf-metrics",
+          "namespace": "default",
+          "pod": "open5gs-amf-84b694c467-rjzgb",
+          "service": "open5gs-amf-metrics"
+        },
+        "value": [
+          1729191016.005,
+          "4"
+        ]
+      }
+    ]
+  }
+}
+]

@@ -1,0 +1,5 @@
+NOTES:
+
+
+traefik with docker.io/rancher/mirrored-library-traefik:3.5.1 has been deployed successfully on kube-system namespace !
+

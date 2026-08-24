@@ -1,0 +1,121 @@
+apiVersion: v1
+items:
+- apiVersion: metallb.io/v1beta1
+  kind: ServiceL2Status
+  metadata:
+    creationTimestamp: "2026-02-22T09:13:42Z"
+    generateName: l2-
+    generation: 1
+    labels:
+      metallb.io/node: rpislave4
+      metallb.io/service-name: traefik
+      metallb.io/service-namespace: kube-system
+    name: l2-77bns
+    namespace: metallb-system
+    ownerReferences:
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-hc4r4
+      uid: 0f3abf62-b130-4a05-a4a5-c805ec092c26
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-lmhcv
+      uid: c0dfb2a2-640f-480e-96eb-b16b37f8636e
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-5dq72
+      uid: 372cdcc0-b770-4f4b-ba4e-c4af09bba3ce
+    resourceVersion: "15150024"
+    uid: bf60d10f-d041-4828-a60e-fa850f76e6bf
+  spec: {}
+  status:
+    node: rpislave2
+    serviceName: traefik
+    serviceNamespace: kube-system
+- apiVersion: metallb.io/v1beta1
+  kind: ServiceL2Status
+  metadata:
+    creationTimestamp: "2026-08-23T22:53:27Z"
+    generateName: l2-
+    generation: 1
+    labels:
+      metallb.io/node: rpislave3
+      metallb.io/service-name: grafana-ext
+      metallb.io/service-namespace: monitoring
+    name: l2-82shb
+    namespace: metallb-system
+    ownerReferences:
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-lmhcv
+      uid: c0dfb2a2-640f-480e-96eb-b16b37f8636e
+    resourceVersion: "15369346"
+    uid: c83915ab-c9e8-43b1-87a0-8b3a395a0e9f
+  spec: {}
+  status:
+    node: rpislave3
+    serviceName: grafana-ext
+    serviceNamespace: monitoring
+- apiVersion: metallb.io/v1beta1
+  kind: ServiceL2Status
+  metadata:
+    creationTimestamp: "2026-05-11T22:07:35Z"
+    generateName: l2-
+    generation: 1
+    labels:
+      metallb.io/node: rpislave3
+      metallb.io/service-name: iperf3-server
+      metallb.io/service-namespace: default
+    name: l2-hdcdc
+    namespace: metallb-system
+    ownerReferences:
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-5dq72
+      uid: 372cdcc0-b770-4f4b-ba4e-c4af09bba3ce
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-lmhcv
+      uid: c0dfb2a2-640f-480e-96eb-b16b37f8636e
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-hc4r4
+      uid: 0f3abf62-b130-4a05-a4a5-c805ec092c26
+    resourceVersion: "14362884"
+    uid: bbbef6d8-086e-48db-a2d2-ab231a315b06
+  spec: {}
+  status:
+    node: rpislave4
+    serviceName: iperf3-server
+    serviceNamespace: default
+- apiVersion: metallb.io/v1beta1
+  kind: ServiceL2Status
+  metadata:
+    creationTimestamp: "2026-07-16T22:48:01Z"
+    generateName: l2-
+    generation: 1
+    labels:
+      metallb.io/node: rpislave3
+      metallb.io/service-name: prometheus-k8s-ext
+      metallb.io/service-namespace: monitoring
+    name: l2-w26ck
+    namespace: metallb-system
+    ownerReferences:
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-lmhcv
+      uid: c0dfb2a2-640f-480e-96eb-b16b37f8636e
+    - apiVersion: v1
+      kind: Pod
+      name: speaker-5dq72
+      uid: 372cdcc0-b770-4f4b-ba4e-c4af09bba3ce
+    resourceVersion: "14279913"
+    uid: cf2b6f94-8a3c-49cc-b9bc-a3b7ac0b1321
+  spec: {}
+  status:
+    node: rpislave4
+    serviceName: prometheus-k8s-ext
+    serviceNamespace: monitoring
+kind: List
+metadata:
+  resourceVersion: ""

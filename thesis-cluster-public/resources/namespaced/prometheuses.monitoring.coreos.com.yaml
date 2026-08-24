@@ -1,0 +1,107 @@
+apiVersion: v1
+items:
+- apiVersion: monitoring.coreos.com/v1
+  kind: Prometheus
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"monitoring.coreos.com/v1","kind":"Prometheus","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"k8s","namespace":"monitoring"},"spec":{"alerting":{"alertmanagers":[{"apiVersion":"v2","name":"alertmanager-main","namespace":"monitoring","port":"web"}]},"enableFeatures":[],"externalLabels":{},"image":"quay.io/prometheus/prometheus:v3.2.0","nodeSelector":{"kubernetes.io/os":"linux"},"podMetadata":{"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"}},"podMonitorNamespaceSelector":{},"podMonitorSelector":{},"probeNamespaceSelector":{},"probeSelector":{},"replicas":1,"resources":{"requests":{"memory":"400Mi"}},"retention":"2d","ruleNamespaceSelector":{},"ruleSelector":{},"scrapeConfigNamespaceSelector":{},"scrapeConfigSelector":{},"securityContext":{"fsGroup":2000,"runAsNonRoot":true,"runAsUser":1000},"serviceAccountName":"prometheus-k8s","serviceMonitorNamespaceSelector":{},"serviceMonitorSelector":{},"storage":{"volumeClaimTemplate":{"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"2Gi"}},"storageClassName":"local-path"}}},"version":"3.2.0"}}
+    creationTimestamp: "2025-03-19T22:29:00Z"
+    generation: 16
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: k8s
+    namespace: monitoring
+    resourceVersion: "15369506"
+    uid: d8c71b4c-6b93-45c3-bd96-4df5152f6c5f
+  spec:
+    alerting:
+      alertmanagers:
+      - apiVersion: v2
+        name: alertmanager-main
+        namespace: monitoring
+        port: web
+    enableFeatures: []
+    evaluationInterval: 30s
+    externalLabels: {}
+    image: quay.io/prometheus/prometheus:v3.2.0
+    nodeSelector:
+      kubernetes.io/os: linux
+    podMetadata:
+      labels:
+        app.kubernetes.io/component: prometheus
+        app.kubernetes.io/instance: k8s
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/part-of: kube-prometheus
+        app.kubernetes.io/version: 3.2.0
+    podMonitorNamespaceSelector: {}
+    podMonitorSelector: {}
+    portName: web
+    probeNamespaceSelector: {}
+    probeSelector: {}
+    replicas: 1
+    resources:
+      requests:
+        memory: 400Mi
+    retention: 2d
+    ruleNamespaceSelector: {}
+    ruleSelector: {}
+    scrapeConfigNamespaceSelector: {}
+    scrapeConfigSelector: {}
+    scrapeInterval: 30s
+    securityContext:
+      fsGroup: 2000
+      runAsNonRoot: true
+      runAsUser: 1000
+    serviceAccountName: prometheus-k8s
+    serviceMonitorNamespaceSelector: {}
+    serviceMonitorSelector:
+      matchExpressions:
+      - key: monitoring.openshift.io/enabled
+        operator: NotIn
+        values:
+        - "false"
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 2Gi
+          storageClassName: local-path
+    version: 3.2.0
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-08-23T22:54:10Z"
+      message: ""
+      observedGeneration: 16
+      reason: ""
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-08-23T22:54:10Z"
+      message: ""
+      observedGeneration: 16
+      reason: ""
+      status: "True"
+      type: Reconciled
+    paused: false
+    replicas: 1
+    selector: app.kubernetes.io/instance=k8s,app.kubernetes.io/managed-by=prometheus-operator,app.kubernetes.io/name=prometheus,operator.prometheus.io/name=k8s,prometheus=k8s
+    shardStatuses:
+    - availableReplicas: 1
+      replicas: 1
+      shardID: "0"
+      unavailableReplicas: 0
+      updatedReplicas: 1
+    shards: 1
+    unavailableReplicas: 0
+    updatedReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""

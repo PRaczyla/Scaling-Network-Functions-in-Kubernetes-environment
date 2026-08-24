@@ -1,0 +1,7 @@
+NAME                   	NAMESPACE  	REVISION	UPDATED                                 	STATUS  	CHART                      	APP VERSION
+open5gs                	default    	2       	2026-07-21 00:47:58.45928615 +0200 CEST 	deployed	open5gs-2.2.6              	2.7.2      
+traefik                	kube-system	2       	2026-01-12 23:58:22.699448301 +0000 UTC 	deployed	traefik-37.1.1+up37.1.0    	v3.5.1     
+traefik-crd            	kube-system	2       	2026-01-12 23:56:15.863664858 +0000 UTC 	deployed	traefik-crd-37.1.1+up37.1.0	v3.5.1     
+ueransim-gnb           	default    	1       	2026-07-17 00:08:50.960197567 +0200 CEST	deployed	ueransim-gnb-0.2.6         	3.2.6      
+ueransim-gnb-ues       	default    	2       	2026-07-30 00:02:33.015573486 +0200 CEST	deployed	ueransim-ues-0.1.2         	3.2.6      
+ueransim-ues-additional	default    	6       	2026-07-29 23:54:49.471371838 +0200 CEST	deployed	ueransim-ues-0.1.2         	3.2.6      

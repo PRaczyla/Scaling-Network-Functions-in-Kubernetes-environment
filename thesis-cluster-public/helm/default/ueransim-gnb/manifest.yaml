@@ -1,0 +1,140 @@
+---
+# Source: ueransim-gnb/templates/gnb-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ueransim-gnb
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: ueransim-gnb
+    helm.sh/chart: ueransim-gnb-0.2.6
+    app.kubernetes.io/instance: ueransim-gnb
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: gnb
+data:
+  gnb.yaml: |
+    mcc: 999 # Mobile Country Code value
+    mnc: 70 # Mobile Network Code value (2 or 3 digits)
+    
+    nci: '0x0000000100'  # NR Cell Identity (36-bit)
+    idLength: 32        # NR gNB ID length in bits [22...32]
+    tac: 0001             # Tracking Area Code
+    
+    linkIp: ${RADIO_BIND_IP}   # gNB's local IP address for Radio Link Simulation (Usually same with local IP)
+    ngapIp: ${N2_BIND_IP}  # gNB's local IP address for N2 Interface (Usually same with local IP)
+    gtpIp: ${N3_BIND_IP}   # gNB's local IP address for N3 Interface (Usually same with local IP)
+    
+    # List of AMF address information
+    amfConfigs:
+      - address: ${AMF_IP}
+        port: 38412
+    
+    # List of supported S-NSSAIs by this gNB
+    slices:
+      - sst: 1
+        sd: 0x111111
+    
+    # Indicates whether or not SCTP stream number errors should be ignored.
+    ignoreStreamIds: true
+---
+# Source: ueransim-gnb/templates/gnb-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ueransim-gnb
+  labels:
+    app.kubernetes.io/name: ueransim-gnb
+    helm.sh/chart: ueransim-gnb-0.2.6
+    app.kubernetes.io/instance: ueransim-gnb
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: gnb
+spec:
+  ports:
+  - name: gnb-ue
+    port: 4997
+    protocol: UDP
+  - name: gnb-upf
+    port: 2152
+    protocol: UDP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: ueransim-gnb
+    app.kubernetes.io/instance: ueransim-gnb
+    app.kubernetes.io/component: gnb
+---
+# Source: ueransim-gnb/templates/gnb-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ueransim-gnb
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: ueransim-gnb
+    helm.sh/chart: ueransim-gnb-0.2.6
+    app.kubernetes.io/instance: ueransim-gnb
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: gnb
+spec:
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: ueransim-gnb
+      app.kubernetes.io/instance: ueransim-gnb
+      app.kubernetes.io/component: gnb
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ueransim-gnb
+        helm.sh/chart: ueransim-gnb-0.2.6
+        app.kubernetes.io/instance: ueransim-gnb
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: gnb
+    spec:
+      
+      containers:
+        - name: gnodeb
+          image: docker.io/gradiant/ueransim:3.2.6
+          imagePullPolicy: Always
+          args:
+            - gnb
+          ports:
+          - name: gnb-ue
+            containerPort: 4997
+            protocol: UDP
+          - name: gnb-upf
+            containerPort: 2152
+            protocol: UDP
+          env:
+            - name: AMF_HOSTNAME
+              value: open5gs-amf-ngap
+            - name: N2_IFACE
+              value: eth0
+            - name: N3_IFACE
+              value: eth0
+            - name: RADIO_IFACE
+              value: eth0
+          resources:
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/ueransim/gnb.yaml
+              subPath: "gnb.yaml"
+      volumes:
+        - name: config
+          configMap:
+            name: ueransim-gnb
+---
+# Source: ueransim-gnb/templates/gnb-hpa.yaml
+#Autoscaler to limit gnb to 1.
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ueransim-gnb
+spec:
+  maxReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: ueransim-gnb
+

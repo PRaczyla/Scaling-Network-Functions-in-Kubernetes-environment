@@ -1,0 +1,6 @@
+USER-SUPPLIED VALUES:
+count: 70
+fullnameOverride: ueransim-gnb-ues
+gnb:
+  hostname: ueransim-gnb
+initialMSISDN: "0000000001"

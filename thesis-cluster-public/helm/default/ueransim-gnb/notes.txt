@@ -1,0 +1,22 @@
+NOTES:
+
+ueransim-gnb successfully installed!
+Check gnodeb log with:
+
+```
+kubectl -n default logs deployment/ueransim-gnb
+```
+
+---
+
+No embedded ues where deployed.
+
+You can deploy ues connected to this gnodeb with gradiant/ueransim-ues chart:
+
+```
+helm install -n default ueransim-ues gradiant/ueransim-ues --set gnb.hostname=ueransim-gnb
+```
+
+
+
+

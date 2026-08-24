@@ -1,0 +1,3 @@
+vpa-admission-controller-7d977b5d75-lr9k2   1/1     Running   3 (2d23h ago)    33d
+vpa-recommender-5f4f956944-sx65q            1/1     Running   2 (2d23h ago)    13d
+vpa-updater-5f6f58cd5-sfb2k                 1/1     Running   5 (2d23h ago)    93d

@@ -1,0 +1,668 @@
+apiVersion: v1
+items:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"default"},"rules":[{"apiGroups":[""],"resources":["services","endpoints","pods"],"verbs":["get","list","watch"]},{"apiGroups":["extensions"],"resources":["ingresses"],"verbs":["get","list","watch"]},{"apiGroups":["networking.k8s.io"],"resources":["ingresses"],"verbs":["get","list","watch"]}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: default
+    resourceVersion: "2909"
+    uid: e94d3313-592b-455e-9851-d325e12ad65c
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - services
+    - endpoints
+    - pods
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - extensions
+    resources:
+    - ingresses
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - networking.k8s.io
+    resources:
+    - ingresses
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:bootstrap-signer
+    namespace: kube-public
+    resourceVersion: "185"
+    uid: c201fb4e-3802-4fe6-af14-158402afc29c
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - ""
+    resourceNames:
+    - cluster-info
+    resources:
+    - configmaps
+    verbs:
+    - update
+  - apiGroups:
+    - ""
+    - events.k8s.io
+    resources:
+    - events
+    verbs:
+    - create
+    - patch
+    - update
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: extension-apiserver-authentication-reader
+    namespace: kube-system
+    resourceVersion: "179"
+    uid: 9d3c9984-8259-4769-b02f-d3a5ac3e8fc9
+  rules:
+  - apiGroups:
+    - ""
+    resourceNames:
+    - extension-apiserver-authentication
+    resources:
+    - configmaps
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"kube-system"},"rules":[{"apiGroups":[""],"resources":["services","endpoints","pods"],"verbs":["get","list","watch"]},{"apiGroups":["extensions"],"resources":["ingresses"],"verbs":["get","list","watch"]},{"apiGroups":["networking.k8s.io"],"resources":["ingresses"],"verbs":["get","list","watch"]}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: kube-system
+    resourceVersion: "2910"
+    uid: 9c84af0f-862e-4c94-8367-aa0ba39cc0b7
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - services
+    - endpoints
+    - pods
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - extensions
+    resources:
+    - ingresses
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - networking.k8s.io
+    resources:
+    - ingresses
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system::leader-locking-kube-controller-manager
+    namespace: kube-system
+    resourceVersion: "183"
+    uid: 9bbe6db5-5efa-436c-906f-91e3bc988ac5
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    verbs:
+    - watch
+  - apiGroups:
+    - ""
+    resourceNames:
+    - kube-controller-manager
+    resources:
+    - configmaps
+    verbs:
+    - get
+    - update
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - create
+    - get
+    - list
+    - update
+    - watch
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leasecandidates
+    verbs:
+    - create
+    - get
+    - list
+    - update
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system::leader-locking-kube-scheduler
+    namespace: kube-system
+    resourceVersion: "184"
+    uid: 84bc7980-8685-4451-8b8d-d913245940dd
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    verbs:
+    - watch
+  - apiGroups:
+    - ""
+    resourceNames:
+    - kube-scheduler
+    resources:
+    - configmaps
+    verbs:
+    - get
+    - update
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - create
+    - get
+    - list
+    - update
+    - watch
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leasecandidates
+    verbs:
+    - create
+    - get
+    - list
+    - update
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:bootstrap-signer
+    namespace: kube-system
+    resourceVersion: "180"
+    uid: 39daa320-7d6b-48cf-a861-3acb21229d47
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:cloud-provider
+    namespace: kube-system
+    resourceVersion: "181"
+    uid: 7d32a974-ad1d-4db4-b86e-caaa3348704b
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    verbs:
+    - create
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:token-cleaner
+    namespace: kube-system
+    resourceVersion: "182"
+    uid: 9761e990-0fdb-407d-b0c0-8d6af617eac8
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - delete
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - ""
+    - events.k8s.io
+    resources:
+    - events
+    verbs:
+    - create
+    - patch
+    - update
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"system:leader-locking-vpa-recommender","namespace":"kube-system"},"rules":[{"apiGroups":["coordination.k8s.io"],"resources":["leases"],"verbs":["create"]},{"apiGroups":["coordination.k8s.io"],"resourceNames":["vpa-recommender","vpa-recommender-lease"],"resources":["leases"],"verbs":["get","watch","update"]}]}
+    creationTimestamp: "2026-01-18T23:54:02Z"
+    name: system:leader-locking-vpa-recommender
+    namespace: kube-system
+    resourceVersion: "2565864"
+    uid: 66ad0ee7-9b43-4e8c-bff2-622a412c76a6
+  rules:
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - create
+  - apiGroups:
+    - coordination.k8s.io
+    resourceNames:
+    - vpa-recommender
+    - vpa-recommender-lease
+    resources:
+    - leases
+    verbs:
+    - get
+    - watch
+    - update
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"system:leader-locking-vpa-updater","namespace":"kube-system"},"rules":[{"apiGroups":["coordination.k8s.io"],"resources":["leases"],"verbs":["create"]},{"apiGroups":["coordination.k8s.io"],"resourceNames":["vpa-updater"],"resources":["leases"],"verbs":["get","watch","update"]}]}
+    creationTimestamp: "2026-01-18T23:54:02Z"
+    name: system:leader-locking-vpa-updater
+    namespace: kube-system
+    resourceVersion: "2565862"
+    uid: 9ee77516-7404-4e1f-8437-4ba206a19857
+  rules:
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - create
+  - apiGroups:
+    - coordination.k8s.io
+    resourceNames:
+    - vpa-updater
+    resources:
+    - leases
+    verbs:
+    - get
+    - watch
+    - update
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"creationTimestamp":null,"name":"vpa-admission-lease","namespace":"kube-system"},"rules":[{"apiGroups":["coordination.k8s.io"],"resources":["leases"],"verbs":["get","list","watch","create","update","patch"]}]}
+    creationTimestamp: "2025-08-13T20:40:02Z"
+    name: vpa-admission-lease
+    namespace: kube-system
+    resourceVersion: "262673"
+    uid: b2ea01b8-d3e1-4928-b314-8a0df2712ce8
+  rules:
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"vpa-admission-lease-reader","namespace":"kube-system"},"rules":[{"apiGroups":["coordination.k8s.io"],"resourceNames":["vpa-admission-controller"],"resources":["leases"],"verbs":["get","list","watch"]}]}
+    creationTimestamp: "2025-08-13T21:24:43Z"
+    name: vpa-admission-lease-reader
+    namespace: kube-system
+    resourceVersion: "265873"
+    uid: 8e1845b3-a875-40ef-ad45-6cd921ba88be
+  rules:
+  - apiGroups:
+    - coordination.k8s.io
+    resourceNames:
+    - vpa-admission-controller
+    resources:
+    - leases
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"labels":{"app":"metallb"},"name":"controller","namespace":"metallb-system"},"rules":[{"apiGroups":[""],"resources":["secrets"],"verbs":["create","delete","get","list","patch","update","watch"]},{"apiGroups":[""],"resourceNames":["memberlist"],"resources":["secrets"],"verbs":["list"]},{"apiGroups":["apps"],"resourceNames":["controller"],"resources":["deployments"],"verbs":["get"]},{"apiGroups":["metallb.io"],"resources":["bgppeers"],"verbs":["get","list"]},{"apiGroups":["metallb.io"],"resources":["bfdprofiles"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["ipaddresspools"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["bgpadvertisements"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["l2advertisements"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["communities"],"verbs":["get","list","watch"]}]}
+    creationTimestamp: "2025-03-22T15:56:57Z"
+    labels:
+      app: metallb
+    name: controller
+    namespace: metallb-system
+    resourceVersion: "5599"
+    uid: 211a380a-b783-45e3-8a58-0d9d9c14a4b5
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - ""
+    resourceNames:
+    - memberlist
+    resources:
+    - secrets
+    verbs:
+    - list
+  - apiGroups:
+    - apps
+    resourceNames:
+    - controller
+    resources:
+    - deployments
+    verbs:
+    - get
+  - apiGroups:
+    - metallb.io
+    resources:
+    - bgppeers
+    verbs:
+    - get
+    - list
+  - apiGroups:
+    - metallb.io
+    resources:
+    - bfdprofiles
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - ipaddresspools
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - bgpadvertisements
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - l2advertisements
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - communities
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"labels":{"app":"metallb"},"name":"pod-lister","namespace":"metallb-system"},"rules":[{"apiGroups":[""],"resources":["pods"],"verbs":["list","get"]},{"apiGroups":[""],"resources":["secrets"],"verbs":["get","list","watch"]},{"apiGroups":[""],"resources":["configmaps"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["bfdprofiles"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["bgppeers"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["l2advertisements"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["bgpadvertisements"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["ipaddresspools"],"verbs":["get","list","watch"]},{"apiGroups":["metallb.io"],"resources":["communities"],"verbs":["get","list","watch"]}]}
+    creationTimestamp: "2025-03-22T15:56:57Z"
+    labels:
+      app: metallb
+    name: pod-lister
+    namespace: metallb-system
+    resourceVersion: "5600"
+    uid: d2e0993d-b2ff-4438-a26d-137877259c70
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - list
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - secrets
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - bfdprofiles
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - bgppeers
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - l2advertisements
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - bgpadvertisements
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - ipaddresspools
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - metallb.io
+    resources:
+    - communities
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"monitoring"},"rules":[{"apiGroups":[""],"resources":["services","endpoints","pods"],"verbs":["get","list","watch"]},{"apiGroups":["extensions"],"resources":["ingresses"],"verbs":["get","list","watch"]},{"apiGroups":["networking.k8s.io"],"resources":["ingresses"],"verbs":["get","list","watch"]}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: monitoring
+    resourceVersion: "2911"
+    uid: a66cfe1d-68c4-4aa8-abea-7d9aa74c69cc
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - services
+    - endpoints
+    - pods
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - extensions
+    resources:
+    - ingresses
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - networking.k8s.io
+    resources:
+    - ingresses
+    verbs:
+    - get
+    - list
+    - watch
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s-config","namespace":"monitoring"},"rules":[{"apiGroups":[""],"resources":["configmaps"],"verbs":["get"]}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s-config
+    namespace: monitoring
+    resourceVersion: "2908"
+    uid: aa3b1c52-646f-4204-9245-68522857ca9e
+  rules:
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    verbs:
+    - get
+kind: List
+metadata:
+  resourceVersion: ""

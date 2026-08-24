@@ -1,0 +1,4137 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"iperf3-server"},"name":"iperf3-server","namespace":"default"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"iperf3-server"}},"template":{"metadata":{"labels":{"app":"iperf3-server"}},"spec":{"containers":[{"args":["-s"],"image":"networkstatic/iperf3:latest","name":"iperf3","ports":[{"containerPort":5201,"protocol":"TCP"},{"containerPort":5201,"protocol":"UDP"}]}]}}}}
+    creationTimestamp: "2025-08-28T09:58:12Z"
+    generation: 2
+    labels:
+      app: iperf3-server
+    name: iperf3-server
+    namespace: default
+    resourceVersion: "15369080"
+    uid: 5367a32d-ec45-45eb-a60d-6b2885ea160a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: iperf3-server
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: iperf3-server
+      spec:
+        containers:
+        - args:
+          - -s
+          image: networkstatic/iperf3:latest
+          imagePullPolicy: Always
+          name: iperf3
+          ports:
+          - containerPort: 5201
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-08-28T09:58:12Z"
+      lastUpdateTime: "2025-08-28T10:27:51Z"
+      message: ReplicaSet "iperf3-server-747f565b8b" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:39Z"
+      lastUpdateTime: "2026-08-23T22:52:39Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "17"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 17
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: amf
+      helm.sh/chart: amf-2.2.5
+    name: open5gs-amf
+    namespace: default
+    resourceVersion: "15369199"
+    uid: 7d19a240-f79e-4c68-866b-036cb6380cb2
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: amf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: d7a949dff54ca1b0d239ce7c12034eb959a467f0409babc567c3f4aa8d717db7
+          kubectl.kubernetes.io/restartedAt: "2026-08-17T20:58:03+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: amf
+          helm.sh/chart: amf-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: amf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-amfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-amf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          - containerPort: 9090
+            name: metrics
+            protocol: TCP
+          - containerPort: 38412
+            name: ngap
+            protocol: SCTP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/amf.yaml
+            name: config
+            subPath: amf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-amf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:02Z"
+      lastUpdateTime: "2026-08-17T18:58:37Z"
+      message: ReplicaSet "open5gs-amf-86fdc78b7" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:55Z"
+      lastUpdateTime: "2026-08-23T22:52:55Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 17
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "7"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 7
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ausf
+      helm.sh/chart: ausf-2.2.5
+    name: open5gs-ausf
+    namespace: default
+    resourceVersion: "15369265"
+    uid: 8de79d68-4da8-406a-adc6-460db65a801a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: ausf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: 4050d8ee5843af09a8f72d0e9faa493795588fc8f8839f49a1a570d32a336883
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:38:22+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ausf
+          helm.sh/chart: ausf-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: ausf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-ausfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-ausf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/ausf.yaml
+            name: config
+            subPath: ausf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-ausf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-16T23:38:55Z"
+      message: ReplicaSet "open5gs-ausf-9fb8579c6" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:06Z"
+      lastUpdateTime: "2026-08-23T22:53:06Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 7
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: bsf
+      helm.sh/chart: bsf-2.2.5
+    name: open5gs-bsf
+    namespace: default
+    resourceVersion: "15369233"
+    uid: 0539b9ac-5653-4f74-9cc0-107554aa927f
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: bsf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: 534e0d0612824267d147080f66a64dba6526b878942b102fa258b526ebee94f9
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:41:08+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: bsf
+          helm.sh/chart: bsf-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: bsf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-bsfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-bsf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/bsf.yaml
+            name: config
+            subPath: bsf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-bsf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-16T23:41:41Z"
+      message: ReplicaSet "open5gs-bsf-7cf8867c96" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:04Z"
+      lastUpdateTime: "2026-08-23T22:53:04Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: mongodb
+      helm.sh/chart: mongodb-12.1.31
+    name: open5gs-mongodb
+    namespace: default
+    resourceVersion: "15368805"
+    uid: 07cbd7f8-397b-4ae9-b1cf-6b941a7ff519
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: mongodb
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: mongodb
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/component: mongodb
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: mongodb
+          helm.sh/chart: mongodb-12.1.31
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: mongodb
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: mongodb
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - env:
+          - name: BITNAMI_DEBUG
+            value: "false"
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "yes"
+          - name: MONGODB_SYSTEM_LOG_VERBOSITY
+            value: "0"
+          - name: MONGODB_DISABLE_SYSTEM_LOG
+            value: "no"
+          - name: MONGODB_DISABLE_JAVASCRIPT
+            value: "no"
+          - name: MONGODB_ENABLE_JOURNAL
+            value: "yes"
+          - name: MONGODB_PORT_NUMBER
+            value: "27017"
+          - name: MONGODB_ENABLE_IPV6
+            value: "no"
+          - name: MONGODB_ENABLE_DIRECTORY_PER_DB
+            value: "no"
+          image: docker.io/dburszty/mongodb-raspberrypi:7.0.14
+          imagePullPolicy: IfNotPresent
+          name: mongodb
+          ports:
+          - containerPort: 27017
+            name: mongodb
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /bitnami/mongodb
+            name: datadir
+          - mountPath: /bitnami/scripts
+            name: common-scripts
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: open5gs-mongodb
+        serviceAccountName: open5gs-mongodb
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 360
+            name: open5gs-mongodb-common-scripts
+          name: common-scripts
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: open5gs-mongodb
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:02Z"
+      lastUpdateTime: "2026-01-19T23:55:10Z"
+      message: ReplicaSet "open5gs-mongodb-5b4cd4946b" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:25Z"
+      lastUpdateTime: "2026-08-23T22:52:25Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "5"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 5
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nrf
+      helm.sh/chart: nrf-2.2.5
+    name: open5gs-nrf
+    namespace: default
+    resourceVersion: "15369227"
+    uid: d194e850-809f-4fa5-8096-95f1a1bf045b
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: nrf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: 7c99cea8f4ea2377406e4085c5b8d00c4332a18bc752a56b439372c468366547
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:36:42+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: nrf
+          helm.sh/chart: nrf-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: nrf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-nrfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-nrf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/nrf.yaml
+            name: config
+            subPath: nrf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-nrf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:02Z"
+      lastUpdateTime: "2026-07-16T23:37:15Z"
+      message: ReplicaSet "open5gs-nrf-9b889c6dc" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:04Z"
+      lastUpdateTime: "2026-08-23T22:53:04Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 5
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nssf
+      helm.sh/chart: nssf-2.2.5
+    name: open5gs-nssf
+    namespace: default
+    resourceVersion: "15369268"
+    uid: 3216ac4f-f468-418c-8a77-bdf0d1c01b48
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: nssf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: e1a29ec649082ba0d9bcf0bd782622d80a037417bdf781498158964c78f32216
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:40:35+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: nssf
+          helm.sh/chart: nssf-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: nssf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-nssfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-nssf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/nssf.yaml
+            name: config
+            subPath: nssf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-nssf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-16T23:41:08Z"
+      message: ReplicaSet "open5gs-nssf-586ccf6cd8" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:06Z"
+      lastUpdateTime: "2026-08-23T22:53:06Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "5"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 5
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: pcf
+      helm.sh/chart: pcf-2.2.5
+    name: open5gs-pcf
+    namespace: default
+    resourceVersion: "15369278"
+    uid: ba881ba4-4127-483e-a7fa-13b5725e6fa4
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: pcf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: 3ffee82dbd69a28b8285c3a25c0a7a768882dd65abd84065a04295cafd0d1a8b
+          kubectl.kubernetes.io/restartedAt: "2026-07-29T23:46:39+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: pcf
+          helm.sh/chart: pcf-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: pcf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-pcfd
+          env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-pcf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          - containerPort: 9090
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/pcf.yaml
+            name: config
+            subPath: pcf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-pcf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-29T21:47:13Z"
+      message: ReplicaSet "open5gs-pcf-7c48d88dfb" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:08Z"
+      lastUpdateTime: "2026-08-23T22:53:08Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 5
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "3"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 4
+    labels:
+      app.kubernetes.io/component: populate
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: open5gs
+      helm.sh/chart: open5gs-2.2.6
+    name: open5gs-populate
+    namespace: default
+    resourceVersion: "13746799"
+    uid: 2ceaaec6-d71b-48d7-9444-72e236b108ab
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 0
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: populate
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: open5gs
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/component: populate
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: open5gs
+          helm.sh/chart: open5gs-2.2.6
+      spec:
+        containers:
+        - command:
+          - /bin/bash
+          - -c
+          - tail -f /dev/null
+          env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: docker.io/gradiant/open5gs-dbctl:0.10.2
+          imagePullPolicy: IfNotPresent
+          name: populate
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - /bin/bash
+          - -c
+          - open5gs-dbctl add_ue_with_slice 999700000000001 465B5CE8B199B49FAA5F0A2EE238A6BC
+            E8ED289DEBA952E4283B54E88E6183CA internet 1 111111&&open5gs-dbctl add_ue_with_slice
+            999700000000002 465B5CE8B199B49FAA5F0A2EE238A6BC E8ED289DEBA952E4283B54E88E6183CA
+            internet 1 111111&&open5gs-dbctl add_ue_with_slice 999700000000003 465B5CE8B199B49FAA5F0A2EE238A6BC
+            E8ED289DEBA952E4283B54E88E6183CA internet 1 111111&&open5gs-dbctl add_ue_with_slice
+            999700000000004 465B5CE8B199B49FAA5F0A2EE238A6BC E8ED289DEBA952E4283B54E88E6183CA
+            internet 1 111111&&open5gs-dbctl add_ue_with_slice 999700000000005 465B5CE8B199B49FAA5F0A2EE238A6BC
+            E8ED289DEBA952E4283B54E88E6183CA internet 1 111111&&open5gs-dbctl add_ue_with_slice
+            999700000000006 465B5CE8B199B49FAA5F0A2EE238A6BC E8ED289DEBA952E4283B54E88E6183CA
+            internet 1 111111&&open5gs-dbctl add_ue_with_slice 999700000000007 465B5CE8B199B49FAA5F0A2EE238A6BC
+            E8ED289DEBA952E4283B54E88E6183CA internet 1 111111&&open5gs-dbctl add_ue_with_slice
+            999700000000008 465B5CE8B199B49FAA5F0A2EE238A6BC E8ED289DEBA952E4283B54E88E6183CA
+            internet 1 111111&&open5gs-dbctl add_ue_with_slice 999700000000009 465B5CE8B199B49FAA5F0A2EE238A6BC
+            E8ED289DEBA952E4283B54E88E6183CA internet 1 111111&&open5gs-dbctl add_ue_with_slice
+            999700000000010 465B5CE8B199B49FAA5F0A2EE238A6BC E8ED289DEBA952E4283B54E88E6183CA
+            internet 1 111111
+          env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: docker.io/gradiant/open5gs-dbctl:0.10.2
+          imagePullPolicy: IfNotPresent
+          name: init
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    conditions:
+    - lastTransitionTime: "2026-01-20T22:56:07Z"
+      lastUpdateTime: "2026-01-20T22:56:07Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-01-20T22:46:29Z"
+      lastUpdateTime: "2026-07-20T22:48:07Z"
+      message: ReplicaSet "open5gs-populate-854994996b" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 4
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "4"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 4
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: scp
+      helm.sh/chart: scp-2.2.5
+    name: open5gs-scp
+    namespace: default
+    resourceVersion: "15369261"
+    uid: a2778272-9c2a-4c56-b17b-4257f50dd25e
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: scp
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: 944afa117def359c4de472fdbcb519146cb42206838913c23a2b376d3ee33655
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:06:57+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: scp
+          helm.sh/chart: scp-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: scp
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-scpd
+          env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-scp
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/scp.yaml
+            name: config
+            subPath: scp.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-scp
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-16T23:07:30Z"
+      message: ReplicaSet "open5gs-scp-774bfb7564" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:06Z"
+      lastUpdateTime: "2026-08-23T22:53:06Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 4
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "19"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 19
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      helm.sh/chart: smf-2.2.6
+    name: open5gs-smf
+    namespace: default
+    resourceVersion: "15369193"
+    uid: 13fd5a2a-56aa-49b6-a0e0-4d7552369e73
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: smf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: b178797c1b47de504c54f180c15fbab064914cb9ea3722077308ae8cf028bb06
+          kubectl.kubernetes.io/restartedAt: "2026-08-17T20:58:04+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: smf
+          helm.sh/chart: smf-2.2.6
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: smf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-smfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-smf
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          - containerPort: 9090
+            name: metrics
+            protocol: TCP
+          - containerPort: 8805
+            name: pfcp
+            protocol: UDP
+          - containerPort: 2123
+            name: gtpc
+            protocol: UDP
+          - containerPort: 2152
+            name: gtpu
+            protocol: UDP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/smf.yaml
+            name: config
+            subPath: smf.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-smf
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-08-17T18:58:39Z"
+      message: ReplicaSet "open5gs-smf-7c5f645bcd" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:54Z"
+      lastUpdateTime: "2026-08-23T22:52:54Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 19
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "7"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 7
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udm
+      helm.sh/chart: udm-2.2.5
+    name: open5gs-udm
+    namespace: default
+    resourceVersion: "15369208"
+    uid: c23aea44-89e6-4b92-a12e-d81c24c0b0f7
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: udm
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: d5e352f236802cd0074b8bf017d44ebab49222932efd71f1aa1746d7f826813c
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:37:48+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: udm
+          helm.sh/chart: udm-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: udm
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-udmd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-udm
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/udm.yaml
+            name: config
+            subPath: udm.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-udm
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:02Z"
+      lastUpdateTime: "2026-07-16T23:38:22Z"
+      message: ReplicaSet "open5gs-udm-8445899f4b" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:57Z"
+      lastUpdateTime: "2026-08-23T22:52:57Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 7
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "7"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 7
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udr
+      helm.sh/chart: udr-2.2.5
+    name: open5gs-udr
+    namespace: default
+    resourceVersion: "15369241"
+    uid: fd8a5b1c-54ad-48d6-ac99-ea8c50964853
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: udr
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: f5a318aa20f4f4d91b57d42fe3f81b8b4819291d9d6ea670ff236007ca936b5d
+          kubectl.kubernetes.io/restartedAt: "2026-07-17T01:37:15+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: udr
+          helm.sh/chart: udr-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: udr
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - args:
+          - open5gs-udrd
+          env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 5
+          name: open5gs-udr
+          ports:
+          - containerPort: 7777
+            name: sbi
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: sbi
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/udr.yaml
+            name: config
+            subPath: udr.yaml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-udr
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-16T23:37:48Z"
+      message: ReplicaSet "open5gs-udr-77497dbb99" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:04Z"
+      lastUpdateTime: "2026-08-23T22:53:04Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 7
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "11"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 11
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      helm.sh/chart: upf-2.2.6
+    name: open5gs-upf
+    namespace: default
+    resourceVersion: "15369108"
+    uid: 255585ee-302b-44fb-aa19-e1b5c24d84c1
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: upf
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: a9d2299544d5751bf82aab17c7421ea3bb6f8d70178d908d623d961e06e2d883
+          kubectl.kubernetes.io/restartedAt: "2026-07-29T23:46:39+02:00"
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: upf
+          helm.sh/chart: upf-2.2.6
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: upf
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - command:
+          - open5gs-upfd
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          name: open5gs-upf
+          ports:
+          - containerPort: 8805
+            name: pfcp
+            protocol: UDP
+          - containerPort: 2152
+            name: gtpu
+            protocol: UDP
+          - containerPort: 9090
+            name: metrics
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 128Mi
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+            privileged: true
+            runAsNonRoot: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/upf.yaml
+            name: config
+            subPath: upf.yaml
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - /bin/bash
+          - -c
+          - /k8s-entrypoint.sh
+          image: docker.io/gradiant/open5gs:2.7.2
+          imagePullPolicy: IfNotPresent
+          name: tun-create
+          resources:
+            requests:
+              cpu: 25m
+              memory: 128Mi
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+            privileged: true
+            runAsGroup: 0
+            runAsNonRoot: false
+            runAsUser: 0
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /k8s-entrypoint.sh
+            name: entrypoint
+            subPath: k8s-entrypoint.sh
+        nodeSelector:
+          kubernetes.io/hostname: rpislave2
+          test-role: upf
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-upf
+          name: config
+        - configMap:
+            defaultMode: 511
+            name: open5gs-upf-entrypoint
+          name: entrypoint
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:03Z"
+      lastUpdateTime: "2026-07-29T21:46:43Z"
+      message: ReplicaSet "open5gs-upf-5b9db6d44" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:41Z"
+      lastUpdateTime: "2026-08-23T22:52:41Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 11
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:02Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: webui
+      helm.sh/chart: webui-2.2.5
+    name: open5gs-webui
+    namespace: default
+    resourceVersion: "15369285"
+    uid: 94344398-47a5-403e-9c54-38c4a22265d1
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: open5gs
+        app.kubernetes.io/name: webui
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          config-hash: f8e99edae0e35faa08ff38885f271058fbb1eef36560e230d7a5fe75e8fd70ba
+        labels:
+          app.kubernetes.io/instance: open5gs
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: webui
+          helm.sh/chart: webui-2.2.5
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: open5gs
+                    app.kubernetes.io/name: webui
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        containers:
+        - env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: docker.io/gradiant/open5gs-webui:2.7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: http
+            timeoutSeconds: 5
+          name: open5gs-webui
+          ports:
+          - containerPort: 9999
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: http
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /opt/open5gs/etc/open5gs/
+            name: populate
+        dnsPolicy: ClusterFirst
+        initContainers:
+        - command:
+          - /bin/bash
+          - /add_admin.sh
+          env:
+          - name: DB_URI
+            value: mongodb://open5gs-mongodb/open5gs
+          image: dburszty/mongodb-raspberrypi:7.0.14
+          imagePullPolicy: IfNotPresent
+          name: init
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /add_admin.sh
+            name: populate
+            subPath: add_admin.sh
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 1001
+        serviceAccount: default
+        serviceAccountName: default
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: open5gs-webui
+          name: populate
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-01-19T23:55:02Z"
+      lastUpdateTime: "2026-01-19T23:55:51Z"
+      message: ReplicaSet "open5gs-webui-76c5475c97" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:16Z"
+      lastUpdateTime: "2026-08-23T22:53:16Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "14"
+      meta.helm.sh/release-name: ueransim-gnb
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-07-16T22:08:51Z"
+    generation: 81
+    labels:
+      app.kubernetes.io/component: gnb
+      app.kubernetes.io/instance: ueransim-gnb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-gnb
+      helm.sh/chart: ueransim-gnb-0.2.6
+    name: ueransim-gnb
+    namespace: default
+    resourceVersion: "15369028"
+    uid: f0a270ef-fc86-4c2c-96a6-4c9432b82540
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: gnb
+        app.kubernetes.io/instance: ueransim-gnb
+        app.kubernetes.io/name: ueransim-gnb
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-07-30T23:34:34+02:00"
+        labels:
+          app.kubernetes.io/component: gnb
+          app.kubernetes.io/instance: ueransim-gnb
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ueransim-gnb
+          helm.sh/chart: ueransim-gnb-0.2.6
+      spec:
+        containers:
+        - args:
+          - gnb
+          env:
+          - name: AMF_HOSTNAME
+            value: open5gs-amf-ngap
+          - name: N2_IFACE
+            value: eth0
+          - name: N3_IFACE
+            value: eth0
+          - name: RADIO_IFACE
+            value: eth0
+          image: docker.io/gradiant/ueransim:3.2.6
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -lc
+                - pkill -TERM -x nr-gnb || true; sleep 5
+          name: gnodeb
+          ports:
+          - containerPort: 4997
+            name: gnb-ue
+            protocol: UDP
+          - containerPort: 2152
+            name: gnb-upf
+            protocol: UDP
+          resources:
+            requests:
+              cpu: "1"
+              memory: 768Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/ueransim/gnb.yaml
+            name: config
+            subPath: gnb.yaml
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/hostname: rpislave3
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 20
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: ueransim-gnb
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-07-16T22:08:51Z"
+      lastUpdateTime: "2026-07-30T22:27:54Z"
+      message: ReplicaSet "ueransim-gnb-5f74f979bb" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:36Z"
+      lastUpdateTime: "2026-08-23T22:52:36Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 81
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "10"
+      meta.helm.sh/release-name: ueransim-gnb-ues
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-07-16T22:09:23Z"
+    generation: 99
+    labels:
+      app.kubernetes.io/component: ues
+      app.kubernetes.io/instance: ueransim-gnb-ues
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-ues
+      helm.sh/chart: ueransim-ues-0.1.2
+    name: ueransim-gnb-ues
+    namespace: default
+    resourceVersion: "15369136"
+    uid: dc6011fa-5059-431f-818b-c7da4d29acfc
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: ues
+        app.kubernetes.io/instance: ueransim-gnb-ues
+        app.kubernetes.io/name: ueransim-ues
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/component: ues
+          app.kubernetes.io/instance: ueransim-gnb-ues
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ueransim-ues
+          helm.sh/chart: ueransim-ues-0.1.2
+      spec:
+        containers:
+        - args:
+          - ue
+          - -n
+          - "50"
+          env:
+          - name: GNB_HOSTNAME
+            value: ueransim-gnb
+          image: docker.io/gradiant/ueransim:3.2.6
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -lc
+                - pkill -TERM -x nr-ue || true; sleep 5
+          name: ues
+          resources:
+            requests:
+              cpu: 1500m
+              memory: 1Gi
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/ueransim/ue.yaml
+            name: config
+            subPath: ue.yaml
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/hostname: rpislave4
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: ueransim-gnb-ues
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-07-16T22:09:23Z"
+      lastUpdateTime: "2026-07-30T23:34:37Z"
+      message: ReplicaSet "ueransim-gnb-ues-69bc49bf9c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:45Z"
+      lastUpdateTime: "2026-08-23T22:52:45Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 99
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "12"
+      meta.helm.sh/release-name: ueransim-ues-additional
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-07-26T17:40:43Z"
+    generation: 19
+    labels:
+      app.kubernetes.io/component: ues
+      app.kubernetes.io/instance: ueransim-ues-additional
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-ues
+      helm.sh/chart: ueransim-ues-0.1.2
+    name: ueransim-ues-additional
+    namespace: default
+    resourceVersion: "14363950"
+    uid: d72d845e-4990-4d1b-a979-99d0e1de5505
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 0
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: ues
+        app.kubernetes.io/instance: ueransim-ues-additional
+        app.kubernetes.io/name: ueransim-ues
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-07-28T01:35:28+02:00"
+        labels:
+          app.kubernetes.io/component: ues
+          app.kubernetes.io/instance: ueransim-ues-additional
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: ueransim-ues
+          helm.sh/chart: ueransim-ues-0.1.2
+          traffic-pool: ues-additional-single
+      spec:
+        containers:
+        - args:
+          - ue
+          - -n
+          - "45"
+          env:
+          - name: GNB_HOSTNAME
+            value: ueransim-gnb
+          image: docker.io/gradiant/ueransim:3.2.6
+          imagePullPolicy: Always
+          name: ues
+          resources:
+            requests:
+              cpu: 1500m
+              memory: 1Gi
+          securityContext:
+            capabilities:
+              add:
+              - NET_ADMIN
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/ueransim/ue.yaml
+            name: config
+            subPath: ue.yaml
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/hostname: rpislave4
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: ueransim-ues-additional
+          name: config
+  status:
+    conditions:
+    - lastTransitionTime: "2026-07-29T21:25:07Z"
+      lastUpdateTime: "2026-07-29T21:25:07Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-07-26T17:40:43Z"
+      lastUpdateTime: "2026-07-29T21:54:50Z"
+      message: ReplicaSet "ueransim-ues-additional-7b87559cbf" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 19
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "3"
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/6xV33PbNgz+V3Z4lmIrbhtXd3vo4mzttfV8ddKXXq5HU5DFmSI4EnKi5fy/7yDZjt3mR7vbk0QSAD98wAfegfLmM4ZoyEEOyvs4WGeQwMq4AnKYoLfU1ugYEqiRVaFYQX4HyjlixYZclCUt/kLNEfkkGDrRitniiaGBkSCQPHpONw5DulyvIIfVKB6crLPkl/fGFb++KQpyz4ZwqkbIQVPAwsUfMo9eafFZNQtMYxsZa9gkYNUCbZfUahxT5f3OpI8rv8EhY5Ro22vPKeBkOn/i2krFCnJYaDwdj05fj8dZdvZipIaj8Su1eJkNy9Py1RmWZy9OXwz1yzMB8l1KT4COHrVADrg2Usu3JjKF9oOpDUM+TCCiRc0UxKhWrKsPT6W5kZAcFOOy7cKStcYtr3yhGPsQt1dOrZWxamER8myTALdekH06spV9rL3d+R200JNEbw6S0uRYGYchQv7lDlRYyg+kmlwJCQyQ9WDL0kAqURqLcJ2AqdVSEAXldIVhUJsQxCzdGu++eXaSjU6k6zuPWWPtjKzRLeTwrpwSzwLGXgLWrNFhjLNAiy6hUhnbBLysAsaKbAH5KIGK2f+BLOdesdR9UKGyXEECngJDPh6OpSi6wq7Gby8vZ0KVcYaNshO0qp2jJldEyF8NE/AYDBX7rUycG60xxoObswTY1EgN3xs+1EcCoadyz+ysQ/VytLfeWgZi0mQhh6uJIHzGJWXtj90uzx90e50dONbIwej4gON1AgFVYf4T5eLZ3jOejbMfZfx7wk9/gu+AkZqgsWttKwqMfevXFKSlsrPhRwOd4d8Nxv5U+0aOhsO6G7Rb095SpIC6CYbbc3KMt12aylq6mQWzNhaXeBG1st08hrxUNmICWnm1MNaw6aGoohDZTC8uv/72bjr5Or/49Pnd+YUopQjk5UxZC9ebnvQ/nW0/EfHvxuJ20OQcGtwksCbb1PiRGrfto1p+Z1veD+QIB93nSrNMe0+4v2EX8/EYA91EpvogVLdOn4l4Lc1TuLhX8gRL1VgRsaMC5wfz8HikU4QcrHHNrdTIB0Md8VbFOO0B9Gyk2jaRMaQ6GDZaWZAyhbXR+EZrSWb6rfCYLIbdo/nlDlYowM63/t1DF7sUEiAvloIPLm6NNIlwhGWJmiGHKc11hUVjJfM+jGSVBrJ4cpyPKC+QTb1VDh+OfC3QPFlatnMvPJ6Tk/FvdvXtRvX8p5+QWt3OV3jTK2V7wfsO7DHEiiJ3xU3gpkJ35aJiE0vTvy0woSnxPl/h4X/Hs1t9w90/5B4DtcPzxrU3qu047FtxP1lLs/yovMAxjPVRxXePVLIbVvsdya43mlKBb0nqs7e635Lrvpnrm0e0tp2+92iO/dK9vMhLZyq7l/lTettcbzabzb8BAAD//9DJxjA/CgAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: coredns
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:32Z"
+    generation: 3
+    labels:
+      k8s-app: kube-dns
+      kubernetes.io/name: CoreDNS
+      objectset.rio.cattle.io/hash: bce283298811743a0386ab510f2f67ef74240c57
+    name: coredns
+    namespace: kube-system
+    resourceVersion: "15368393"
+    uid: 78cb94a7-850a-41bf-9b73-b147e60fa017
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 0
+    selector:
+      matchLabels:
+        k8s-app: kube-dns
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          k8s-app: kube-dns
+      spec:
+        containers:
+        - args:
+          - -conf
+          - /etc/coredns/Corefile
+          image: rancher/mirrored-coredns-coredns:1.13.1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: coredns
+          ports:
+          - containerPort: 53
+            name: dns
+            protocol: UDP
+          - containerPort: 53
+            name: dns-tcp
+            protocol: TCP
+          - containerPort: 9153
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ready
+              port: 8181
+              scheme: HTTP
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 170Mi
+            requests:
+              cpu: 100m
+              memory: 70Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+              - NET_BIND_SERVICE
+              drop:
+              - all
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/coredns
+            name: config-volume
+            readOnly: true
+          - mountPath: /etc/coredns/custom
+            name: custom-config-volume
+            readOnly: true
+        dnsPolicy: Default
+        nodeSelector:
+          kubernetes.io/os: linux
+        priorityClassName: system-cluster-critical
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: coredns
+        serviceAccountName: coredns
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              k8s-app: kube-dns
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+        - labelSelector:
+            matchLabels:
+              k8s-app: kube-dns
+          maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+        volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+            - key: Corefile
+              path: Corefile
+            - key: NodeHosts
+              path: NodeHosts
+            name: coredns
+          name: config-volume
+        - configMap:
+            defaultMode: 420
+            name: coredns-custom
+            optional: true
+          name: custom-config-volume
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:36Z"
+      lastUpdateTime: "2025-03-19T21:28:36Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-03-19T21:28:36Z"
+      lastUpdateTime: "2026-01-12T23:56:22Z"
+      message: ReplicaSet "coredns-7f496c8d7d" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "3"
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/5RUUU/zRhD8K9U+207yBaLIUh8ioGpVCBGIvqCo2pzXyZHz3elu42JF/u/Vxg4ElUC/J/t8u+OZ2bnbA3r9F4WonYUc0Ps4qEeQwFbbAnK4Jm9cU5FlSKAixgIZId8DWusYWTsbZelWL6Q4EmdBu0whs6FMu4EWEEjO7rt/LIV0XW8hh+04nuzUo+SXP7Utfp0VhbPfQlisCHIwTqFJI7uAa/pfTdGjks7tbkVpbCJTBW0CBldkvpS2wbiBHEbTcTm+VJPLslyp8XByMRmOy4txObqcDoupmkzxR4Gr4kJAP5D0yJvUB1drMZ8CdPtn+ERPStgE6up/1yKyudWVZsiHCUQypNgFKaqQ1eb2TQF6f/6vrYBzQKZ1c/iBM0bb9ZMvkKkDe32yWKM2uDIE+ahNgBsvHB8+1Mp3qrw59p2kxfwEl16ocpZRWwoR8mdZVhVKJJ/P2xcZg+Q0TZWzpV5DAgNiNehW/SN7ic7CMgGy9QG5H8ri/vrv+ezu5nExu7qBBGo0O/otuErIlJpM8UDl2/sCWYZ/1Ji9T65t22UCupL85RDQqg2Fweec83qYDbPxD+gbFjtjFs5o1UAOf5Rzx4tAsTt832WndmZX0Z3bWe4cq+S153lqwztW9yHtOqFdCnHrCno8iZLEMFhiiodjE4WCtrtXmbYP2gXNzZXBGOcdZpfYVGBSFTRrhUZGQ6HWimZKCav5V1rSvjbFrhgSYGcoHC+b5z1sSQy66uEPF0S8t6aRA++lUrjDzauOHKFN9kBlSYohh7l7VBsqdkYuhw7mQDU4Q9lHrRLA4EzqDVr6HHl5tP2YUfHzDr0Y99959aFsz/vftu2/AQAA///dDGDzkQUAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: local-storage
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 3
+    labels:
+      objectset.rio.cattle.io/hash: 183f35c65ffbc3064603f43f1580d8c68a2dabd4
+    name: local-path-provisioner
+    namespace: kube-system
+    resourceVersion: "15368339"
+    uid: 358ee997-b9dc-4f32-8251-55b6528d6e51
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 0
+    selector:
+      matchLabels:
+        app: local-path-provisioner
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: local-path-provisioner
+      spec:
+        containers:
+        - command:
+          - local-path-provisioner
+          - start
+          - --config
+          - /etc/config/config.json
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: rancher/local-path-provisioner:v0.0.32
+          imagePullPolicy: IfNotPresent
+          name: local-path-provisioner
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/config/
+            name: config-volume
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        priorityClassName: system-node-critical
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: local-path-provisioner-service-account
+        serviceAccountName: local-path-provisioner-service-account
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: local-path-config
+          name: config-volume
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:36Z"
+      lastUpdateTime: "2025-03-19T21:28:36Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-03-19T21:28:36Z"
+      lastUpdateTime: "2026-01-12T23:56:09Z"
+      message: ReplicaSet "local-path-provisioner-578895bd58" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "3"
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/5xVYW8aORD9K6f5vJvsEkjSlfiACFeqS1NU6J1OVYSMdwAfXtvnmaXhIv77aXaTlFxD0+sXtNjj5zfvjWfuQQXzO0Yy3kEBKgQ63eaQwMa4Egq4wmD9rkLHkECFrErFCop7UM55Vmy8I/nrF3+hZkI+icafaMVs8cT4UyMgkBzd918cxnS13UABmzM62NnmyS+/GVf2B2Xp3asQTlUIhVCMRlNKGLcY0/KQ/usAFJQWlE29wJR2xFjBPgGrFmibNDeXlKoQvrnoO+hrRWsoAPMMO90e5mfYPVcXnZ5+U5Zl2V2+wUXn7M0y715cXHSXpdz3Yi7Qrh+hSAG1EIy4NeLl2BD7uLs2lWEosgQILWr2UYIqxXp9/XpSewHmqBhXuwbcW2vc6lMoFWMLdPfJqa0yVi0sQpHvE+BdEH4fn8XKOlbBPp47KKQfEPeoJAeJa+9YGYeRoPh8Dyqu5APSVGPktDSxf8pVgATSlFDXEdPgI/fzrNPLmlUR1CKnIeISY8QyVWUZkSiVjKj/zjFGp+y7STK6e/oce+KG2yFETZg6X2JKrLim5qYmoKWfRiRva3k7/bxHzQ5bSrUJa4wp1YaR+rPr6Xw0vBqP5Hc6mP/xbjaeD0bTead3Pn87fD+fjgdnl93ka9zHH4r6D1reuXyM6/TOj6EdjTpAG44Hw/Ggk80nH67/zM+y3ktg3wTBbQKmUitxNyqn1xhPKxOjFwee211ss5PLE3HLmi06JJpEv2gKaqmMrSPO1hFp7W0JxVkCa+bwFln2g2J5hKdy8B9IoHGkaCJEf9JrbOprPJtNplJWxhk2yl6hVbspau9KguI8SyBgNL58WsrladVaI9HB5XkCbCr0NX8N/M67FjZt2T5V8aQh2FTn07lHtiF69tpbKGA2nMD+NoGIqjQ/pYic3P28JN8q0vkfgshDqKNGalvX3zUSN9861FBAnmVVM3YqH3dQwEX23rRNSV6w4d3QO8a7Jh9lrf8yiWZrLK5wRFrZZjpBsVSWsJXog7O7j97zr8biQ+8sONayW7sB3Xgnu8/WPhFGMSLL9glsva0rfO9r9+BXJZ+TBynb/vJgFldBug7sb8Uf6QbTgw4snSI6ZKRmABEUYI2r70TnEI1vkrOK6KZFa8m2TUVHw0YrKyZh3BqNA62Fx82R8mJvMT6O6s/3sEERc/gA04xXEmVkiAWJFI4wujNixj65B1wuUUtx3PipXmNZW+l3LUxDKXqLJ89zkkqO3qbBKocvI98+CtrSwirw7sqIPvuXZNzv9/8GAAD//0w/ypmuCAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: metrics-server-deployment
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 3
+    labels:
+      k8s-app: metrics-server
+      objectset.rio.cattle.io/hash: e10e245e13e46a725c9dddd4f9eb239f147774fd
+    name: metrics-server
+    namespace: kube-system
+    resourceVersion: "15368455"
+    uid: 4ba134de-dcd2-448b-a565-9d497338c072
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 0
+    selector:
+      matchLabels:
+        k8s-app: metrics-server
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          k8s-app: metrics-server
+        name: metrics-server
+      spec:
+        containers:
+        - args:
+          - --cert-dir=/tmp
+          - --secure-port=10250
+          - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+          - --kubelet-use-node-status-port
+          - --metric-resolution=15s
+          - --tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+          image: rancher/mirrored-metrics-server:v0.8.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /livez
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: metrics-server
+          ports:
+          - containerPort: 10250
+            name: https
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: https
+              scheme: HTTPS
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 70Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp
+            name: tmp-dir
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        priorityClassName: system-node-critical
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: metrics-server
+        serviceAccountName: metrics-server
+        terminationGracePeriodSeconds: 30
+        tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: tmp-dir
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:36Z"
+      lastUpdateTime: "2025-03-19T21:28:36Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2025-03-19T21:28:36Z"
+      lastUpdateTime: "2026-01-12T23:56:26Z"
+      message: ReplicaSet "metrics-server-7b9c9c4b9c" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      meta.helm.sh/release-name: traefik
+      meta.helm.sh/release-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:39:43Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/instance: traefik-kube-system
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: traefik
+      helm.sh/chart: traefik-37.1.1_up37.1.0
+    name: traefik
+    namespace: kube-system
+    resourceVersion: "15368534"
+    uid: 6617da70-0b4e-4e5d-a80b-03b5451f4046
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/instance: traefik-kube-system
+        app.kubernetes.io/name: traefik
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          prometheus.io/path: /metrics
+          prometheus.io/port: "9100"
+          prometheus.io/scrape: "true"
+        labels:
+          app.kubernetes.io/instance: traefik-kube-system
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: traefik
+          helm.sh/chart: traefik-37.1.1_up37.1.0
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --entryPoints.metrics.address=:9100/tcp
+          - --entryPoints.traefik.address=:8080/tcp
+          - --entryPoints.web.address=:8000/tcp
+          - --entryPoints.websecure.address=:8443/tcp
+          - --api.dashboard=true
+          - --ping=true
+          - --metrics.prometheus=true
+          - --metrics.prometheus.entrypoint=metrics
+          - --providers.kubernetescrd
+          - --providers.kubernetescrd.allowEmptyServices=true
+          - --providers.kubernetesingress
+          - --providers.kubernetesingress.allowEmptyServices=true
+          - --providers.kubernetesingress.ingressendpoint.publishedservice=kube-system/traefik
+          - --entryPoints.websecure.http.tls=true
+          - --log.level=INFO
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: rancher/mirrored-library-traefik:3.5.1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /ping
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: traefik
+          ports:
+          - containerPort: 9100
+            name: metrics
+            protocol: TCP
+          - containerPort: 8080
+            name: traefik
+            protocol: TCP
+          - containerPort: 8000
+            name: web
+            protocol: TCP
+          - containerPort: 8443
+            name: websecure
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /ping
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data
+            name: data
+          - mountPath: /tmp
+            name: tmp
+        dnsPolicy: ClusterFirst
+        priorityClassName: system-cluster-critical
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65532
+        serviceAccount: traefik
+        serviceAccountName: traefik
+        terminationGracePeriodSeconds: 60
+        tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/control-plane
+          operator: Exists
+        volumes:
+        - emptyDir: {}
+          name: data
+        - emptyDir: {}
+          name: tmp
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:39:43Z"
+      lastUpdateTime: "2026-01-12T23:58:55Z"
+      message: ReplicaSet "traefik-6d98778dfc" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:19Z"
+      lastUpdateTime: "2026-08-23T22:52:19Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "24"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"vpa-admission-controller","namespace":"kube-system"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"vpa-admission"}},"template":{"metadata":{"labels":{"app":"vpa-admission"}},"spec":{"containers":[{"args":["--v=2","--tls-cert-file=/etc/tls-certs/tls.crt","--tls-private-key=/etc/tls-certs/tls.key"],"image":"registry.k8s.io/autoscaling/vpa-admission-controller:1.2.0","name":"admission-controller"}],"restartPolicy":"Always","serviceAccountName":"vpa-admission-controller"}}}}
+    creationTimestamp: "2025-07-30T20:30:55Z"
+    generation: 24
+    name: vpa-admission-controller
+    namespace: kube-system
+    resourceVersion: "15369004"
+    uid: be22499b-53a2-4033-a018-96f9dc91bcbb
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: vpa-admission
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-08-13T22:52:06+02:00"
+        labels:
+          app: vpa-admission
+      spec:
+        containers:
+        - args:
+          - --v=6
+          - --address=:8944
+          - --port=8000
+          - --webhook-service=vpa-webhook
+          - --tls-cert-file=/etc/tls-certs/tls.crt
+          - --tls-private-key=/etc/tls-certs/tls.key
+          - --client-ca-file=
+          - --register-webhook=false
+          env:
+          - name: POD_NAMESPACE
+            value: kube-system
+          image: registry.k8s.io/autoscaling/vpa-admission-controller:1.5.1
+          imagePullPolicy: IfNotPresent
+          name: admission-controller
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/tls-certs
+            name: tls-certs
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: vpa-admission-controller
+        serviceAccountName: vpa-admission-controller
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: tls-certs
+          secret:
+            defaultMode: 420
+            secretName: vpa-tls
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-07-30T20:30:55Z"
+      lastUpdateTime: "2026-01-18T23:54:44Z"
+      message: ReplicaSet "vpa-admission-controller-7d977b5d75" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:35Z"
+      lastUpdateTime: "2026-08-23T22:52:35Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 24
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"vpa-recommender","namespace":"kube-system"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"vpa-recommender"}},"template":{"metadata":{"labels":{"app":"vpa-recommender"}},"spec":{"containers":[{"args":["--v=2"],"image":"registry.k8s.io/autoscaling/vpa-recommender:1.2.0","name":"recommender"}],"serviceAccountName":"vpa-recommender"}}}}
+    creationTimestamp: "2025-07-30T20:30:55Z"
+    generation: 116
+    name: vpa-recommender
+    namespace: kube-system
+    resourceVersion: "15368927"
+    uid: 35b0ad0d-eb85-4c39-9dc8-143bf9bcecbf
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: vpa-recommender
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: vpa-recommender
+      spec:
+        containers:
+        - args:
+          - --v=2
+          image: registry.k8s.io/autoscaling/vpa-recommender:1.5.1
+          imagePullPolicy: IfNotPresent
+          name: recommender
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: vpa-recommender
+        serviceAccountName: vpa-recommender
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-07-30T20:30:55Z"
+      lastUpdateTime: "2026-01-18T23:54:44Z"
+      message: ReplicaSet "vpa-recommender-5f4f956944" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:31Z"
+      lastUpdateTime: "2026-08-23T22:52:31Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 116
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "6"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"vpa-updater","namespace":"kube-system"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"vpa-updater"}},"template":{"metadata":{"labels":{"app":"vpa-updater"}},"spec":{"containers":[{"args":["--v=2"],"image":"registry.k8s.io/autoscaling/vpa-updater:1.2.0","name":"updater"}],"serviceAccountName":"vpa-updater"}}}}
+    creationTimestamp: "2025-07-30T20:30:55Z"
+    generation: 6
+    name: vpa-updater
+    namespace: kube-system
+    resourceVersion: "15368898"
+    uid: b44b650a-f910-4fce-a31e-cebf1155b377
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: vpa-updater
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2025-08-13T23:38:04+02:00"
+        labels:
+          app: vpa-updater
+      spec:
+        containers:
+        - args:
+          - --min-replicas=1
+          - --v=2
+          image: registry.k8s.io/autoscaling/vpa-updater:1.5.1
+          imagePullPolicy: IfNotPresent
+          name: updater
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: vpa-updater
+        serviceAccountName: vpa-updater
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-07-30T20:30:55Z"
+      lastUpdateTime: "2026-01-18T23:54:40Z"
+      message: ReplicaSet "vpa-updater-5f6f58cd5" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:29Z"
+      lastUpdateTime: "2026-08-23T22:52:29Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 6
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"metallb","component":"controller"},"name":"controller","namespace":"metallb-system"},"spec":{"revisionHistoryLimit":3,"selector":{"matchLabels":{"app":"metallb","component":"controller"}},"template":{"metadata":{"annotations":{"prometheus.io/port":"7472","prometheus.io/scrape":"true"},"labels":{"app":"metallb","component":"controller"}},"spec":{"containers":[{"args":["--port=7472","--log-level=info","--tls-min-version=VersionTLS12"],"env":[{"name":"METALLB_ML_SECRET_NAME","value":"memberlist"},{"name":"METALLB_DEPLOYMENT","value":"controller"}],"image":"quay.io/metallb/controller:v0.14.9","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/metrics","port":"monitoring"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"name":"controller","ports":[{"containerPort":7472,"name":"monitoring"},{"containerPort":9443,"name":"webhook-server","protocol":"TCP"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/metrics","port":"monitoring"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"readOnlyRootFilesystem":true},"volumeMounts":[{"mountPath":"/tmp/k8s-webhook-server/serving-certs","name":"cert","readOnly":true}]}],"nodeSelector":{"kubernetes.io/os":"linux"},"securityContext":{"fsGroup":65534,"runAsNonRoot":true,"runAsUser":65534},"serviceAccountName":"controller","terminationGracePeriodSeconds":0,"volumes":[{"name":"cert","secret":{"defaultMode":420,"secretName":"metallb-webhook-cert"}}]}}}}
+    creationTimestamp: "2025-03-22T15:56:58Z"
+    generation: 1
+    labels:
+      app: metallb
+      component: controller
+    name: controller
+    namespace: metallb-system
+    resourceVersion: "15369055"
+    uid: cd4db4c8-3468-4393-b056-3a3a827316ac
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 3
+    selector:
+      matchLabels:
+        app: metallb
+        component: controller
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          prometheus.io/port: "7472"
+          prometheus.io/scrape: "true"
+        labels:
+          app: metallb
+          component: controller
+      spec:
+        containers:
+        - args:
+          - --port=7472
+          - --log-level=info
+          - --tls-min-version=VersionTLS12
+          env:
+          - name: METALLB_ML_SECRET_NAME
+            value: memberlist
+          - name: METALLB_DEPLOYMENT
+            value: controller
+          image: quay.io/metallb/controller:v0.14.9
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics
+              port: monitoring
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: controller
+          ports:
+          - containerPort: 7472
+            name: monitoring
+            protocol: TCP
+          - containerPort: 9443
+            name: webhook-server
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics
+              port: monitoring
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - all
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp/k8s-webhook-server/serving-certs
+            name: cert
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+        serviceAccount: controller
+        serviceAccountName: controller
+        terminationGracePeriodSeconds: 0
+        volumes:
+        - name: cert
+          secret:
+            defaultMode: 420
+            secretName: metallb-webhook-cert
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-22T15:56:58Z"
+      lastUpdateTime: "2025-03-22T15:58:12Z"
+      message: ReplicaSet "controller-bb5f47665" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:38Z"
+      lastUpdateTime: "2026-08-23T22:52:38Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"exporter","app.kubernetes.io/name":"blackbox-exporter","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.25.0"},"name":"blackbox-exporter","namespace":"monitoring"},"spec":{"replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"exporter","app.kubernetes.io/name":"blackbox-exporter","app.kubernetes.io/part-of":"kube-prometheus"}},"template":{"metadata":{"annotations":{"kubectl.kubernetes.io/default-container":"blackbox-exporter"},"labels":{"app.kubernetes.io/component":"exporter","app.kubernetes.io/name":"blackbox-exporter","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.25.0"}},"spec":{"automountServiceAccountToken":true,"containers":[{"args":["--config.file=/etc/blackbox_exporter/config.yml","--web.listen-address=:19115"],"image":"quay.io/prometheus/blackbox-exporter:v0.25.0","name":"blackbox-exporter","ports":[{"containerPort":19115,"name":"http"}],"resources":{"limits":{"cpu":"20m","memory":"40Mi"},"requests":{"cpu":"10m","memory":"20Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534},"volumeMounts":[{"mountPath":"/etc/blackbox_exporter/","name":"config","readOnly":true}]},{"args":["--webhook-url=http://localhost:19115/-/reload","--volume-dir=/etc/blackbox_exporter/"],"image":"ghcr.io/jimmidyson/configmap-reload:v0.14.0","name":"module-configmap-reloader","resources":{"limits":{"cpu":"20m","memory":"40Mi"},"requests":{"cpu":"10m","memory":"20Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","volumeMounts":[{"mountPath":"/etc/blackbox_exporter/","name":"config","readOnly":true}]},{"args":["--secure-listen-address=:9115","--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305","--upstream=http://127.0.0.1:19115/"],"image":"quay.io/brancz/kube-rbac-proxy:v0.19.0","name":"kube-rbac-proxy","ports":[{"containerPort":9115,"name":"https"}],"resources":{"limits":{"cpu":"20m","memory":"40Mi"},"requests":{"cpu":"10m","memory":"20Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532,"seccompProfile":{"type":"RuntimeDefault"}}}],"nodeSelector":{"kubernetes.io/os":"linux"},"serviceAccountName":"blackbox-exporter","volumes":[{"configMap":{"name":"blackbox-exporter-configuration"},"name":"config"}]}}}}
+    creationTimestamp: "2025-03-19T22:24:18Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: blackbox-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.25.0
+    name: blackbox-exporter
+    namespace: monitoring
+    resourceVersion: "15369132"
+    uid: 447e2cc8-74a0-43c8-a427-78d021fe2b7e
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: blackbox-exporter
+        app.kubernetes.io/part-of: kube-prometheus
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/default-container: blackbox-exporter
+        labels:
+          app.kubernetes.io/component: exporter
+          app.kubernetes.io/name: blackbox-exporter
+          app.kubernetes.io/part-of: kube-prometheus
+          app.kubernetes.io/version: 0.25.0
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --config.file=/etc/blackbox_exporter/config.yml
+          - --web.listen-address=:19115
+          image: quay.io/prometheus/blackbox-exporter:v0.25.0
+          imagePullPolicy: IfNotPresent
+          name: blackbox-exporter
+          ports:
+          - containerPort: 19115
+            name: http
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 20m
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/blackbox_exporter/
+            name: config
+            readOnly: true
+        - args:
+          - --webhook-url=http://localhost:19115/-/reload
+          - --volume-dir=/etc/blackbox_exporter/
+          image: ghcr.io/jimmidyson/configmap-reload:v0.14.0
+          imagePullPolicy: IfNotPresent
+          name: module-configmap-reloader
+          resources:
+            limits:
+              cpu: 20m
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+          - mountPath: /etc/blackbox_exporter/
+            name: config
+            readOnly: true
+        - args:
+          - --secure-listen-address=:9115
+          - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+          - --upstream=http://127.0.0.1:19115/
+          image: quay.io/brancz/kube-rbac-proxy:v0.19.0
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy
+          ports:
+          - containerPort: 9115
+            name: https
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 20m
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: blackbox-exporter
+        serviceAccountName: blackbox-exporter
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: blackbox-exporter-configuration
+          name: config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T22:24:18Z"
+      lastUpdateTime: "2025-03-19T22:26:39Z"
+      message: ReplicaSet "blackbox-exporter-69bdcc6fc7" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:44Z"
+      lastUpdateTime: "2026-08-23T22:52:44Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "2"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"grafana","app.kubernetes.io/name":"grafana","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"11.5.2"},"name":"grafana","namespace":"monitoring"},"spec":{"replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"grafana","app.kubernetes.io/name":"grafana","app.kubernetes.io/part-of":"kube-prometheus"}},"template":{"metadata":{"annotations":{"checksum/grafana-config":"bf7272039de303c19924363e4271ad80","checksum/grafana-dashboardproviders":"40d6c3ef390b61afadf89d3ec567fbb1","checksum/grafana-datasources":"f4206612422f2ed1b334342a031c6f0f"},"labels":{"app.kubernetes.io/component":"grafana","app.kubernetes.io/name":"grafana","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"11.5.2"}},"spec":{"automountServiceAccountToken":false,"containers":[{"env":[],"image":"grafana/grafana:11.5.2","livenessProbe":{"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":3000},"timeoutSeconds":1},"name":"grafana","ports":[{"containerPort":3000,"name":"http"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/api/health","port":"http"},"initialDelaySeconds":10,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":2},"resources":{"limits":{"cpu":"200m","memory":"200Mi"},"requests":{"cpu":"100m","memory":"100Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"seccompProfile":{"type":"RuntimeDefault"}},"volumeMounts":[{"mountPath":"/var/lib/grafana","name":"grafana-storage","readOnly":false},{"mountPath":"/etc/grafana/provisioning/datasources","name":"grafana-datasources","readOnly":false},{"mountPath":"/etc/grafana/provisioning/dashboards","name":"grafana-dashboards","readOnly":false},{"mountPath":"/tmp","name":"tmp-plugins","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/alertmanager-overview","name":"grafana-dashboard-alertmanager-overview","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/apiserver","name":"grafana-dashboard-apiserver","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/cluster-total","name":"grafana-dashboard-cluster-total","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/controller-manager","name":"grafana-dashboard-controller-manager","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/grafana-overview","name":"grafana-dashboard-grafana-overview","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-cluster","name":"grafana-dashboard-k8s-resources-cluster","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-multicluster","name":"grafana-dashboard-k8s-resources-multicluster","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-namespace","name":"grafana-dashboard-k8s-resources-namespace","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-node","name":"grafana-dashboard-k8s-resources-node","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-pod","name":"grafana-dashboard-k8s-resources-pod","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-windows-cluster","name":"grafana-dashboard-k8s-resources-windows-cluster","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-windows-namespace","name":"grafana-dashboard-k8s-resources-windows-namespace","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-windows-pod","name":"grafana-dashboard-k8s-resources-windows-pod","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-workload","name":"grafana-dashboard-k8s-resources-workload","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-resources-workloads-namespace","name":"grafana-dashboard-k8s-resources-workloads-namespace","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-windows-cluster-rsrc-use","name":"grafana-dashboard-k8s-windows-cluster-rsrc-use","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/k8s-windows-node-rsrc-use","name":"grafana-dashboard-k8s-windows-node-rsrc-use","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/kubelet","name":"grafana-dashboard-kubelet","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/namespace-by-pod","name":"grafana-dashboard-namespace-by-pod","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/namespace-by-workload","name":"grafana-dashboard-namespace-by-workload","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/node-cluster-rsrc-use","name":"grafana-dashboard-node-cluster-rsrc-use","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/node-rsrc-use","name":"grafana-dashboard-node-rsrc-use","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/nodes-aix","name":"grafana-dashboard-nodes-aix","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/nodes-darwin","name":"grafana-dashboard-nodes-darwin","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/nodes","name":"grafana-dashboard-nodes","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/persistentvolumesusage","name":"grafana-dashboard-persistentvolumesusage","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/pod-total","name":"grafana-dashboard-pod-total","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/prometheus-remote-write","name":"grafana-dashboard-prometheus-remote-write","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/prometheus","name":"grafana-dashboard-prometheus","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/proxy","name":"grafana-dashboard-proxy","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/scheduler","name":"grafana-dashboard-scheduler","readOnly":false},{"mountPath":"/grafana-dashboard-definitions/0/workload-total","name":"grafana-dashboard-workload-total","readOnly":false},{"mountPath":"/etc/grafana","name":"grafana-config","readOnly":false}]}],"nodeSelector":{"kubernetes.io/os":"linux"},"securityContext":{"fsGroup":65534,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534},"serviceAccountName":"grafana","volumes":[{"name":"grafana-storage","persistentVolumeClaim":{"claimName":"grafana-local-path-pvc"}},{"name":"grafana-datasources","secret":{"secretName":"grafana-datasources"}},{"configMap":{"name":"grafana-dashboards"},"name":"grafana-dashboards"},{"emptyDir":{"medium":"Memory"},"name":"tmp-plugins"},{"configMap":{"name":"grafana-dashboard-alertmanager-overview"},"name":"grafana-dashboard-alertmanager-overview"},{"configMap":{"name":"grafana-dashboard-apiserver"},"name":"grafana-dashboard-apiserver"},{"configMap":{"name":"grafana-dashboard-cluster-total"},"name":"grafana-dashboard-cluster-total"},{"configMap":{"name":"grafana-dashboard-controller-manager"},"name":"grafana-dashboard-controller-manager"},{"configMap":{"name":"grafana-dashboard-grafana-overview"},"name":"grafana-dashboard-grafana-overview"},{"configMap":{"name":"grafana-dashboard-k8s-resources-cluster"},"name":"grafana-dashboard-k8s-resources-cluster"},{"configMap":{"name":"grafana-dashboard-k8s-resources-multicluster"},"name":"grafana-dashboard-k8s-resources-multicluster"},{"configMap":{"name":"grafana-dashboard-k8s-resources-namespace"},"name":"grafana-dashboard-k8s-resources-namespace"},{"configMap":{"name":"grafana-dashboard-k8s-resources-node"},"name":"grafana-dashboard-k8s-resources-node"},{"configMap":{"name":"grafana-dashboard-k8s-resources-pod"},"name":"grafana-dashboard-k8s-resources-pod"},{"configMap":{"name":"grafana-dashboard-k8s-resources-windows-cluster"},"name":"grafana-dashboard-k8s-resources-windows-cluster"},{"configMap":{"name":"grafana-dashboard-k8s-resources-windows-namespace"},"name":"grafana-dashboard-k8s-resources-windows-namespace"},{"configMap":{"name":"grafana-dashboard-k8s-resources-windows-pod"},"name":"grafana-dashboard-k8s-resources-windows-pod"},{"configMap":{"name":"grafana-dashboard-k8s-resources-workload"},"name":"grafana-dashboard-k8s-resources-workload"},{"configMap":{"name":"grafana-dashboard-k8s-resources-workloads-namespace"},"name":"grafana-dashboard-k8s-resources-workloads-namespace"},{"configMap":{"name":"grafana-dashboard-k8s-windows-cluster-rsrc-use"},"name":"grafana-dashboard-k8s-windows-cluster-rsrc-use"},{"configMap":{"name":"grafana-dashboard-k8s-windows-node-rsrc-use"},"name":"grafana-dashboard-k8s-windows-node-rsrc-use"},{"configMap":{"name":"grafana-dashboard-kubelet"},"name":"grafana-dashboard-kubelet"},{"configMap":{"name":"grafana-dashboard-namespace-by-pod"},"name":"grafana-dashboard-namespace-by-pod"},{"configMap":{"name":"grafana-dashboard-namespace-by-workload"},"name":"grafana-dashboard-namespace-by-workload"},{"configMap":{"name":"grafana-dashboard-node-cluster-rsrc-use"},"name":"grafana-dashboard-node-cluster-rsrc-use"},{"configMap":{"name":"grafana-dashboard-node-rsrc-use"},"name":"grafana-dashboard-node-rsrc-use"},{"configMap":{"name":"grafana-dashboard-nodes-aix"},"name":"grafana-dashboard-nodes-aix"},{"configMap":{"name":"grafana-dashboard-nodes-darwin"},"name":"grafana-dashboard-nodes-darwin"},{"configMap":{"name":"grafana-dashboard-nodes"},"name":"grafana-dashboard-nodes"},{"configMap":{"name":"grafana-dashboard-persistentvolumesusage"},"name":"grafana-dashboard-persistentvolumesusage"},{"configMap":{"name":"grafana-dashboard-pod-total"},"name":"grafana-dashboard-pod-total"},{"configMap":{"name":"grafana-dashboard-prometheus-remote-write"},"name":"grafana-dashboard-prometheus-remote-write"},{"configMap":{"name":"grafana-dashboard-prometheus"},"name":"grafana-dashboard-prometheus"},{"configMap":{"name":"grafana-dashboard-proxy"},"name":"grafana-dashboard-proxy"},{"configMap":{"name":"grafana-dashboard-scheduler"},"name":"grafana-dashboard-scheduler"},{"configMap":{"name":"grafana-dashboard-workload-total"},"name":"grafana-dashboard-workload-total"},{"name":"grafana-config","secret":{"secretName":"grafana-config"}}]}}}}
+    creationTimestamp: "2025-03-19T22:24:20Z"
+    generation: 2
+    labels:
+      app.kubernetes.io/component: grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 11.5.2
+    name: grafana
+    namespace: monitoring
+    resourceVersion: "15369348"
+    uid: 89ad1587-e08b-4f50-9495-6db6bc68e3ad
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: grafana
+        app.kubernetes.io/name: grafana
+        app.kubernetes.io/part-of: kube-prometheus
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum/grafana-config: bf7272039de303c19924363e4271ad80
+          checksum/grafana-dashboardproviders: 40d6c3ef390b61afadf89d3ec567fbb1
+          checksum/grafana-datasources: f4206612422f2ed1b334342a031c6f0f
+        labels:
+          app.kubernetes.io/component: grafana
+          app.kubernetes.io/name: grafana
+          app.kubernetes.io/part-of: kube-prometheus
+          app.kubernetes.io/version: 11.5.2
+      spec:
+        automountServiceAccountToken: false
+        containers:
+        - image: grafana/grafana:11.5.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 3000
+            timeoutSeconds: 1
+          name: grafana
+          ports:
+          - containerPort: 3000
+            name: http
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/grafana
+            name: grafana-storage
+          - mountPath: /etc/grafana/provisioning/datasources
+            name: grafana-datasources
+          - mountPath: /etc/grafana/provisioning/dashboards
+            name: grafana-dashboards
+          - mountPath: /tmp
+            name: tmp-plugins
+          - mountPath: /grafana-dashboard-definitions/0/alertmanager-overview
+            name: grafana-dashboard-alertmanager-overview
+          - mountPath: /grafana-dashboard-definitions/0/apiserver
+            name: grafana-dashboard-apiserver
+          - mountPath: /grafana-dashboard-definitions/0/cluster-total
+            name: grafana-dashboard-cluster-total
+          - mountPath: /grafana-dashboard-definitions/0/controller-manager
+            name: grafana-dashboard-controller-manager
+          - mountPath: /grafana-dashboard-definitions/0/grafana-overview
+            name: grafana-dashboard-grafana-overview
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-cluster
+            name: grafana-dashboard-k8s-resources-cluster
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-multicluster
+            name: grafana-dashboard-k8s-resources-multicluster
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-namespace
+            name: grafana-dashboard-k8s-resources-namespace
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-node
+            name: grafana-dashboard-k8s-resources-node
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-pod
+            name: grafana-dashboard-k8s-resources-pod
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-windows-cluster
+            name: grafana-dashboard-k8s-resources-windows-cluster
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-windows-namespace
+            name: grafana-dashboard-k8s-resources-windows-namespace
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-windows-pod
+            name: grafana-dashboard-k8s-resources-windows-pod
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-workload
+            name: grafana-dashboard-k8s-resources-workload
+          - mountPath: /grafana-dashboard-definitions/0/k8s-resources-workloads-namespace
+            name: grafana-dashboard-k8s-resources-workloads-namespace
+          - mountPath: /grafana-dashboard-definitions/0/k8s-windows-cluster-rsrc-use
+            name: grafana-dashboard-k8s-windows-cluster-rsrc-use
+          - mountPath: /grafana-dashboard-definitions/0/k8s-windows-node-rsrc-use
+            name: grafana-dashboard-k8s-windows-node-rsrc-use
+          - mountPath: /grafana-dashboard-definitions/0/kubelet
+            name: grafana-dashboard-kubelet
+          - mountPath: /grafana-dashboard-definitions/0/namespace-by-pod
+            name: grafana-dashboard-namespace-by-pod
+          - mountPath: /grafana-dashboard-definitions/0/namespace-by-workload
+            name: grafana-dashboard-namespace-by-workload
+          - mountPath: /grafana-dashboard-definitions/0/node-cluster-rsrc-use
+            name: grafana-dashboard-node-cluster-rsrc-use
+          - mountPath: /grafana-dashboard-definitions/0/node-rsrc-use
+            name: grafana-dashboard-node-rsrc-use
+          - mountPath: /grafana-dashboard-definitions/0/nodes-aix
+            name: grafana-dashboard-nodes-aix
+          - mountPath: /grafana-dashboard-definitions/0/nodes-darwin
+            name: grafana-dashboard-nodes-darwin
+          - mountPath: /grafana-dashboard-definitions/0/nodes
+            name: grafana-dashboard-nodes
+          - mountPath: /grafana-dashboard-definitions/0/persistentvolumesusage
+            name: grafana-dashboard-persistentvolumesusage
+          - mountPath: /grafana-dashboard-definitions/0/pod-total
+            name: grafana-dashboard-pod-total
+          - mountPath: /grafana-dashboard-definitions/0/prometheus-remote-write
+            name: grafana-dashboard-prometheus-remote-write
+          - mountPath: /grafana-dashboard-definitions/0/prometheus
+            name: grafana-dashboard-prometheus
+          - mountPath: /grafana-dashboard-definitions/0/proxy
+            name: grafana-dashboard-proxy
+          - mountPath: /grafana-dashboard-definitions/0/scheduler
+            name: grafana-dashboard-scheduler
+          - mountPath: /grafana-dashboard-definitions/0/workload-total
+            name: grafana-dashboard-workload-total
+          - mountPath: /etc/grafana
+            name: grafana-config
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          fsGroup: 65534
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+        serviceAccount: grafana
+        serviceAccountName: grafana
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: grafana-storage
+          persistentVolumeClaim:
+            claimName: grafana-local-path-pvc
+        - name: grafana-datasources
+          secret:
+            defaultMode: 420
+            secretName: grafana-datasources
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboards
+          name: grafana-dashboards
+        - emptyDir:
+            medium: Memory
+          name: tmp-plugins
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-alertmanager-overview
+          name: grafana-dashboard-alertmanager-overview
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-apiserver
+          name: grafana-dashboard-apiserver
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-cluster-total
+          name: grafana-dashboard-cluster-total
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-controller-manager
+          name: grafana-dashboard-controller-manager
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-grafana-overview
+          name: grafana-dashboard-grafana-overview
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-cluster
+          name: grafana-dashboard-k8s-resources-cluster
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-multicluster
+          name: grafana-dashboard-k8s-resources-multicluster
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-namespace
+          name: grafana-dashboard-k8s-resources-namespace
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-node
+          name: grafana-dashboard-k8s-resources-node
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-pod
+          name: grafana-dashboard-k8s-resources-pod
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-windows-cluster
+          name: grafana-dashboard-k8s-resources-windows-cluster
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-windows-namespace
+          name: grafana-dashboard-k8s-resources-windows-namespace
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-windows-pod
+          name: grafana-dashboard-k8s-resources-windows-pod
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-workload
+          name: grafana-dashboard-k8s-resources-workload
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-resources-workloads-namespace
+          name: grafana-dashboard-k8s-resources-workloads-namespace
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-windows-cluster-rsrc-use
+          name: grafana-dashboard-k8s-windows-cluster-rsrc-use
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-k8s-windows-node-rsrc-use
+          name: grafana-dashboard-k8s-windows-node-rsrc-use
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-kubelet
+          name: grafana-dashboard-kubelet
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-namespace-by-pod
+          name: grafana-dashboard-namespace-by-pod
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-namespace-by-workload
+          name: grafana-dashboard-namespace-by-workload
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-node-cluster-rsrc-use
+          name: grafana-dashboard-node-cluster-rsrc-use
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-node-rsrc-use
+          name: grafana-dashboard-node-rsrc-use
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-nodes-aix
+          name: grafana-dashboard-nodes-aix
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-nodes-darwin
+          name: grafana-dashboard-nodes-darwin
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-nodes
+          name: grafana-dashboard-nodes
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-persistentvolumesusage
+          name: grafana-dashboard-persistentvolumesusage
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-pod-total
+          name: grafana-dashboard-pod-total
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-prometheus-remote-write
+          name: grafana-dashboard-prometheus-remote-write
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-prometheus
+          name: grafana-dashboard-prometheus
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-proxy
+          name: grafana-dashboard-proxy
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-scheduler
+          name: grafana-dashboard-scheduler
+        - configMap:
+            defaultMode: 420
+            name: grafana-dashboard-workload-total
+          name: grafana-dashboard-workload-total
+        - name: grafana-config
+          secret:
+            defaultMode: 420
+            secretName: grafana-config
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T22:24:20Z"
+      lastUpdateTime: "2025-03-23T20:41:45Z"
+      message: ReplicaSet "grafana-d8ddf6c68" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:27Z"
+      lastUpdateTime: "2026-08-23T22:53:27Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"exporter","app.kubernetes.io/name":"kube-state-metrics","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"2.15.0"},"name":"kube-state-metrics","namespace":"monitoring"},"spec":{"replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"exporter","app.kubernetes.io/name":"kube-state-metrics","app.kubernetes.io/part-of":"kube-prometheus"}},"template":{"metadata":{"annotations":{"kubectl.kubernetes.io/default-container":"kube-state-metrics"},"labels":{"app.kubernetes.io/component":"exporter","app.kubernetes.io/name":"kube-state-metrics","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"2.15.0"}},"spec":{"automountServiceAccountToken":true,"containers":[{"args":["--host=127.0.0.1","--port=8081","--telemetry-host=127.0.0.1","--telemetry-port=8082"],"image":"registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.15.0","name":"kube-state-metrics","resources":{"limits":{"cpu":"100m","memory":"250Mi"},"requests":{"cpu":"10m","memory":"190Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}}},{"args":["--secure-listen-address=:8443","--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305","--upstream=http://127.0.0.1:8081/"],"image":"quay.io/brancz/kube-rbac-proxy:v0.19.0","name":"kube-rbac-proxy-main","ports":[{"containerPort":8443,"name":"https-main"}],"resources":{"limits":{"cpu":"40m","memory":"40Mi"},"requests":{"cpu":"20m","memory":"20Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532,"seccompProfile":{"type":"RuntimeDefault"}}},{"args":["--secure-listen-address=:9443","--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305","--upstream=http://127.0.0.1:8082/"],"image":"quay.io/brancz/kube-rbac-proxy:v0.19.0","name":"kube-rbac-proxy-self","ports":[{"containerPort":9443,"name":"https-self"}],"resources":{"limits":{"cpu":"20m","memory":"40Mi"},"requests":{"cpu":"10m","memory":"20Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532,"seccompProfile":{"type":"RuntimeDefault"}}}],"nodeSelector":{"kubernetes.io/os":"linux"},"serviceAccountName":"kube-state-metrics"}}}}
+    creationTimestamp: "2025-03-19T22:24:20Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: kube-state-metrics
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 2.15.0
+    name: kube-state-metrics
+    namespace: monitoring
+    resourceVersion: "15369117"
+    uid: 8a522c11-59fc-42d6-b1ff-14a7efab777e
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: kube-state-metrics
+        app.kubernetes.io/part-of: kube-prometheus
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/default-container: kube-state-metrics
+        labels:
+          app.kubernetes.io/component: exporter
+          app.kubernetes.io/name: kube-state-metrics
+          app.kubernetes.io/part-of: kube-prometheus
+          app.kubernetes.io/version: 2.15.0
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --host=127.0.0.1
+          - --port=8081
+          - --telemetry-host=127.0.0.1
+          - --telemetry-port=8082
+          image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.15.0
+          imagePullPolicy: IfNotPresent
+          name: kube-state-metrics
+          resources:
+            limits:
+              cpu: 100m
+              memory: 250Mi
+            requests:
+              cpu: 10m
+              memory: 190Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - args:
+          - --secure-listen-address=:8443
+          - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+          - --upstream=http://127.0.0.1:8081/
+          image: quay.io/brancz/kube-rbac-proxy:v0.19.0
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy-main
+          ports:
+          - containerPort: 8443
+            name: https-main
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 40m
+              memory: 40Mi
+            requests:
+              cpu: 20m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - args:
+          - --secure-listen-address=:9443
+          - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+          - --upstream=http://127.0.0.1:8082/
+          image: quay.io/brancz/kube-rbac-proxy:v0.19.0
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy-self
+          ports:
+          - containerPort: 9443
+            name: https-self
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 20m
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: kube-state-metrics
+        serviceAccountName: kube-state-metrics
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T22:24:21Z"
+      lastUpdateTime: "2025-03-19T22:26:18Z"
+      message: ReplicaSet "kube-state-metrics-5f96f94459" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:43Z"
+      lastUpdateTime: "2026-08-23T22:52:43Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"metrics-adapter","app.kubernetes.io/name":"prometheus-adapter","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.12.0"},"name":"prometheus-adapter","namespace":"monitoring"},"spec":{"replicas":2,"selector":{"matchLabels":{"app.kubernetes.io/component":"metrics-adapter","app.kubernetes.io/name":"prometheus-adapter","app.kubernetes.io/part-of":"kube-prometheus"}},"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":1}},"template":{"metadata":{"annotations":{"checksum.config/md5":"3b1ebf7df0232d1675896f67b66373db"},"labels":{"app.kubernetes.io/component":"metrics-adapter","app.kubernetes.io/name":"prometheus-adapter","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.12.0"}},"spec":{"automountServiceAccountToken":true,"containers":[{"args":["--cert-dir=/var/run/serving-cert","--config=/etc/adapter/config.yaml","--metrics-relist-interval=1m","--prometheus-url=http://prometheus-k8s.monitoring.svc:9090/","--secure-port=6443","--tls-cipher-suites=TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA"],"image":"registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0","livenessProbe":{"failureThreshold":5,"httpGet":{"path":"/livez","port":"https","scheme":"HTTPS"},"periodSeconds":5},"name":"prometheus-adapter","ports":[{"containerPort":6443,"name":"https"}],"readinessProbe":{"failureThreshold":5,"httpGet":{"path":"/readyz","port":"https","scheme":"HTTPS"},"periodSeconds":5},"resources":{"limits":{"cpu":"250m","memory":"180Mi"},"requests":{"cpu":"102m","memory":"180Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}},"startupProbe":{"failureThreshold":18,"httpGet":{"path":"/livez","port":"https","scheme":"HTTPS"},"periodSeconds":10},"volumeMounts":[{"mountPath":"/tmp","name":"tmpfs","readOnly":false},{"mountPath":"/var/run/serving-cert","name":"volume-serving-cert","readOnly":false},{"mountPath":"/etc/adapter","name":"config","readOnly":false}]}],"nodeSelector":{"kubernetes.io/os":"linux"},"serviceAccountName":"prometheus-adapter","volumes":[{"emptyDir":{},"name":"tmpfs"},{"emptyDir":{},"name":"volume-serving-cert"},{"configMap":{"name":"adapter-config"},"name":"config"}]}}}}
+    creationTimestamp: "2025-03-19T22:24:23Z"
+    generation: 1
+    labels:
+      app.kubernetes.io/component: metrics-adapter
+      app.kubernetes.io/name: prometheus-adapter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.12.0
+    name: prometheus-adapter
+    namespace: monitoring
+    resourceVersion: "15369220"
+    uid: 29adc083-05ce-4c1a-a2cc-9b3cc9331538
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: metrics-adapter
+        app.kubernetes.io/name: prometheus-adapter
+        app.kubernetes.io/part-of: kube-prometheus
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          checksum.config/md5: 3b1ebf7df0232d1675896f67b66373db
+        labels:
+          app.kubernetes.io/component: metrics-adapter
+          app.kubernetes.io/name: prometheus-adapter
+          app.kubernetes.io/part-of: kube-prometheus
+          app.kubernetes.io/version: 0.12.0
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --cert-dir=/var/run/serving-cert
+          - --config=/etc/adapter/config.yaml
+          - --metrics-relist-interval=1m
+          - --prometheus-url=http://prometheus-k8s.monitoring.svc:9090/
+          - --secure-port=6443
+          - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA
+          image: registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /livez
+              port: https
+              scheme: HTTPS
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: prometheus-adapter
+          ports:
+          - containerPort: 6443
+            name: https
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /readyz
+              port: https
+              scheme: HTTPS
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 250m
+              memory: 180Mi
+            requests:
+              cpu: 102m
+              memory: 180Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            failureThreshold: 18
+            httpGet:
+              path: /livez
+              port: https
+              scheme: HTTPS
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /tmp
+            name: tmpfs
+          - mountPath: /var/run/serving-cert
+            name: volume-serving-cert
+          - mountPath: /etc/adapter
+            name: config
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: prometheus-adapter
+        serviceAccountName: prometheus-adapter
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir: {}
+          name: tmpfs
+        - emptyDir: {}
+          name: volume-serving-cert
+        - configMap:
+            defaultMode: 420
+            name: adapter-config
+          name: config
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2025-03-19T22:24:23Z"
+      lastUpdateTime: "2025-03-19T22:26:24Z"
+      message: ReplicaSet "prometheus-adapter-599c88b6c4" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:48Z"
+      lastUpdateTime: "2026-08-23T22:52:48Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    terminatingReplicas: 0
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "7"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"controller","app.kubernetes.io/name":"prometheus-operator","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.80.1"},"name":"prometheus-operator","namespace":"monitoring"},"spec":{"replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"controller","app.kubernetes.io/name":"prometheus-operator","app.kubernetes.io/part-of":"kube-prometheus"}},"template":{"metadata":{"annotations":{"kubectl.kubernetes.io/default-container":"prometheus-operator"},"labels":{"app.kubernetes.io/component":"controller","app.kubernetes.io/name":"prometheus-operator","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.80.1"}},"spec":{"automountServiceAccountToken":true,"containers":[{"args":["--kubelet-service=kube-system/kubelet","--prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1","--kubelet-endpoints=true","--kubelet-endpointslice=false"],"env":[{"name":"GOGC","value":"30"}],"image":"quay.io/prometheus-operator/prometheus-operator:v0.80.1","name":"prometheus-operator","ports":[{"containerPort":8080,"name":"http"}],"resources":{"limits":{"cpu":"200m","memory":"200Mi"},"requests":{"cpu":"100m","memory":"100Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true}},{"args":["--secure-listen-address=:8443","--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305","--upstream=http://127.0.0.1:8080/"],"image":"quay.io/brancz/kube-rbac-proxy:v0.19.0","name":"kube-rbac-proxy","ports":[{"containerPort":8443,"name":"https"}],"resources":{"limits":{"cpu":"20m","memory":"40Mi"},"requests":{"cpu":"10m","memory":"20Mi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65532,"runAsNonRoot":true,"runAsUser":65532,"seccompProfile":{"type":"RuntimeDefault"}}}],"nodeSelector":{"kubernetes.io/os":"linux"},"securityContext":{"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534,"seccompProfile":{"type":"RuntimeDefault"}},"serviceAccountName":"prometheus-operator"}}}}
+    creationTimestamp: "2025-03-19T22:24:23Z"
+    generation: 7
+    labels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/name: prometheus-operator
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.80.1
+    name: prometheus-operator
+    namespace: monitoring
+    resourceVersion: "15369013"
+    uid: ec3984c8-39fe-4e6e-8820-431eefa8cd96
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: controller
+        app.kubernetes.io/name: prometheus-operator
+        app.kubernetes.io/part-of: kube-prometheus
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/default-container: prometheus-operator
+        labels:
+          app.kubernetes.io/component: controller
+          app.kubernetes.io/name: prometheus-operator
+          app.kubernetes.io/part-of: kube-prometheus
+          app.kubernetes.io/version: 0.80.1
+      spec:
+        automountServiceAccountToken: true
+        containers:
+        - args:
+          - --kubelet-service=kube-system/kubelet
+          - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1
+          - --kubelet-endpoints=true
+          - --kubelet-endpointslice=false
+          env:
+          - name: GOGC
+            value: "30"
+          image: quay.io/prometheus-operator/prometheus-operator:v0.80.1
+          imagePullPolicy: IfNotPresent
+          name: prometheus-operator
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - args:
+          - --secure-listen-address=:8443
+          - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+          - --upstream=http://127.0.0.1:8080/
+          image: quay.io/brancz/kube-rbac-proxy:v0.19.0
+          imagePullPolicy: IfNotPresent
+          name: kube-rbac-proxy
+          ports:
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 20m
+              memory: 40Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          runAsGroup: 65534
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: prometheus-operator
+        serviceAccountName: prometheus-operator
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2025-03-19T22:24:23Z"
+      lastUpdateTime: "2025-08-06T18:23:47Z"
+      message: ReplicaSet "prometheus-operator-68dbcbf4cc" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:52:35Z"
+      lastUpdateTime: "2026-08-23T22:52:35Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 7
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"vpa-exporter"},"name":"vpa-exporter","namespace":"monitoring"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"vpa-exporter"}},"template":{"metadata":{"labels":{"app":"vpa-exporter"}},"spec":{"containers":[{"command":["python","/app/exporter.py"],"image":"python:3.12-alpine","imagePullPolicy":"IfNotPresent","livenessProbe":{"httpGet":{"path":"/healthz","port":"metrics"},"initialDelaySeconds":10,"periodSeconds":20},"name":"vpa-exporter","ports":[{"containerPort":9108,"name":"metrics"}],"readinessProbe":{"httpGet":{"path":"/healthz","port":"metrics"},"initialDelaySeconds":5,"periodSeconds":10},"resources":{"limits":{"cpu":"100m","memory":"128Mi"},"requests":{"cpu":"20m","memory":"64Mi"}},"volumeMounts":[{"mountPath":"/app","name":"script","readOnly":true}]}],"serviceAccountName":"vpa-exporter","volumes":[{"configMap":{"name":"vpa-exporter-script"},"name":"script"}]}}}}
+    creationTimestamp: "2026-05-20T19:29:48Z"
+    generation: 1
+    labels:
+      app: vpa-exporter
+    name: vpa-exporter
+    namespace: monitoring
+    resourceVersion: "15369318"
+    uid: 0131a0a0-4a1c-442d-847d-fdccbb9d706e
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: vpa-exporter
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: vpa-exporter
+      spec:
+        containers:
+        - command:
+          - python
+          - /app/exporter.py
+          image: python:3.12-alpine
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: vpa-exporter
+          ports:
+          - containerPort: 9108
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: metrics
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 20m
+              memory: 64Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /app
+            name: script
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: vpa-exporter
+        serviceAccountName: vpa-exporter
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: vpa-exporter-script
+          name: script
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2026-05-20T19:29:48Z"
+      lastUpdateTime: "2026-05-20T19:30:50Z"
+      message: ReplicaSet "vpa-exporter-6497875df5" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-08-23T22:53:19Z"
+      lastUpdateTime: "2026-08-23T22:53:19Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    terminatingReplicas: 0
+    updatedReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""

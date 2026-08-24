@@ -1,0 +1,494 @@
+apiVersion: v1
+items:
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: catch-all
+    resourceVersion: "67"
+    uid: bdc86916-5793-4877-a8d1-eeb9cdc7bc0a
+  spec:
+    distinguisherMethod:
+      type: ByUser
+    matchingPrecedence: 10000
+    priorityLevelConfiguration:
+      name: catch-all
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - group:
+          name: system:unauthenticated
+        kind: Group
+      - group:
+          name: system:authenticated
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "catch-all" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: exempt
+    resourceVersion: "66"
+    uid: 876d9898-74ea-4adf-a59c-abf1961b3101
+  spec:
+    matchingPrecedence: 1
+    priorityLevelConfiguration:
+      name: exempt
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - group:
+          name: system:masters
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "exempt" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: global-default
+    resourceVersion: "65"
+    uid: 9c41ae75-7a97-450d-83a2-968548f24824
+  spec:
+    distinguisherMethod:
+      type: ByUser
+    matchingPrecedence: 9900
+    priorityLevelConfiguration:
+      name: global-default
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - group:
+          name: system:unauthenticated
+        kind: Group
+      - group:
+          name: system:authenticated
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "global-default" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: kube-controller-manager
+    resourceVersion: "56"
+    uid: 8ab5ef97-7cda-4421-9326-41d970492fe6
+  spec:
+    distinguisherMethod:
+      type: ByNamespace
+    matchingPrecedence: 800
+    priorityLevelConfiguration:
+      name: workload-high
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - kind: User
+        user:
+          name: system:kube-controller-manager
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "workload-high" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: kube-scheduler
+    resourceVersion: "59"
+    uid: 5f13c30f-613f-4417-9533-2afe9dc835a4
+  spec:
+    distinguisherMethod:
+      type: ByNamespace
+    matchingPrecedence: 800
+    priorityLevelConfiguration:
+      name: workload-high
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - kind: User
+        user:
+          name: system:kube-scheduler
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "workload-high" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: kube-system-service-accounts
+    resourceVersion: "63"
+    uid: bd7feca8-0aaa-47ee-bc2b-21f5f116bb1e
+  spec:
+    distinguisherMethod:
+      type: ByNamespace
+    matchingPrecedence: 900
+    priorityLevelConfiguration:
+      name: workload-high
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - kind: ServiceAccount
+        serviceAccount:
+          name: '*'
+          namespace: kube-system
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "workload-high" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: probes
+    resourceVersion: "62"
+    uid: 2275913a-864b-4a6e-86ee-5c4c5723d067
+  spec:
+    matchingPrecedence: 2
+    priorityLevelConfiguration:
+      name: exempt
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - /healthz
+        - /readyz
+        - /livez
+        verbs:
+        - get
+      subjects:
+      - group:
+          name: system:unauthenticated
+        kind: Group
+      - group:
+          name: system:authenticated
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "exempt" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: service-accounts
+    resourceVersion: "64"
+    uid: e7c99402-41a2-4844-a651-79bf38b6ec2c
+  spec:
+    distinguisherMethod:
+      type: ByUser
+    matchingPrecedence: 9000
+    priorityLevelConfiguration:
+      name: workload-low
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - group:
+          name: system:serviceaccounts
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "workload-low" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: system-leader-election
+    resourceVersion: "49"
+    uid: a27260a6-17d5-4dcc-ad3a-66412c73e805
+  spec:
+    distinguisherMethod:
+      type: ByUser
+    matchingPrecedence: 100
+    priorityLevelConfiguration:
+      name: leader-election
+    rules:
+    - resourceRules:
+      - apiGroups:
+        - coordination.k8s.io
+        namespaces:
+        - '*'
+        resources:
+        - leases
+        verbs:
+        - get
+        - create
+        - update
+      subjects:
+      - kind: User
+        user:
+          name: system:kube-controller-manager
+      - kind: User
+        user:
+          name: system:kube-scheduler
+      - kind: ServiceAccount
+        serviceAccount:
+          name: '*'
+          namespace: kube-system
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "leader-election" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: system-node-high
+    resourceVersion: "42"
+    uid: 79ce3b0c-167d-49ae-aa11-5ad1fc7a32fd
+  spec:
+    distinguisherMethod:
+      type: ByUser
+    matchingPrecedence: 400
+    priorityLevelConfiguration:
+      name: node-high
+    rules:
+    - resourceRules:
+      - apiGroups:
+        - ""
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - nodes
+        - nodes/status
+        verbs:
+        - '*'
+      - apiGroups:
+        - coordination.k8s.io
+        namespaces:
+        - '*'
+        resources:
+        - leases
+        verbs:
+        - '*'
+      subjects:
+      - group:
+          name: system:nodes
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "node-high" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+- apiVersion: flowcontrol.apiserver.k8s.io/v1
+  kind: FlowSchema
+  metadata:
+    annotations:
+      apf.kubernetes.io/autoupdate-spec: "true"
+    creationTimestamp: "2025-03-19T21:28:25Z"
+    generation: 1
+    name: system-nodes
+    resourceVersion: "38"
+    uid: 2ef05fb4-55a9-42b6-9935-15fb7c18d2de
+  spec:
+    distinguisherMethod:
+      type: ByUser
+    matchingPrecedence: 500
+    priorityLevelConfiguration:
+      name: system
+    rules:
+    - nonResourceRules:
+      - nonResourceURLs:
+        - '*'
+        verbs:
+        - '*'
+      resourceRules:
+      - apiGroups:
+        - '*'
+        clusterScope: true
+        namespaces:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      subjects:
+      - group:
+          name: system:nodes
+        kind: Group
+  status:
+    conditions:
+    - lastTransitionTime: "2025-03-19T21:28:25Z"
+      message: This FlowSchema references the PriorityLevelConfiguration object named
+        "system" and it exists
+      reason: Found
+      status: "False"
+      type: Dangling
+kind: List
+metadata:
+  resourceVersion: ""

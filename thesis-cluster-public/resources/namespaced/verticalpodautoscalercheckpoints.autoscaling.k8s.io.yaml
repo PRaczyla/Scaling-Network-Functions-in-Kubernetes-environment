@@ -1,0 +1,48 @@
+apiVersion: v1
+items:
+- apiVersion: autoscaling.k8s.io/v1
+  kind: VerticalPodAutoscalerCheckpoint
+  metadata:
+    creationTimestamp: "2026-08-22T00:16:47Z"
+    generation: 52
+    name: open5gs-upf-vpa-open5gs-upf
+    namespace: default
+    resourceVersion: "15369567"
+    uid: ed414301-ae81-49fd-85bd-a225bdf71ca9
+  spec:
+    containerName: open5gs-upf
+    vpaObjectName: open5gs-upf-vpa
+  status:
+    cpuHistogram:
+      bucketWeights:
+        "0": 10000
+        "1": 312
+        "4": 312
+        "7": 624
+        "9": 313
+        "11": 940
+        "13": 313
+        "14": 313
+        "15": 313
+        "16": 313
+        "17": 627
+        "18": 628
+        "20": 628
+        "21": 315
+        "22": 630
+        "23": 630
+        "24": 315
+        "25": 316
+        "26": 316
+      referenceTimestamp: "2026-08-24T00:00:00Z"
+      totalWeight: 1.4686935987803171
+    firstSampleStart: "2026-08-22T00:16:31Z"
+    lastSampleStart: "2026-08-23T22:54:17Z"
+    lastUpdateTime: "2026-08-23T22:54:35Z"
+    memoryHistogram:
+      referenceTimestamp: "2026-08-25T00:00:00Z"
+    totalSamplesCount: 52
+    version: v3
+kind: List
+metadata:
+  resourceVersion: ""

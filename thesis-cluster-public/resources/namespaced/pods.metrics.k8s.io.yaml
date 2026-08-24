@@ -1,0 +1,868 @@
+apiVersion: v1
+items:
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: iperf3
+    usage:
+      cpu: "0"
+      memory: 5476Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: iperf3-server
+      pod-template-hash: 747f565b8b
+    name: iperf3-server-747f565b8b-glz8n
+    namespace: default
+  timestamp: "2026-08-23T22:54:41Z"
+  window: 18.118s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: nat
+    usage:
+      cpu: "0"
+      memory: 4684Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    name: nat-setup-hostnet
+    namespace: default
+  timestamp: "2026-08-23T22:54:37Z"
+  window: 12.221s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-amf
+    usage:
+      cpu: 544841n
+      memory: 31232Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: amf
+      helm.sh/chart: amf-2.2.5
+      pod-template-hash: 86fdc78b7
+    name: open5gs-amf-86fdc78b7-sfllw
+    namespace: default
+  timestamp: "2026-08-23T22:54:44Z"
+  window: 18.967s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-ausf
+    usage:
+      cpu: 405232n
+      memory: 11024Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ausf
+      helm.sh/chart: ausf-2.2.5
+      pod-template-hash: 9fb8579c6
+    name: open5gs-ausf-9fb8579c6-xxl6w
+    namespace: default
+  timestamp: "2026-08-23T22:54:36Z"
+  window: 14.984s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-bsf
+    usage:
+      cpu: 265079n
+      memory: 11324Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: bsf
+      helm.sh/chart: bsf-2.2.5
+      pod-template-hash: 7cf8867c96
+    name: open5gs-bsf-7cf8867c96-qwjq9
+    namespace: default
+  timestamp: "2026-08-23T22:54:41Z"
+  window: 11.887s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: mongodb
+    usage:
+      cpu: 14608850n
+      memory: 168564Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: mongodb
+      helm.sh/chart: mongodb-12.1.31
+      pod-template-hash: 5b4cd4946b
+    name: open5gs-mongodb-5b4cd4946b-g6p2m
+    namespace: default
+  timestamp: "2026-08-23T22:54:42Z"
+  window: 13.174s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-nrf
+    usage:
+      cpu: 995176n
+      memory: 8864Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nrf
+      helm.sh/chart: nrf-2.2.5
+      pod-template-hash: 9b889c6dc
+    name: open5gs-nrf-9b889c6dc-j4r5f
+    namespace: default
+  timestamp: "2026-08-23T22:54:34Z"
+  window: 17.828s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-nssf
+    usage:
+      cpu: 360813n
+      memory: 8472Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nssf
+      helm.sh/chart: nssf-2.2.5
+      pod-template-hash: 586ccf6cd8
+    name: open5gs-nssf-586ccf6cd8-m6jrt
+    namespace: default
+  timestamp: "2026-08-23T22:54:39Z"
+  window: 18.68s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-pcf
+    usage:
+      cpu: 328533n
+      memory: 6472Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: pcf
+      helm.sh/chart: pcf-2.2.5
+      pod-template-hash: 7c48d88dfb
+    name: open5gs-pcf-7c48d88dfb-b7w7c
+    namespace: default
+  timestamp: "2026-08-23T22:54:36Z"
+  window: 13.125s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-scp
+    usage:
+      cpu: 327122n
+      memory: 7552Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: scp
+      helm.sh/chart: scp-2.2.5
+      pod-template-hash: 774bfb7564
+    name: open5gs-scp-774bfb7564-xc95p
+    namespace: default
+  timestamp: "2026-08-23T22:54:31Z"
+  window: 13.955s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-smf
+    usage:
+      cpu: 631590n
+      memory: 52424Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      helm.sh/chart: smf-2.2.6
+      pod-template-hash: 7c5f645bcd
+    name: open5gs-smf-7c5f645bcd-dz65d
+    namespace: default
+  timestamp: "2026-08-23T22:54:44Z"
+  window: 28.471s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-udm
+    usage:
+      cpu: 366953n
+      memory: 24400Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udm
+      helm.sh/chart: udm-2.2.5
+      pod-template-hash: 8445899f4b
+    name: open5gs-udm-8445899f4b-5p98q
+    namespace: default
+  timestamp: "2026-08-23T22:54:27Z"
+  window: 17.648s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-udr
+    usage:
+      cpu: 331935n
+      memory: 15576Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udr
+      helm.sh/chart: udr-2.2.5
+      pod-template-hash: 77497dbb99
+    name: open5gs-udr-77497dbb99-ckvcl
+    namespace: default
+  timestamp: "2026-08-23T22:54:44Z"
+  window: 19.799s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-upf
+    usage:
+      cpu: 549385n
+      memory: 31548Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      helm.sh/chart: upf-2.2.6
+      pod-template-hash: 5b9db6d44
+    name: open5gs-upf-5b9db6d44-nsbqz
+    namespace: default
+  timestamp: "2026-08-23T22:54:31Z"
+  window: 14.407s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: open5gs-webui
+    usage:
+      cpu: 1922764n
+      memory: 92492Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: webui
+      helm.sh/chart: webui-2.2.5
+      pod-template-hash: 76c5475c97
+    name: open5gs-webui-76c5475c97-nm99d
+    namespace: default
+  timestamp: "2026-08-23T22:54:44Z"
+  window: 32.472s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: gnodeb
+    usage:
+      cpu: 15377716n
+      memory: 25304Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: gnb
+      app.kubernetes.io/instance: ueransim-gnb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-gnb
+      helm.sh/chart: ueransim-gnb-0.2.6
+      pod-template-hash: 5f74f979bb
+    name: ueransim-gnb-5f74f979bb-xgjm9
+    namespace: default
+  timestamp: "2026-08-23T22:54:34Z"
+  window: 12.79s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: ues
+    usage:
+      cpu: 160640307n
+      memory: 19104Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: ues
+      app.kubernetes.io/instance: ueransim-gnb-ues
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-ues
+      helm.sh/chart: ueransim-ues-0.1.2
+      pod-template-hash: 69bc49bf9c
+    name: ueransim-gnb-ues-69bc49bf9c-7l8lt
+    namespace: default
+  timestamp: "2026-08-23T22:54:31Z"
+  window: 16.25s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: coredns
+    usage:
+      cpu: 11271579n
+      memory: 76240Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      k8s-app: kube-dns
+      pod-template-hash: 7f496c8d7d
+    name: coredns-7f496c8d7d-mcnqm
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:37Z"
+  window: 17.273s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: local-path-provisioner
+    usage:
+      cpu: 90573n
+      memory: 51296Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: local-path-provisioner
+      pod-template-hash: 578895bd58
+    name: local-path-provisioner-578895bd58-5fx6d
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:37Z"
+  window: 14.607s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: metrics-server
+    usage:
+      cpu: 25710298n
+      memory: 78964Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      k8s-app: metrics-server
+      pod-template-hash: 7b9c9c4b9c
+    name: metrics-server-7b9c9c4b9c-ssj5q
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:41Z"
+  window: 15.799s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: traefik
+    usage:
+      cpu: 479258n
+      memory: 129192Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/instance: traefik-kube-system
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: traefik
+      helm.sh/chart: traefik-37.1.1_up37.1.0
+      pod-template-hash: 6d98778dfc
+    name: traefik-6d98778dfc-sq6xm
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:37Z"
+  window: 16.513s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: admission-controller
+    usage:
+      cpu: 865076n
+      memory: 40632Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: vpa-admission
+      pod-template-hash: 7d977b5d75
+    name: vpa-admission-controller-7d977b5d75-lr9k2
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:27Z"
+  window: 14.297s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: recommender
+    usage:
+      cpu: 4771766n
+      memory: 44880Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: vpa-recommender
+      pod-template-hash: 5f4f956944
+    name: vpa-recommender-5f4f956944-9h9dj
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:40Z"
+  window: 18.354s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: updater
+    usage:
+      cpu: 3377885n
+      memory: 47328Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: vpa-updater
+      pod-template-hash: 5f6f58cd5
+    name: vpa-updater-5f6f58cd5-sfb2k
+    namespace: kube-system
+  timestamp: "2026-08-23T22:54:45Z"
+  window: 16.55s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: controller
+    usage:
+      cpu: 5831887n
+      memory: 75884Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: metallb
+      component: controller
+      pod-template-hash: bb5f47665
+    name: controller-bb5f47665-5zlql
+    namespace: metallb-system
+  timestamp: "2026-08-23T22:54:40Z"
+  window: 14.526s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: speaker
+    usage:
+      cpu: 13146537n
+      memory: 62272Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: metallb
+      component: speaker
+      controller-revision-hash: 779c7bb879
+      pod-template-generation: "1"
+    name: speaker-5dq72
+    namespace: metallb-system
+  timestamp: "2026-08-23T22:54:28Z"
+  window: 19.408s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: speaker
+    usage:
+      cpu: 10921299n
+      memory: 61600Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: metallb
+      component: speaker
+      controller-revision-hash: 779c7bb879
+      pod-template-generation: "1"
+    name: speaker-hc4r4
+    namespace: metallb-system
+  timestamp: "2026-08-23T22:54:43Z"
+  window: 16.01s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: speaker
+    usage:
+      cpu: 10890631n
+      memory: 61700Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: metallb
+      component: speaker
+      controller-revision-hash: 779c7bb879
+      pod-template-generation: "1"
+    name: speaker-lmhcv
+    namespace: metallb-system
+  timestamp: "2026-08-23T22:54:42Z"
+  window: 16.833s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: alertmanager
+    usage:
+      cpu: 9834119n
+      memory: 44552Ki
+  - name: config-reloader
+    usage:
+      cpu: 2914206n
+      memory: 8696Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      alertmanager: main
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/instance: main
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.28.0
+      apps.kubernetes.io/pod-index: "0"
+      controller-revision-hash: alertmanager-main-679949ff75
+      statefulset.kubernetes.io/pod-name: alertmanager-main-0
+    name: alertmanager-main-0
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:38Z"
+  window: 14.5s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: config-reloader
+    usage:
+      cpu: 2069563n
+      memory: 8560Ki
+  - name: alertmanager
+    usage:
+      cpu: 11733710n
+      memory: 44328Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      alertmanager: main
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/instance: main
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.28.0
+      apps.kubernetes.io/pod-index: "1"
+      controller-revision-hash: alertmanager-main-679949ff75
+      statefulset.kubernetes.io/pod-name: alertmanager-main-1
+    name: alertmanager-main-1
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:38Z"
+  window: 13.556s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: alertmanager
+    usage:
+      cpu: 9227179n
+      memory: 45660Ki
+  - name: config-reloader
+    usage:
+      cpu: 2535123n
+      memory: 7776Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      alertmanager: main
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/instance: main
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.28.0
+      apps.kubernetes.io/pod-index: "2"
+      controller-revision-hash: alertmanager-main-679949ff75
+      statefulset.kubernetes.io/pod-name: alertmanager-main-2
+    name: alertmanager-main-2
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:27Z"
+  window: 13.584s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: blackbox-exporter
+    usage:
+      cpu: 6930n
+      memory: 16036Ki
+  - name: kube-rbac-proxy
+    usage:
+      cpu: 20036554n
+      memory: 11444Ki
+  - name: module-configmap-reloader
+    usage:
+      cpu: 5921n
+      memory: 9544Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: blackbox-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.25.0
+      pod-template-hash: 69bdcc6fc7
+    name: blackbox-exporter-69bdcc6fc7-qppcj
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:39Z"
+  window: 14.428s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: grafana
+    usage:
+      cpu: 83284317n
+      memory: 170168Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 11.5.2
+      pod-template-hash: d8ddf6c68
+    name: grafana-d8ddf6c68-45bcw
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:38Z"
+  window: 11.663s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: kube-rbac-proxy-self
+    usage:
+      cpu: 20065473n
+      memory: 10784Ki
+  - name: kube-state-metrics
+    usage:
+      cpu: 5435334n
+      memory: 60084Ki
+  - name: kube-rbac-proxy-main
+    usage:
+      cpu: 21752750n
+      memory: 28544Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: kube-state-metrics
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 2.15.0
+      pod-template-hash: 5f96f94459
+    name: kube-state-metrics-5f96f94459-8t6t2
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:32Z"
+  window: 13.517s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: kube-rbac-proxy
+    usage:
+      cpu: 20087574n
+      memory: 25136Ki
+  - name: node-exporter
+    usage:
+      cpu: 6580n
+      memory: 16700Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 1.9.0
+      controller-revision-hash: 76ffdbfcc
+      pod-template-generation: "1"
+    name: node-exporter-kk2b6
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:34Z"
+  window: 15.678s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: kube-rbac-proxy
+    usage:
+      cpu: 20237619n
+      memory: 27880Ki
+  - name: node-exporter
+    usage:
+      cpu: "0"
+      memory: 16396Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 1.9.0
+      controller-revision-hash: 76ffdbfcc
+      pod-template-generation: "1"
+    name: node-exporter-ktgf7
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:27Z"
+  window: 15.912s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: kube-rbac-proxy
+    usage:
+      cpu: 19997379n
+      memory: 36940Ki
+  - name: node-exporter
+    usage:
+      cpu: 3102n
+      memory: 16732Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 1.9.0
+      controller-revision-hash: 76ffdbfcc
+      pod-template-generation: "1"
+    name: node-exporter-mwpcz
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:39Z"
+  window: 19.082s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: node-exporter
+    usage:
+      cpu: "0"
+      memory: 16932Ki
+  - name: kube-rbac-proxy
+    usage:
+      cpu: 19973685n
+      memory: 33468Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: node-exporter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 1.9.0
+      controller-revision-hash: 76ffdbfcc
+      pod-template-generation: "1"
+    name: node-exporter-rfk96
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:27Z"
+  window: 15.735s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: prometheus-adapter
+    usage:
+      cpu: 16207487n
+      memory: 72048Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: metrics-adapter
+      app.kubernetes.io/name: prometheus-adapter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.12.0
+      pod-template-hash: 599c88b6c4
+    name: prometheus-adapter-599c88b6c4-7b9lf
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:35Z"
+  window: 15.225s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: prometheus-adapter
+    usage:
+      cpu: 15095779n
+      memory: 73900Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: metrics-adapter
+      app.kubernetes.io/name: prometheus-adapter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.12.0
+      pod-template-hash: 599c88b6c4
+    name: prometheus-adapter-599c88b6c4-ghqcw
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:40Z"
+  window: 16.444s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: config-reloader
+    usage:
+      cpu: "0"
+      memory: 9672Ki
+  - name: prometheus
+    usage:
+      cpu: 235142136n
+      memory: 406296Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/managed-by: prometheus-operator
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+      apps.kubernetes.io/pod-index: "0"
+      controller-revision-hash: prometheus-k8s-99bcf448d
+      operator.prometheus.io/name: k8s
+      operator.prometheus.io/shard: "0"
+      prometheus: k8s
+      statefulset.kubernetes.io/pod-name: prometheus-k8s-0
+    name: prometheus-k8s-0
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:37Z"
+  window: 17.244s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: kube-rbac-proxy
+    usage:
+      cpu: 19944039n
+      memory: 13340Ki
+  - name: prometheus-operator
+    usage:
+      cpu: 1006069n
+      memory: 75932Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/name: prometheus-operator
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.80.1
+      pod-template-hash: 68dbcbf4cc
+    name: prometheus-operator-68dbcbf4cc-tkq2t
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:42Z"
+  window: 18.37s
+- apiVersion: metrics.k8s.io/v1beta1
+  containers:
+  - name: vpa-exporter
+    usage:
+      cpu: 4989879n
+      memory: 28060Ki
+  kind: PodMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:54:59Z"
+    labels:
+      app: vpa-exporter
+      pod-template-hash: 6497875df5
+    name: vpa-exporter-6497875df5-6cn4t
+    namespace: monitoring
+  timestamp: "2026-08-23T22:54:34Z"
+  window: 10.573s
+kind: List
+metadata:
+  resourceVersion: ""

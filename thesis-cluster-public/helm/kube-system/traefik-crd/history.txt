@@ -1,0 +1,3 @@
+REVISION	UPDATED                 	STATUS    	CHART                        	APP VERSION	DESCRIPTION     
+1       	Wed Mar 19 21:39:34 2025	superseded	traefik-crd-27.0.201+up27.0.2	v2.11.10   	Install complete
+2       	Mon Jan 12 23:56:15 2026	deployed  	traefik-crd-37.1.1+up37.1.0  	v3.5.1     	Upgrade complete

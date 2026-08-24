@@ -1,0 +1,179 @@
+apiVersion: v1
+items:
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: rbac.authorization.k8s.io/v1, Kind=ClusterRole
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: aggregated-metrics-reader
+    namespace: kube-system
+    resourceVersion: "275"
+    uid: 023c5a5b-8cef-4eae-9c28-a050198e9a56
+  spec:
+    checksum: 63b058ebe88b8179b459777318be49b591fefe629d9258b10974aeed224b5530
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/aggregated-metrics-reader.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: auth-delegator
+    namespace: kube-system
+    resourceVersion: "281"
+    uid: 1ddb4056-44db-4582-920a-08af192d1ce2
+  spec:
+    checksum: f55fee16219349d1d803b7025f9fde2b6fca741e3900bfedcf64f34dc1c23786
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/auth-delegator.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: rbac.authorization.k8s.io/v1, Kind=RoleBinding
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: auth-reader
+    namespace: kube-system
+    resourceVersion: "286"
+    uid: 946151e9-a8d2-4b6d-8c07-46b13679242f
+  spec:
+    checksum: 97a74f054fe2972fcc6ffb909224d9cb27f136cc152983c9ac96ff45579015c2
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/auth-reader.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: /v1, Kind=ServiceAccount;rbac.authorization.k8s.io/v1,
+        Kind=ClusterRole;rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding;/v1,
+        Kind=ConfigMap;apps/v1, Kind=Deployment;/v1, Kind=Service
+    creationTimestamp: "2025-03-19T21:28:32Z"
+    generation: 4
+    name: coredns
+    namespace: kube-system
+    resourceVersion: "2166974"
+    uid: b3c17787-737f-4222-bc75-087f12b346a0
+  spec:
+    checksum: d5c3f26e4f8502eeae50168164f7e05aafe3750c172127dd5e1d051a4df08f31
+    source: /var/lib/rancher/k3s/server/manifests/coredns.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: /v1, Kind=ServiceAccount;rbac.authorization.k8s.io/v1,
+        Kind=ClusterRole;rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding;apps/v1,
+        Kind=Deployment;storage.k8s.io/v1, Kind=StorageClass;/v1, Kind=ConfigMap
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 4
+    name: local-storage
+    namespace: kube-system
+    resourceVersion: "2166987"
+    uid: fc6c8126-1220-4694-addc-796c24d5f884
+  spec:
+    checksum: 33219fd9c2c92159bd348dc496ec410188db866505955e3afc4dfce8003c0330
+    source: /var/lib/rancher/k3s/server/manifests/local-storage.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: apiregistration.k8s.io/v1, Kind=APIService
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: metrics-apiservice
+    namespace: kube-system
+    resourceVersion: "292"
+    uid: 129be733-b253-423e-a6c9-b3438e41d1c1
+  spec:
+    checksum: 03266df7891b56dfffebb855a031b524ed20c6736846417ccd491dd91c6c0ec3
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/metrics-apiservice.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: /v1, Kind=ServiceAccount;apps/v1, Kind=Deployment
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 4
+    name: metrics-server-deployment
+    namespace: kube-system
+    resourceVersion: "2167011"
+    uid: 064b80c5-34a9-4258-8413-ef93dd29ace3
+  spec:
+    checksum: 8adeb56fb2f911b9edfe0525de69cd8bc295ee25227bd18980183098fcaf0d49
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/metrics-server-deployment.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: /v1, Kind=Service
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: metrics-server-service
+    namespace: kube-system
+    resourceVersion: "304"
+    uid: f057f0c0-8bd8-4e77-86ee-da331413197b
+  spec:
+    checksum: 0ba8f8a9133f38c226e33384b8019a882440480cb8b7b45b0cd9f62bebb06a6d
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/metrics-server-service.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: rbac.authorization.k8s.io/v1, Kind=ClusterRole;rbac.authorization.k8s.io/v1,
+        Kind=ClusterRoleBinding
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: resource-reader
+    namespace: kube-system
+    resourceVersion: "311"
+    uid: 7076b5eb-4615-43ff-ab33-a59bd234c235
+  spec:
+    checksum: d7e21b07d9edf7a1d4e169342f470405970621de59864f998dd84c2048fb9e64
+    source: /var/lib/rancher/k3s/server/manifests/metrics-server/resource-reader.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding;rbac.authorization.k8s.io/v1,
+        Kind=ClusterRole
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 3
+    name: rolebindings
+    namespace: kube-system
+    resourceVersion: "2166635"
+    uid: 2d412796-3c98-434a-8476-4ceae04f2419
+  spec:
+    checksum: 6b4dc430eb4c8fc1a94efd18efa74647f561326923254c23b3001ef488457c1f
+    source: /var/lib/rancher/k3s/server/manifests/rolebindings.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: node.k8s.io/v1, Kind=RuntimeClass
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    generation: 2
+    name: runtimes
+    namespace: kube-system
+    resourceVersion: "338"
+    uid: bef3c086-c3dd-413d-b968-779c52275f45
+  spec:
+    checksum: 4ea3be58c76250c61e65a257c8279b42d11568f913233eda98ac0d77ef2a8e37
+    source: /var/lib/rancher/k3s/server/manifests/runtimes.yaml
+- apiVersion: k3s.cattle.io/v1
+  kind: Addon
+  metadata:
+    annotations:
+      addon.k3s.cattle.io/gvks: helm.cattle.io/v1, Kind=HelmChart
+    creationTimestamp: "2025-03-19T21:28:34Z"
+    generation: 4
+    name: traefik
+    namespace: kube-system
+    resourceVersion: "2167024"
+    uid: e8d08881-c551-4092-bd5a-2ad2331a2015
+  spec:
+    checksum: 2081bd3506d615b76ce01aede5c1bce9b2f752a39adaa4e671dcabf086c1c6cf
+    source: /var/lib/rancher/k3s/server/manifests/traefik.yaml
+kind: List
+metadata:
+  resourceVersion: ""

@@ -1,0 +1,165 @@
+apiVersion: v1
+items:
+- apiVersion: node.k8s.io/v1
+  handler: crun
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQvU7sMBCFX+Xq1N5cZaPsZi1RIEo6CvqxPWFNkvHK4wShVd4dBSho+ClHZ+bTN+cKusRHzhqTwEJS4GrotIrp/1LD4EwSRs6w8HkWGAxRAiweZilx4ruRVGEwcaFAhWCvIJFUqMQkuo3JPbMvyqXKMVWeShl5w8cNA/Ntnl6E8+5pGWAxNPolWWrz7z5KuLkNIcmvCKGJYZE/jPVP+3ohvx0Ns+OdvmrhCavBSI7HH786k55h0R73Te2YToe28/2+7X0gv2/62reHriV/dM73p67ZoJ9+7/2u61sAAAD//4qB84qRAQAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: crun
+    resourceVersion: "326"
+    uid: 8e8009c0-35ce-4ed6-9e84-f180a9843fa2
+- apiVersion: node.k8s.io/v1
+  handler: lunatic
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQzU7sMAyFX+XqrDO96lSd6URigViyY8HeSVwmNHVGdVqERn13VAESG36W1rE/f/YVdImPPGnMAgvJgauh0yrm/0sNgzNJSDzBIs1CJXoYDFECLB5mKXHku0SqMBi5UKBCsFeQSC5UYhbdyuye2RflUk0xV55KSbxtiBsG5ts8vwhPu6dlgMXQ6Jdkqc2/+yjh5jaELL8ihEaGxfRurH/q1wv5bWiYHe/0VQuPWA0SOU4/XnUmPcOiPe6b2jGdDm3n+33b+0B+3/S1bw9dS/7onO9PXbNBP/w+X7yubwEAAP//PgU3nZcBAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: lunatic
+    resourceVersion: "327"
+    uid: 1822f034-e4b4-4f05-8270-bc1366c2eae3
+- apiVersion: node.k8s.io/v1
+  handler: nvidia
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQvW7rMAyFX+XizIovHMOJI6BD0bFbh+6URNeqbSowFRdF4HcvhGbo0p+R+MiPh7yCzvGZF41JYCEpcDV2WsX0f61hMJCEiZeC1hgiwWCMEmDxdJEcZ36YSBUGM2cKlAn2ChJJmXJMoqVM7pV9Vs7VElPlKeeJy4JYNDDf8vQmvOxe1hEWY6NfyFqbf49Rwt19CEl+VQjNDIvlM7H+qV/P5MvQeHG803fNPGMzmMjx9ONVA+kAi/a4b2rHdDq0ne/3be8D+X3T1749dC35o3O+P3VNkd7y3T68bR8BAAD///Uj4MeVAQAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: nvidia
+    resourceVersion: "328"
+    uid: 14b2d6f9-ae66-4e73-b5b9-7d7005f546cf
+- apiVersion: node.k8s.io/v1
+  handler: nvidia-experimental
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQv07EMAyHXwV5zhX1qt71IjEgRjYGdidxOdPUOcW5Ajr13VEEAwP/RuuzP//sC+CJHykrJwELkgI106ANp+ulBQNHlBApV7RwYNzQ64kyzyQFIxiYWAJYeDhL4ZnuIqqCgZkKBiwI9gIokgoWTqK1TO6ZfFEqTebUeCwlUt3GVQPmR55ehPLmaZnAwtTpF7K05uqeJdzchpDkT4XgTGAhfyTWf/XrCX0dms6ONvqmhWZYDUR0FH+96oh6BAv9ftu1jvCw6wc/bvvRB/Tbbmx9vxt69Hvn/HgYuir9zPfdu9f1PQAA//8zYTQRrwEAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: nvidia-experimental
+    resourceVersion: "329"
+    uid: ca049921-4a0d-4be6-8fa6-9045c00da9b2
+- apiVersion: node.k8s.io/v1
+  handler: slight
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQu27DMAxFf6W4s+LCMZw4AjoUHbt16E5JdKxapgJTSVEE/vfCaIYufYzEJQ8PeQWd4ivPGrPAQnLgauy0ivn+UsNgIAmJZ1hoisehwGCMEmDxcpYSJ35KpAqDiQsFKgR7BYnkQiVm0bXM7o19US7VHHPlqZTE64K4YmB+zPO78Lw5XkZYjI1+Sy61uXuOEh4eQ8jyJ0JoYljMX8b6r349kV+HxrPjjX5o4QmLQSLH6derBtIBFu1+29SO6bBrO99v294H8tumr32761rye+d8f+iaFXrzu314WT4DAAD///q8G36VAQAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: slight
+    resourceVersion: "330"
+    uid: 8c306e1a-197e-4f74-8a02-0a735605eb49
+- apiVersion: node.k8s.io/v1
+  handler: spin
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQvU7sMBCFX+Xq1N5cJVF2s5YoECUdBf3YnhCTZBxlvEFolXdHAQoafsrRmfn0zbmC5vjIi8YksJAUuBhaLWL6v5Yw6EnCyAssdI4CgyFKgMXDRXKc+G4kVRhMnClQJtgrSCRlyjGJ7mNyz+yzci6WmApPOY+84+OOgfk2Ty/Cy+FpHWAx1PolWUvz7z5KuLkNIcmvCKGJYbF8GOuf9nUmvx8NF8cHfdXMEzaDkRyPP37Vk/awaE5VXTqm87FpfVc1nQ/kq7orfXNsG/In53x3busd+un33u+2vQUAAP//xdJSzpEBAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:34Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: spin
+    resourceVersion: "331"
+    uid: 532dcf91-4498-4698-b7aa-5504b17acbbe
+- apiVersion: node.k8s.io/v1
+  handler: wasmedge
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQvW7rMAyFX+XizIovbMOJI6BD0bFbh+6URMeqbSowFQdF4HcvjBZFl/6MxCE/fuQNdI7PPGtMAgtJgYuh1SKm/0sJg54kjDzD4ko6cTgxDIYoARZPF8lx4oeRVGEwcaZAmWBvIJGUKcckupXJvbDPyrmYYyo85TzytiJuGJhv83QVnnenZYDFUOuXZCnNv8co4e4+hCS/IoQmhsX8bqx/6tcz+W1ouDje6atmnrAajOR4/PGqnrSHRXOo6tIxHfdN67uq6XwgX9Vd6Zt925A/OOe7Y1tv0A+/zx+v61sAAAD//7QqKvOZAQAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:34Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: wasmedge
+    resourceVersion: "332"
+    uid: c83db2db-c98e-4e95-868a-ee5c93f10060
+- apiVersion: node.k8s.io/v1
+  handler: wasmer
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQu27DMAxFf6W4s+LCMZw4AjoUHbt16E5JdKPapgJRcVAE/vfCaIYufYzEJQ8PeQWd4itnjUlgISlwNXRaxXQ/1zA4koSRMywupBNnGAxRAixezlLixE8jqcJg4kKBCsFeQSKpUIlJdC2Te2dflEuVY6o8lTLyuiCuGJgf83QRzpu3eYDF0Oi3ZK7N3XOU8PAYQpI/EUITwyJ/Geu/+vVEfh0azo43+qGFJywGIzkef73qSHqERbvfNrVjOuzazvfbtveB/Lbpa9/uupb83jnfH7pmhd78bh9els8AAAD///XoQSeVAQAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:34Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: wasmer
+    resourceVersion: "333"
+    uid: 74f2be57-38a8-4f40-a3b8-ccb0a585626d
+- apiVersion: node.k8s.io/v1
+  handler: wasmtime
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQT0/DMAzFvwp656yoq7p1kTggjtw4cHcSl4W2zlRnndDU744iEOLCn6P97J+f3xV0is88a0wCC0mBq6HTKqbbpYbBkSSMPMPiQjrlODEMhigBFk9nKY2HkVRhMHGmQJlgryCRlCnHJFrK5F7ZZ+VczTFVnnIeuZyIBQPzo54uwvPmZRlgMTT6TVlqc/MYJdzdh5DkT4TQxLCYPxzrv+b1RL4sDWfHG33TzBNWg5Ecj79+dSQ9wqLdb5vaMR12bef7bdv7QH7b9LVvd11Lfu+c7w9dU6Cf/r4yXtf3AAAA///juahxmQEAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:34Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: wasmtime
+    resourceVersion: "334"
+    uid: c7441e71-90ac-42fb-b93e-474107d71c96
+- apiVersion: node.k8s.io/v1
+  handler: wws
+  kind: RuntimeClass
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4yQvW6sQAyFX+Xq1CxXgNhlR0oRpUyXIr1nxoQJ4FnhWVC04t2jUVKkyU9pH/vTZ99Al/DMi4YoMJDouRw7LUP8v1YoMJD4iRcYbJuiwBjEw+DpKinM/DCR5u7MiTwlgrmBRGKiFKJoLqN9ZZeUU7mEWDpKaeJMDxmD4ts8bsLL4WUdYTA2+iVZq+LfYxB/d+99lF8RQjPDYPkw1j/N64VcXhqvlg/6poln7AUmsjz9eNVAOsCgPdVNZZnOx7Zzfd32zpOrm75y7bFryZ2sdf25azL00y+/d9/fAwAA//+JDGIdjwEAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: runtimes
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:34Z"
+    labels:
+      objectset.rio.cattle.io/hash: 57231bea9658cf25fcdac23f1c5685ac7bbcf983
+    name: wws
+    resourceVersion: "335"
+    uid: 8fd1d525-0697-45dd-b183-0da53cb30b9e
+kind: List
+metadata:
+  resourceVersion: ""

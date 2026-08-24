@@ -1,0 +1,29 @@
+apiVersion: v1
+items:
+- apiVersion: scheduling.k8s.io/v1
+  description: Used for system critical pods that must run in the cluster, but can
+    be moved to another node if necessary.
+  kind: PriorityClass
+  metadata:
+    creationTimestamp: "2025-03-19T21:28:26Z"
+    generation: 1
+    name: system-cluster-critical
+    resourceVersion: "69"
+    uid: ac8066e5-fbdb-45dd-b0a8-1155c716cbcd
+  preemptionPolicy: PreemptLowerPriority
+  value: 2000000000
+- apiVersion: scheduling.k8s.io/v1
+  description: Used for system critical pods that must not be moved from their current
+    node.
+  kind: PriorityClass
+  metadata:
+    creationTimestamp: "2025-03-19T21:28:26Z"
+    generation: 1
+    name: system-node-critical
+    resourceVersion: "68"
+    uid: dfd1e44e-ba42-4731-a502-33ccfe7ecae0
+  preemptionPolicy: PreemptLowerPriority
+  value: 2000001000
+kind: List
+metadata:
+  resourceVersion: ""

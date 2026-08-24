@@ -1,0 +1,619 @@
+- name: UPF TCP scaling load test with one limited iperf per UE
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    k8s_namespace: default
+
+    iperf_host: "192.168.1.211"
+    iperf_base_port: 5201
+
+    # Limit TCP bitrate per UE.
+    iperf_tcp_bitrate: "1M"
+
+    # Ramp-up między startem kolejnych klientów iperf.
+    # 0.02 = 20 ms. Dla 200 UE daje około 10 sekund rozłożenia startu.
+    iperf_client_start_delay: "0.05"
+
+    # Ile błędnych klientów wypisać szczegółowo w logu scenariusza.
+    # Reszta jest liczona w TRAFFIC_SUMMARY, ale nie zaśmieca loga.
+    failed_clients_log_limit: 10
+
+    test_duration: 30
+    iperf_timeout_extra: 15
+    pause_between: 0
+
+    tunnel_timeout: 30
+    pod_timeout: 15
+
+    required_registered_ues: 50
+    scenarios: "13 15 17 19 21 23 25 27 29 31 33 35"
+
+    precheck_ports_count: 1
+
+  tasks:
+    - name: Run UPF TCP scenarios
+      ansible.builtin.shell: |
+        set -u
+        set -o pipefail
+
+        NS="{{ k8s_namespace }}"
+
+        IPERF_HOST="{{ iperf_host }}"
+        IPERF_BASE_PORT={{ iperf_base_port }}
+        IPERF_TCP_BITRATE="{{ iperf_tcp_bitrate }}"
+        IPERF_CLIENT_START_DELAY="{{ iperf_client_start_delay }}"
+        FAILED_CLIENTS_LOG_LIMIT={{ failed_clients_log_limit }}
+
+        TEST_DURATION={{ test_duration }}
+        IPERF_TIMEOUT=$((TEST_DURATION + {{ iperf_timeout_extra }}))
+        PAUSE_BETWEEN={{ pause_between }}
+
+        TUNNEL_TIMEOUT={{ tunnel_timeout }}
+        POD_TIMEOUT={{ pod_timeout }}
+
+        REQUIRED_REGISTERED_UES={{ required_registered_ues }}
+        SCENARIOS="{{ scenarios }}"
+
+        PRECHECK_PORTS_COUNT={{ precheck_ports_count }}
+
+        ADD_RELEASE="ueransim-gnb-ues"
+        ADD_SELECTOR="app.kubernetes.io/instance=${ADD_RELEASE}"
+
+        UPF_SELECTOR="app.kubernetes.io/instance=open5gs,app.kubernetes.io/name=upf"
+        UPF_VPA_NAME="open5gs-upf-vpa"
+
+        RUN_ID="$(date +%Y%m%d_%H%M%S)"
+        PROGRESS_LOG="$PWD/upf_iperf_per_ue_${RUN_ID}.log"
+
+        ln -sf "$PROGRESS_LOG" "$PWD/upf_iperf_per_ue.log"
+
+        log() {
+          echo "[$(date -Iseconds)] $*" | tee -a "$PROGRESS_LOG" >&2
+        }
+
+        fail_exit() {
+          log "ERROR: $*"
+          exit 1
+        }
+
+        hard_reset_upf_vpa_history() {
+          local label="$1"
+
+          log "================================================================"
+          log "VPA HARD RESET START label=$label timestamp=$(date -Iseconds)"
+          log "================================================================"
+
+          log "Scaling vpa-recommender to 0 timestamp=$(date -Iseconds)"
+
+          kubectl -n kube-system scale deploy/vpa-recommender --replicas=0
+          kubectl -n kube-system rollout status deploy/vpa-recommender --timeout=120s || true
+
+          log "Waiting until vpa-recommender pod is fully removed timestamp=$(date -Iseconds)"
+
+          while kubectl -n kube-system get pods --no-headers 2>/dev/null | awk '{print $1}' | grep -q '^vpa-recommender-'; do
+            log "Waiting for vpa-recommender pod deletion timestamp=$(date -Iseconds)"
+            sleep 2
+          done
+
+          log "Deleting all VPA checkpoints in namespace=$NS timestamp=$(date -Iseconds)"
+
+          kubectl -n "$NS" delete verticalpodautoscalercheckpoints.autoscaling.k8s.io --all --ignore-not-found
+
+          log "Current VPA checkpoints after delete timestamp=$(date -Iseconds):"
+          kubectl -n "$NS" get verticalpodautoscalercheckpoints.autoscaling.k8s.io 2>&1 | while read -r line; do
+            log "$line"
+          done
+
+          log "Scaling vpa-recommender back to 1 timestamp=$(date -Iseconds)"
+
+          kubectl -n kube-system scale deploy/vpa-recommender --replicas=1
+          kubectl -n kube-system rollout status deploy/vpa-recommender --timeout=180s
+
+          log "Waiting 60 seconds for fresh VPA recommender state timestamp=$(date -Iseconds)"
+
+          sleep 60
+
+          log "VPA status after hard reset timestamp=$(date -Iseconds):"
+          kubectl -n "$NS" describe vpa "$UPF_VPA_NAME" 2>&1 | sed -n '/Recommendation:/,/Events:/p' | while read -r line; do
+            log "$line"
+          done
+
+          log "VPA checkpoints after recommender restart timestamp=$(date -Iseconds):"
+          kubectl -n "$NS" get verticalpodautoscalercheckpoints.autoscaling.k8s.io 2>&1 | while read -r line; do
+            log "$line"
+          done
+
+          log "================================================================"
+          log "VPA HARD RESET END label=$label timestamp=$(date -Iseconds)"
+          log "================================================================"
+        }
+
+        get_additional_pod() {
+          kubectl -n "$NS" get pod \
+            -l "$ADD_SELECTOR" \
+            -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.status.phase}{"\n"}{end}' \
+            | awk '$2=="Running" {print $1; exit}'
+        }
+
+        wait_additional_pod() {
+          local timeout_sec="$1"
+          local start
+          local now
+          local pod
+
+          start="$(date +%s)"
+
+          while true; do
+            pod="$(get_additional_pod || true)"
+
+            if [ -n "$pod" ]; then
+              echo "$pod"
+              return 0
+            fi
+
+            now="$(date +%s)"
+
+            if [ $((now - start)) -ge "$timeout_sec" ]; then
+              log "Timeout waiting for existing additional UE pod timestamp=$(date -Iseconds)"
+              return 1
+            fi
+
+            log "Waiting for existing additional UE pod timestamp=$(date -Iseconds)"
+            sleep 5
+          done
+        }
+
+        get_upf_pod() {
+          kubectl -n "$NS" get pod \
+            -l "$UPF_SELECTOR" \
+            -o jsonpath='{.items[0].metadata.name}'
+        }
+
+        get_pod_uid() {
+          kubectl -n "$NS" get pod "$1" \
+            -o jsonpath='{.metadata.uid}'
+        }
+
+        get_pod_restarts() {
+          kubectl -n "$NS" get pod "$1" \
+            -o jsonpath='{.status.containerStatuses[0].restartCount}'
+        }
+
+        count_tunnels() {
+          local pod="$1"
+
+          kubectl -n "$NS" exec "$pod" -- bash -lc \
+            "ip -o -4 addr show | awk '\$2 ~ /^uesimtun/ {print \$4}' | wc -l" \
+            2>/dev/null \
+            | tr -d ' '
+        }
+
+        verify_registered_ues() {
+          local pod="$1"
+          local required="$2"
+          local timeout_sec="$3"
+          local start
+          local now
+          local count
+
+          start="$(date +%s)"
+
+          while true; do
+            count="$(count_tunnels "$pod" || echo 0)"
+            count="${count:-0}"
+
+            if [ "$count" -ge "$required" ]; then
+              log "Required registered UE pool ready timestamp=$(date -Iseconds) count=$count required=$required"
+              return 0
+            fi
+
+            now="$(date +%s)"
+
+            if [ $((now - start)) -ge "$timeout_sec" ]; then
+              log "Required registered UE pool not ready timestamp=$(date -Iseconds) got=$count required=$required"
+              return 1
+            fi
+
+            log "Waiting for required registered UE pool timestamp=$(date -Iseconds) got=$count required=$required"
+            sleep 5
+          done
+        }
+
+        validate_scenarios() {
+          local scenario
+          local max_port
+
+          for scenario in $SCENARIOS; do
+            if [ "$scenario" -gt "$REQUIRED_REGISTERED_UES" ]; then
+              fail_exit "Scenario UE=$scenario is larger than required registered UE pool=$REQUIRED_REGISTERED_UES"
+            fi
+
+            max_port=$((IPERF_BASE_PORT + scenario - 1))
+            log "Scenario validation timestamp=$(date -Iseconds) active_ue=$scenario requires_iperf_ports=${IPERF_BASE_PORT}-${max_port}"
+          done
+        }
+
+        precheck_iperf_ports() {
+          local pod="$1"
+          local check_count="$2"
+          local rc
+          local last_port
+
+          last_port=$((IPERF_BASE_PORT + check_count - 1))
+
+          log "IPERF ports precheck START timestamp=$(date -Iseconds) host=$IPERF_HOST ports=${IPERF_BASE_PORT}-${last_port} bitrate=1M"
+
+          kubectl -n "$NS" exec -i "$pod" -- env \
+            IPERF_HOST="$IPERF_HOST" \
+            IPERF_BASE_PORT="$IPERF_BASE_PORT" \
+            CHECK_COUNT="$check_count" \
+            bash -s <<'REMOTE_PORT_PRECHECK'
+        set -u
+
+        FIRST_LINE="$(ip -o -4 addr show | awk '$2 ~ /^uesimtun/ {split($4,a,"/"); print $2" "a[1]; exit}')"
+
+        if [ -z "$FIRST_LINE" ]; then
+          echo "ERROR: no uesimtun interface found"
+          exit 10
+        fi
+
+        UE_IF="$(echo "$FIRST_LINE" | awk '{print $1}')"
+        UE_IP="$(echo "$FIRST_LINE" | awk '{print $2}')"
+
+        echo "PORT_PRECHECK_SOURCE timestamp=$(date -Iseconds) ue_if=$UE_IF ue_ip=$UE_IP"
+
+        i=0
+
+        while [ "$i" -lt "$CHECK_COUNT" ]; do
+          PORT=$((IPERF_BASE_PORT + i))
+
+          echo "PORT_PRECHECK_START timestamp=$(date -Iseconds) ue_ip=$UE_IP target=${IPERF_HOST}:${PORT}"
+
+          timeout 20 \
+            iperf3 \
+            -c "$IPERF_HOST" \
+            -p "$PORT" \
+            -t 3 \
+            -B "$UE_IP" \
+            -b 1M \
+            >/tmp/iperf_port_precheck_${PORT}.log 2>&1
+
+          RC="$?"
+
+          echo "PORT_PRECHECK_END timestamp=$(date -Iseconds) target=${IPERF_HOST}:${PORT} rc=$RC"
+
+          if [ "$RC" -ne 0 ]; then
+            echo "ERROR: port precheck failed target=${IPERF_HOST}:${PORT} rc=$RC"
+            echo "ERROR: precheck log below"
+            cat /tmp/iperf_port_precheck_${PORT}.log || true
+            exit "$RC"
+          fi
+
+          i=$((i + 1))
+        done
+
+        exit 0
+        REMOTE_PORT_PRECHECK
+
+          rc="$?"
+
+          log "IPERF ports precheck END timestamp=$(date -Iseconds) rc=$rc"
+
+          return "$rc"
+        }
+
+        start_iperf_per_ue() {
+          local pod="$1"
+          local tag="$2"
+          local active_ues="$3"
+
+          (
+            kubectl -n "$NS" exec -i "$pod" -- env \
+              RUN_ID="$RUN_ID" \
+              TAG="$tag" \
+              ACTIVE_UES="$active_ues" \
+              IPERF_HOST="$IPERF_HOST" \
+              IPERF_BASE_PORT="$IPERF_BASE_PORT" \
+              IPERF_TCP_BITRATE="$IPERF_TCP_BITRATE" \
+              IPERF_CLIENT_START_DELAY="$IPERF_CLIENT_START_DELAY" \
+              FAILED_CLIENTS_LOG_LIMIT="$FAILED_CLIENTS_LOG_LIMIT" \
+              TEST_DURATION="$TEST_DURATION" \
+              IPERF_TIMEOUT="$IPERF_TIMEOUT" \
+              bash -s <<'REMOTE_SCRIPT'
+        set +e
+
+        WORK="/tmp/upf_iperf_per_ue_${RUN_ID}_${TAG}"
+
+        rm -rf "$WORK"
+        mkdir -p "$WORK"
+
+        count_rc() {
+          local pattern="$1"
+          local expected_rc="$2"
+          local count=0
+          local file
+          local rc
+
+          for file in $pattern; do
+            [ -e "$file" ] || continue
+
+            rc="$(cat "$file" 2>/dev/null || echo ERR)"
+
+            if [ "$rc" = "$expected_rc" ]; then
+              count=$((count + 1))
+            fi
+          done
+
+          echo "$count"
+        }
+
+        echo "REMOTE_IPERF_PER_UE_START timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES tag=$TAG iperf_host=$IPERF_HOST base_port=$IPERF_BASE_PORT duration=$TEST_DURATION bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY failed_log_limit=$FAILED_CLIENTS_LOG_LIMIT"
+
+        ip -o -4 addr show \
+          | awk '$2 ~ /^uesimtun/ {split($4,a,"/"); print $2" "a[1]}' \
+          | sort -V \
+          > "$WORK/all_tunnels.txt"
+
+        REGISTERED_TUNNELS="$(wc -l < "$WORK/all_tunnels.txt" | tr -d ' ')"
+
+        head -n "$ACTIVE_UES" "$WORK/all_tunnels.txt" > "$WORK/active_tunnels.txt"
+
+        ACTIVE_TUNNELS="$(wc -l < "$WORK/active_tunnels.txt" | tr -d ' ')"
+
+        if [ "$ACTIVE_TUNNELS" -lt "$ACTIVE_UES" ]; then
+          echo "ERROR: not enough active tunnels selected timestamp=$(date -Iseconds) active=$ACTIVE_TUNNELS requested=$ACTIVE_UES registered=$REGISTERED_TUNNELS"
+          rm -rf "$WORK"
+          exit 11
+        fi
+
+        if [ "$ACTIVE_TUNNELS" -eq 0 ]; then
+          echo "ERROR: no active tunnels selected timestamp=$(date -Iseconds)"
+          rm -rf "$WORK"
+          exit 12
+        fi
+
+        IDX=0
+
+        while read -r UE_IF UE_IP; do
+          [ -n "$UE_IF" ] || continue
+
+          PORT=$((IPERF_BASE_PORT + IDX))
+
+          echo "$IDX $UE_IF $UE_IP $PORT" >> "$WORK/mapping.txt"
+
+          (
+            echo "IPERF_CLIENT_START timestamp=$(date -Iseconds) idx=$IDX ue_if=$UE_IF ue_ip=$UE_IP target=${IPERF_HOST}:${PORT} bitrate=$IPERF_TCP_BITRATE"
+
+            timeout "$IPERF_TIMEOUT" \
+              iperf3 \
+              -c "$IPERF_HOST" \
+              -p "$PORT" \
+              -t "$TEST_DURATION" \
+              -B "$UE_IP" \
+              -b "$IPERF_TCP_BITRATE" \
+              > "$WORK/iperf_${IDX}_${UE_IF}_${PORT}.log" 2>&1
+
+            RC="$?"
+
+            echo "$RC" > "$WORK/iperf_${IDX}_${UE_IF}_${PORT}.rc"
+
+            echo "IPERF_CLIENT_END timestamp=$(date -Iseconds) idx=$IDX ue_if=$UE_IF ue_ip=$UE_IP target=${IPERF_HOST}:${PORT} rc=$RC"
+          ) &
+
+          IDX=$((IDX + 1))
+
+          if [ "$IPERF_CLIENT_START_DELAY" != "0" ]; then
+            sleep "$IPERF_CLIENT_START_DELAY"
+          fi
+        done < "$WORK/active_tunnels.txt"
+
+        wait
+
+        IPERF_OK="$(count_rc "$WORK/iperf_*.rc" 0)"
+        IPERF_TIMEOUT_COUNT="$(count_rc "$WORK/iperf_*.rc" 124)"
+        IPERF_BUSY="$(grep -l "server is busy running a test" "$WORK"/iperf_*.log 2>/dev/null | wc -l | tr -d ' ')"
+        IPERF_TOTAL="$(find "$WORK" -maxdepth 1 -name 'iperf_*.rc' | wc -l | tr -d ' ')"
+        IPERF_FAILED=$((IPERF_TOTAL - IPERF_OK))
+
+        FIRST_PORT="$IPERF_BASE_PORT"
+        LAST_PORT=$((IPERF_BASE_PORT + ACTIVE_UES - 1))
+
+        echo "IPERF_MAPPING_SUMMARY timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS active_tunnels=$ACTIVE_TUNNELS target_host=$IPERF_HOST first_port=$FIRST_PORT last_port=$LAST_PORT bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY"
+
+        echo "TRAFFIC_SUMMARY timestamp=$(date -Iseconds) registered_tunnels=$REGISTERED_TUNNELS active_ues=$ACTIVE_UES active_tunnels=$ACTIVE_TUNNELS iperf_total=$IPERF_TOTAL iperf_ok=$IPERF_OK iperf_failed=$IPERF_FAILED iperf_timeout=$IPERF_TIMEOUT_COUNT iperf_busy=$IPERF_BUSY target_host=$IPERF_HOST first_port=$FIRST_PORT last_port=$LAST_PORT bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY"
+
+        if [ "$IPERF_FAILED" -ne 0 ]; then
+          echo "WARNING: one or more iperf clients failed timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES iperf_total=$IPERF_TOTAL iperf_ok=$IPERF_OK iperf_failed=$IPERF_FAILED iperf_timeout=$IPERF_TIMEOUT_COUNT iperf_busy=$IPERF_BUSY"
+          echo "WARNING: failed iperf mapping and short logs below"
+
+          FAILED_TOTAL=0
+          FAILED_PRINTED=0
+
+          for rcfile in "$WORK"/iperf_*.rc; do
+            [ -e "$rcfile" ] || continue
+
+            RC="$(cat "$rcfile" 2>/dev/null || echo ERR)"
+
+            if [ "$RC" != "0" ]; then
+              FAILED_TOTAL=$((FAILED_TOTAL + 1))
+
+              if [ "$FAILED_PRINTED" -lt "$FAILED_CLIENTS_LOG_LIMIT" ]; then
+                FAILED_PRINTED=$((FAILED_PRINTED + 1))
+
+                base="$(basename "$rcfile" .rc)"
+                logfile="$WORK/${base}.log"
+
+                echo "FAILED_CLIENT rc=$RC logfile=$logfile"
+                sed -n '1,10p' "$logfile" 2>/dev/null || true
+              fi
+            fi
+          done
+
+          echo "WARNING: failed_clients_total=$FAILED_TOTAL failed_clients_printed=$FAILED_PRINTED failed_clients_log_limit=$FAILED_CLIENTS_LOG_LIMIT"
+          echo "WARNING: scenario traffic completed with failed clients, but test will continue because Grafana/Prometheus metrics are the source of measurement"
+        fi
+
+        echo "REMOTE_IPERF_PER_UE_END timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES tag=$TAG"
+
+        rm -rf "$WORK"
+        exit 0
+        REMOTE_SCRIPT
+          ) 2>&1 | while IFS= read -r line; do
+            log "$line"
+          done &
+
+          LAST_TRAFFIC_PID=$!
+
+          log "Started iperf-per-UE traffic pod=$pod active_ues=$active_ues pid=$LAST_TRAFFIC_PID timestamp=$(date -Iseconds)"
+        }
+
+        log "================================================================"
+        log "TEST START run_id=$RUN_ID timestamp=$(date -Iseconds)"
+        log "================================================================"
+
+        log "Pre-checks START timestamp=$(date -Iseconds)"
+
+        kubectl get nodes >/dev/null \
+          || fail_exit "kubectl cannot reach cluster"
+
+        helm list -n "$NS" >/dev/null \
+          || fail_exit "helm cannot list releases"
+
+        kubectl -n "$NS" get vpa "$UPF_VPA_NAME" >/dev/null \
+          || fail_exit "UPF VPA not found: $UPF_VPA_NAME"
+
+        ADD_POD="$(wait_additional_pod "$POD_TIMEOUT" || true)"
+
+        if [ -z "$ADD_POD" ]; then
+          fail_exit "Existing additional UE pod not found. Start/register UE pool before running this test."
+        fi
+
+        log "Using existing additional UE pod timestamp=$(date -Iseconds) pod=$ADD_POD"
+
+        verify_registered_ues "$ADD_POD" "$REQUIRED_REGISTERED_UES" "$TUNNEL_TIMEOUT" \
+          || fail_exit "Required $REQUIRED_REGISTERED_UES registered UE tunnels not available. Test will not start."
+
+        validate_scenarios
+
+        if ! precheck_iperf_ports "$ADD_POD" "$PRECHECK_PORTS_COUNT"; then
+          log "WARNING: Pre-check iperf ports failed. Test will continue because iperf client failures are measured and logged during scenarios."
+          log "WARNING: Check iperf server host=$IPERF_HOST ports=${IPERF_BASE_PORT}-$((IPERF_BASE_PORT + PRECHECK_PORTS_COUNT - 1)) if all scenario clients fail."
+        fi
+
+        UPF_POD="$(get_upf_pod)" \
+          || fail_exit "UPF pod not found"
+
+        UPF_QOS="$(kubectl -n "$NS" get pod "$UPF_POD" \
+          -o jsonpath='{.status.qosClass}')"
+
+        log "UPF pod timestamp=$(date -Iseconds) pod=$UPF_POD QoS=$UPF_QOS"
+        log "IMPORTANT: this script does not register or unregister UE during scenarios"
+        log "IMPORTANT: existing registered UE pool is reused for all scenarios"
+        log "IMPORTANT: no ping is used"
+        log "IMPORTANT: every active UE runs its own iperf3 client"
+        log "IMPORTANT: all iperf servers use the same IP but different ports"
+        log "IMPORTANT: target_host=$IPERF_HOST base_port=$IPERF_BASE_PORT tcp_bitrate_per_ue=$IPERF_TCP_BITRATE"
+        log "IMPORTANT: iperf client start delay is $IPERF_CLIENT_START_DELAY seconds"
+        log "IMPORTANT: failed client detailed log limit is $FAILED_CLIENTS_LOG_LIMIT"
+        log "IMPORTANT: VPA hard reset is executed once before all scenarios"
+        log "IMPORTANT: individual iperf client failures are logged but do not abort the whole test"
+        log "Metrics are collected externally by Prometheus and Grafana"
+        log "Pre-checks END timestamp=$(date -Iseconds)"
+
+        hard_reset_upf_vpa_history "before_test_run"
+
+
+
+
+
+        log "SCENARIO LOOP START timestamp=$(date -Iseconds) scenarios=\"$SCENARIOS\""
+
+        for UE_COUNT in $SCENARIOS; do
+          FAIL=0
+          TAG="ue${UE_COUNT}_${RUN_ID}"
+          SCENARIO_START_TS="$(date -Iseconds)"
+          FIRST_PORT="$IPERF_BASE_PORT"
+          LAST_PORT=$((IPERF_BASE_PORT + UE_COUNT - 1))
+
+          log "================================================================"
+          log "SCENARIO START timestamp=$SCENARIO_START_TS active_ue=$UE_COUNT registered_ue_pool=$REQUIRED_REGISTERED_UES target_host=$IPERF_HOST ports=${FIRST_PORT}-${LAST_PORT} bitrate_per_ue=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY"
+          log "================================================================"
+
+          CURRENT_TUNNELS="$(count_tunnels "$ADD_POD" || echo 0)"
+          CURRENT_TUNNELS="${CURRENT_TUNNELS:-0}"
+
+          log "SCENARIO TUNNEL CHECK timestamp=$(date -Iseconds) active_ue=$UE_COUNT current_tunnels=$CURRENT_TUNNELS required=$REQUIRED_REGISTERED_UES"
+
+          if [ "$CURRENT_TUNNELS" -lt "$REQUIRED_REGISTERED_UES" ]; then
+            fail_exit "Registered UE pool dropped below requirement before scenario UE=$UE_COUNT: got=$CURRENT_TUNNELS required=$REQUIRED_REGISTERED_UES"
+          fi
+
+          UPF_POD="$(get_upf_pod)" || {
+            log "UPF pod missing timestamp=$(date -Iseconds)"
+            FAIL=1
+          }
+
+          UID_BEFORE="$(get_pod_uid "$UPF_POD" 2>/dev/null || echo ERR)"
+          RESTARTS_BEFORE="$(get_pod_restarts "$UPF_POD" 2>/dev/null || echo -1)"
+
+          log "SCENARIO UPF BEFORE timestamp=$(date -Iseconds) active_ue=$UE_COUNT pod=$UPF_POD uid=$UID_BEFORE restarts=$RESTARTS_BEFORE"
+
+          if [ "$FAIL" -ne 0 ]; then
+            fail_exit "Scenario active_ue=$UE_COUNT cannot start because UPF pod is missing"
+          fi
+
+          log "SCENARIO TRAFFIC START timestamp=$(date -Iseconds) active_ue=$UE_COUNT target_host=$IPERF_HOST ports=${FIRST_PORT}-${LAST_PORT} bitrate_per_ue=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY"
+
+          start_iperf_per_ue "$ADD_POD" "$TAG" "$UE_COUNT"
+
+          TRAFFIC_PID="$LAST_TRAFFIC_PID"
+
+          if ! wait "$TRAFFIC_PID"; then
+            fail_exit "Traffic generation command failed for active_ue=$UE_COUNT. This means kubectl exec or remote script crashed, not just that individual iperf clients failed."
+          fi
+
+          log "SCENARIO TRAFFIC END timestamp=$(date -Iseconds) active_ue=$UE_COUNT pod=$ADD_POD"
+
+          UPF_POD_AFTER="$(get_upf_pod 2>/dev/null || true)"
+
+          if [ -z "$UPF_POD_AFTER" ]; then
+            fail_exit "UPF pod missing after scenario active_ue=$UE_COUNT"
+          fi
+
+          UID_AFTER="$(get_pod_uid "$UPF_POD_AFTER" 2>/dev/null || echo ERR)"
+          RESTARTS_AFTER="$(get_pod_restarts "$UPF_POD_AFTER" 2>/dev/null || echo -1)"
+
+          log "SCENARIO UPF AFTER timestamp=$(date -Iseconds) active_ue=$UE_COUNT pod=$UPF_POD_AFTER uid=$UID_AFTER restarts=$RESTARTS_AFTER"
+
+          if [ "$UID_BEFORE" != "$UID_AFTER" ]; then
+            fail_exit "UPF UID changed during scenario active_ue=$UE_COUNT: $UID_BEFORE -> $UID_AFTER"
+          fi
+
+          if [ "$RESTARTS_AFTER" -gt "$RESTARTS_BEFORE" ]; then
+            fail_exit "UPF restartCount increased during scenario active_ue=$UE_COUNT: $RESTARTS_BEFORE -> $RESTARTS_AFTER"
+          fi
+
+          SCENARIO_END_TS="$(date -Iseconds)"
+
+          log "================================================================"
+          log "SCENARIO END timestamp=$SCENARIO_END_TS active_ue=$UE_COUNT fail=0 target_host=$IPERF_HOST ports=${FIRST_PORT}-${LAST_PORT} bitrate_per_ue=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY"
+          log "SCENARIO DURATION active_ue=$UE_COUNT start=$SCENARIO_START_TS end=$SCENARIO_END_TS"
+          log "================================================================"
+
+          log "PAUSE START timestamp=$(date -Iseconds) seconds=$PAUSE_BETWEEN after_active_ue=$UE_COUNT"
+          sleep "$PAUSE_BETWEEN"
+          log "PAUSE END timestamp=$(date -Iseconds) after_active_ue=$UE_COUNT"
+        done
+
+        log "================================================================"
+        log "TEST END run_id=$RUN_ID timestamp=$(date -Iseconds)"
+        log "Progress log saved: $PROGRESS_LOG"
+        log "================================================================"
+      args:
+        executable: /bin/bash
+      register: upf_test
+
+    - name: Show progress output
+      ansible.builtin.debug:
+        var: upf_test.stderr_lines

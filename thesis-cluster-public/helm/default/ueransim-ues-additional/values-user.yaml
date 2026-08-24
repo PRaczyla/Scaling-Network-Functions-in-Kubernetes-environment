@@ -1,0 +1,5 @@
+USER-SUPPLIED VALUES:
+count: 45
+gnb:
+  hostname: ueransim-gnb
+initialMSISDN: "0000000011"

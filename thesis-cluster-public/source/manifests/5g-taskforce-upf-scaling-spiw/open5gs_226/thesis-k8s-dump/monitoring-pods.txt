@@ -1,0 +1,16 @@
+NAME                                   READY   STATUS    RESTARTS          AGE
+alertmanager-main-0                    2/2     Running   10 (2d23h ago)    85d
+alertmanager-main-1                    2/2     Running   6 (2d23h ago)     30d
+alertmanager-main-2                    2/2     Running   4 (2d23h ago)     15d
+blackbox-exporter-69bdcc6fc7-qppcj     3/3     Running   15 (2d23h ago)    93d
+grafana-d8ddf6c68-45bcw                1/1     Running   7 (2d6h ago)      107d
+kube-state-metrics-5f96f94459-8t6t2    3/3     Running   15 (2d23h ago)    93d
+node-exporter-kk2b6                    2/2     Running   505 (2d23h ago)   511d
+node-exporter-ktgf7                    2/2     Running   140 (2d23h ago)   511d
+node-exporter-mwpcz                    2/2     Running   128 (2d23h ago)   511d
+node-exporter-rfk96                    2/2     Running   115 (2d23h ago)   511d
+prometheus-adapter-599c88b6c4-7b9lf    1/1     Running   5 (2d23h ago)     93d
+prometheus-adapter-599c88b6c4-ghqcw    1/1     Running   3 (2d23h ago)     33d
+prometheus-k8s-0                       2/2     Running   10 (2d23h ago)    85d
+prometheus-operator-68dbcbf4cc-tkq2t   2/2     Running   10 (2d23h ago)    93d
+vpa-exporter-6497875df5-6cn4t          1/1     Running   5 (2d23h ago)     85d

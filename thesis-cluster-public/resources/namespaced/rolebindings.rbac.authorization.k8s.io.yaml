@@ -1,0 +1,423 @@
+apiVersion: v1
+items:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"default"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"prometheus-k8s"},"subjects":[{"kind":"ServiceAccount","name":"prometheus-k8s","namespace":"monitoring"}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: default
+    resourceVersion: "2902"
+    uid: b19c7b49-b165-4ed6-86ea-972dcf440cde
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: prometheus-k8s
+  subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: monitoring
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:bootstrap-signer
+    namespace: kube-public
+    resourceVersion: "186"
+    uid: 8369c69d-5397-4e27-9598-f7b7126130f6
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system:controller:bootstrap-signer
+  subjects:
+  - kind: ServiceAccount
+    name: bootstrap-signer
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/4ySP0/DMBDFvwq6OQmkbaoqEkNZGNiKxIIYLvZreySxI9sJf6p+d+RCUTs0MFqn9/P7+bwj7uQJzos1VJKrWGXch6118slBrMnqhc/EXg85JVSL0VTSyja4E6PFbCihFoE1B6ZyR2yMDYecj0dbvUIFj5A5sZniEBpEmEQKJRfn9s3ApZuhppLqqT+ZDHly9SBG3y61tuZPhOEWVFI0Sh1Yw/0r4jtWMVf3FVL/4QNa2ifUcIVmVGzLfkslFXquoVVV5MjVBJiogteTm1mB2VQviiKv5noxXc8j9Kdii+BE+dTDDXDpeeORTs42WGF9ePxO7p3tu7E9ni+Rfq/He4CJnyDlTk46wARRB8CxzT4h33/rU/m8O+Ie4QZRWCplexPogteYy8v+KwAA///W26sDjQIAAA
+      objectset.rio.cattle.io/id: ""
+      objectset.rio.cattle.io/owner-gvk: k3s.cattle.io/v1, Kind=Addon
+      objectset.rio.cattle.io/owner-name: auth-reader
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2025-03-19T21:28:33Z"
+    labels:
+      objectset.rio.cattle.io/hash: 5d6dedcb51e1c2ee2c5af2045e43d8551b6d83f6
+    name: metrics-server-auth-reader
+    namespace: kube-system
+    resourceVersion: "284"
+    uid: d62ed4d7-9b52-4950-b318-813934864455
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: extension-apiserver-authentication-reader
+  subjects:
+  - kind: ServiceAccount
+    name: metrics-server
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"kube-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"prometheus-k8s"},"subjects":[{"kind":"ServiceAccount","name":"prometheus-k8s","namespace":"monitoring"}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: kube-system
+    resourceVersion: "2906"
+    uid: 9df4aea4-7983-4e88-a174-718877cfbc06
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: prometheus-k8s
+  subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: monitoring
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"metrics-adapter","app.kubernetes.io/name":"prometheus-adapter","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"0.12.0"},"name":"resource-metrics-auth-reader","namespace":"kube-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"extension-apiserver-authentication-reader"},"subjects":[{"kind":"ServiceAccount","name":"prometheus-adapter","namespace":"monitoring"}]}
+    creationTimestamp: "2025-03-19T22:24:23Z"
+    labels:
+      app.kubernetes.io/component: metrics-adapter
+      app.kubernetes.io/name: prometheus-adapter
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 0.12.0
+    name: resource-metrics-auth-reader
+    namespace: kube-system
+    resourceVersion: "2946"
+    uid: 0a761a05-c9ed-4dc4-871b-e63b0d076ed2
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: extension-apiserver-authentication-reader
+  subjects:
+  - kind: ServiceAccount
+    name: prometheus-adapter
+    namespace: monitoring
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system::extension-apiserver-authentication-reader
+    namespace: kube-system
+    resourceVersion: "187"
+    uid: e71e5aad-4861-4847-b0f4-cb391f905aa6
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: extension-apiserver-authentication-reader
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:kube-controller-manager
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:kube-scheduler
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system::leader-locking-kube-controller-manager
+    namespace: kube-system
+    resourceVersion: "188"
+    uid: a7b3ad84-16d2-44c4-a781-4b88d6b2516e
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system::leader-locking-kube-controller-manager
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:kube-controller-manager
+  - kind: ServiceAccount
+    name: kube-controller-manager
+    namespace: kube-system
+  - kind: ServiceAccount
+    name: leader-election-controller
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system::leader-locking-kube-scheduler
+    namespace: kube-system
+    resourceVersion: "189"
+    uid: 8e521609-207e-4f6a-a0c6-2686923e28cb
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system::leader-locking-kube-scheduler
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:kube-scheduler
+  - kind: ServiceAccount
+    name: kube-scheduler
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:bootstrap-signer
+    namespace: kube-system
+    resourceVersion: "190"
+    uid: 8bf73603-114d-4d07-8671-9e1f7785f14f
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system:controller:bootstrap-signer
+  subjects:
+  - kind: ServiceAccount
+    name: bootstrap-signer
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:cloud-provider
+    namespace: kube-system
+    resourceVersion: "191"
+    uid: a7251d5e-e849-4db2-a77f-dda3ea331933
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system:controller:cloud-provider
+  subjects:
+  - kind: ServiceAccount
+    name: cloud-provider
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      rbac.authorization.kubernetes.io/autoupdate: "true"
+    creationTimestamp: "2025-03-19T21:28:28Z"
+    labels:
+      kubernetes.io/bootstrapping: rbac-defaults
+    name: system:controller:token-cleaner
+    namespace: kube-system
+    resourceVersion: "192"
+    uid: 64244b9b-0e31-49f6-84e8-fa688d76555a
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system:controller:token-cleaner
+  subjects:
+  - kind: ServiceAccount
+    name: token-cleaner
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"name":"system:leader-locking-vpa-recommender","namespace":"kube-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"system:leader-locking-vpa-recommender"},"subjects":[{"kind":"ServiceAccount","name":"vpa-recommender","namespace":"kube-system"}]}
+    creationTimestamp: "2026-01-18T23:54:02Z"
+    name: system:leader-locking-vpa-recommender
+    namespace: kube-system
+    resourceVersion: "2565865"
+    uid: 81d2b595-814c-4ac4-af72-88e0b3a2c32c
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system:leader-locking-vpa-recommender
+  subjects:
+  - kind: ServiceAccount
+    name: vpa-recommender
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"name":"system:leader-locking-vpa-updater","namespace":"kube-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"system:leader-locking-vpa-updater"},"subjects":[{"kind":"ServiceAccount","name":"vpa-updater","namespace":"kube-system"}]}
+    creationTimestamp: "2026-01-18T23:54:02Z"
+    name: system:leader-locking-vpa-updater
+    namespace: kube-system
+    resourceVersion: "2565863"
+    uid: d8f3bb57-7fb1-453f-a99a-423c63687944
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: system:leader-locking-vpa-updater
+  subjects:
+  - kind: ServiceAccount
+    name: vpa-updater
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"creationTimestamp":null,"name":"vpa-admission-lease","namespace":"kube-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"vpa-admission-lease"},"subjects":[{"kind":"ServiceAccount","name":"vpa-admission-controller","namespace":"kube-system"}]}
+    creationTimestamp: "2025-08-13T20:40:10Z"
+    name: vpa-admission-lease
+    namespace: kube-system
+    resourceVersion: "262681"
+    uid: a5458880-d83e-4599-85f7-9e065d50222d
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: vpa-admission-lease
+  subjects:
+  - kind: ServiceAccount
+    name: vpa-admission-controller
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"name":"vpa-updater-read-admission-lease","namespace":"kube-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"vpa-admission-lease-reader"},"subjects":[{"kind":"ServiceAccount","name":"vpa-updater","namespace":"kube-system"}]}
+    creationTimestamp: "2025-08-13T21:24:43Z"
+    name: vpa-updater-read-admission-lease
+    namespace: kube-system
+    resourceVersion: "265874"
+    uid: 7e595d46-3ac6-4a18-a0e7-68fdebdd4604
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: vpa-admission-lease-reader
+  subjects:
+  - kind: ServiceAccount
+    name: vpa-updater
+    namespace: kube-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app":"metallb"},"name":"controller","namespace":"metallb-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"controller"},"subjects":[{"kind":"ServiceAccount","name":"controller","namespace":"metallb-system"}]}
+    creationTimestamp: "2025-03-22T15:56:57Z"
+    labels:
+      app: metallb
+    name: controller
+    namespace: metallb-system
+    resourceVersion: "5603"
+    uid: 1ce18ad0-2ea7-49d3-9d07-0942db2d4103
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: controller
+  subjects:
+  - kind: ServiceAccount
+    name: controller
+    namespace: metallb-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app":"metallb"},"name":"pod-lister","namespace":"metallb-system"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"pod-lister"},"subjects":[{"kind":"ServiceAccount","name":"speaker","namespace":"metallb-system"}]}
+    creationTimestamp: "2025-03-22T15:56:58Z"
+    labels:
+      app: metallb
+    name: pod-lister
+    namespace: metallb-system
+    resourceVersion: "5604"
+    uid: e11f6740-dd51-4159-8a8a-6807226dcc59
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: pod-lister
+  subjects:
+  - kind: ServiceAccount
+    name: speaker
+    namespace: metallb-system
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s","namespace":"monitoring"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"prometheus-k8s"},"subjects":[{"kind":"ServiceAccount","name":"prometheus-k8s","namespace":"monitoring"}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s
+    namespace: monitoring
+    resourceVersion: "2907"
+    uid: 409ebeb5-44ed-4db1-b07c-a1ed45936d93
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: prometheus-k8s
+  subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: monitoring
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"RoleBinding","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"prometheus","app.kubernetes.io/instance":"k8s","app.kubernetes.io/name":"prometheus","app.kubernetes.io/part-of":"kube-prometheus","app.kubernetes.io/version":"3.2.0"},"name":"prometheus-k8s-config","namespace":"monitoring"},"roleRef":{"apiGroup":"rbac.authorization.k8s.io","kind":"Role","name":"prometheus-k8s-config"},"subjects":[{"kind":"ServiceAccount","name":"prometheus-k8s","namespace":"monitoring"}]}
+    creationTimestamp: "2025-03-19T22:24:22Z"
+    labels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+      app.kubernetes.io/version: 3.2.0
+    name: prometheus-k8s-config
+    namespace: monitoring
+    resourceVersion: "2901"
+    uid: 03d1afac-69e1-4342-ac67-942d2f26b73f
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: prometheus-k8s-config
+  subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: monitoring
+kind: List
+metadata:
+  resourceVersion: ""

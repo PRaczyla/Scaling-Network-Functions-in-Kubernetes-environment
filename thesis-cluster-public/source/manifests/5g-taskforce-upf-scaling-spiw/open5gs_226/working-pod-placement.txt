@@ -1,0 +1,17 @@
+iperf3-server-747f565b8b-glz8n      1/1     Running   0                9d      10.42.2.174     rpislave2   <none>           <none>
+nat-setup-hostnet                   1/1     Running   0                15d     192.168.1.102   rpislave2   <none>           <none>
+open5gs-amf-f9df59f7f-6ppcx         1/1     Running   0                3d21h   10.42.1.17      rpislave4   <none>           <none>
+open5gs-ausf-9fb8579c6-ktw8q        1/1     Running   0                3d21h   10.42.1.14      rpislave4   <none>           <none>
+open5gs-bsf-7cf8867c96-6hp4r        1/1     Running   0                3d21h   10.42.1.18      rpislave4   <none>           <none>
+open5gs-mongodb-5b4cd4946b-t7fzw    1/1     Running   95 (3d22h ago)   4d22h   10.42.1.236     rpislave4   <none>           <none>
+open5gs-nrf-9b889c6dc-j4r5f         1/1     Running   0                3d21h   10.42.2.201     rpislave2   <none>           <none>
+open5gs-nssf-586ccf6cd8-m6jrt       1/1     Running   0                3d21h   10.42.2.203     rpislave2   <none>           <none>
+open5gs-pcf-5ffd49f4d6-hn8bq        1/1     Running   0                3d21h   10.42.1.15      rpislave4   <none>           <none>
+open5gs-scp-774bfb7564-xr9gt        1/1     Running   0                3d22h   10.42.1.252     rpislave4   <none>           <none>
+open5gs-smf-7fd7bfdb9b-vnqcv        1/1     Running   0                3d21h   10.42.1.16      rpislave4   <none>           <none>
+open5gs-udm-8445899f4b-5p98q        1/1     Running   0                3d21h   10.42.3.143     rpislave3   <none>           <none>
+open5gs-udr-77497dbb99-ckvcl        1/1     Running   0                3d21h   10.42.2.202     rpislave2   <none>           <none>
+open5gs-upf-64b4586676-vrm69        1/1     Running   0                3d23h   10.42.2.183     rpislave2   <none>           <none>
+open5gs-webui-76c5475c97-nm99d      1/1     Running   2 (44d ago)      69d     10.42.3.136     rpislave3   <none>           <none>
+ueransim-gnb-75b9f788dd-pv9p5       1/1     Running   0                3d21h   10.42.2.204     rpislave2   <none>           <none>
+ueransim-gnb-ues-5fb87f9969-spxcf   1/1     Running   0                3d21h   10.42.2.205     rpislave2   <none>           <none>

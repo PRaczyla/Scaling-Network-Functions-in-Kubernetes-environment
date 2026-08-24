@@ -1,0 +1,2059 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    ca.crt: |
+      -----BEGIN CERTIFICATE-----
+      MIIBdzCCAR2gAwIBAgIBADAKBggqhkjOPQQDAjAjMSEwHwYDVQQDDBhrM3Mtc2Vy
+      dmVyLWNhQDE3NDI0MTk3MDAwHhcNMjUwMzE5MjEyODIwWhcNMzUwMzE3MjEyODIw
+      WjAjMSEwHwYDVQQDDBhrM3Mtc2VydmVyLWNhQDE3NDI0MTk3MDAwWTATBgcqhkjO
+      PQIBBggqhkjOPQMBBwNCAAQengO/9NpnjYalPc8XPkW9+YW3aQvxdTWqQHP/YJnN
+      sYUeVMw5xOwLwtnEOaW4144/Mfd8aRZsq1glpqF4czh6o0IwQDAOBgNVHQ8BAf8E
+      BAMCAqQwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUZCuD7YNRGFdex8NKEG9e
+      vppgxWAwCgYIKoZIzj0EAwIDSAAwRQIgYANiWwMYgFqlXDdlnHgxtKkdun4Ot9OI
+      bv0ELD8/138CIQCe1BeOC/vYM9D+cgNl8COsUP0GC/DD+NFawpJJJSCZ5Q==
+      -----END CERTIFICATE-----
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubernetes.io/description: Contains a CA bundle that can be used to verify the
+        kube-apiserver when using internal endpoints such as the internal service
+        IP or kubernetes.default.svc. No other usage is guaranteed across distributions
+        of Kubernetes clusters.
+    creationTimestamp: "2025-03-19T21:28:36Z"
+    name: kube-root-ca.crt
+    namespace: default
+    resourceVersion: "408"
+    uid: 7f5ac177-f0b8-428f-a769-52ae086035fd
+- apiVersion: v1
+  data:
+    amf.yaml: |2
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      amf:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+        ngap:
+          server:
+          - dev: eth0
+        metrics:
+          server:
+          - dev: eth0
+            port: 9090
+        guami:
+          -
+            amf_id:
+              region: 2
+              set: 1
+            plmn_id:
+              mcc: "999"
+              mnc: "70"
+        tai:
+          -
+            plmn_id:
+              mcc: "999"
+              mnc: "70"
+            tac:
+            - 1
+        plmn_support:
+          -
+            plmn_id:
+              mcc: "999"
+              mnc: "70"
+            s_nssai:
+            - sd: "0x111111"
+              sst: 1
+        security:
+          integrity_order: [NIA2, NIA1, NIA0]
+          ciphering_order: [NEA0, NEA1, NEA2]
+        network_name:
+          full: Gradiant
+        amf_name: open5gs-amf
+        time:
+          #    t3502:
+          #      value: 720   # 12 minutes * 60 = 720 seconds
+          t3512:
+            value: 540 # 9 minutes * 60 = 540 seconds
+
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev:eth0
+      #        advertise: open5gs-amf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/amf.key
+      #        cert: @sysconfdir@/open5gs/tls/amf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: amf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/amf.key
+      #        cert: @sysconfdir@/open5gs/tls/amf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/amf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/amf.crt
+      #  sbi:
+      #    server:
+      #      - address: amf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      ################################################################################
+      # NGAP Server
+      ################################################################################
+      #  o Listen on address available in `eth0` interface
+      #  ngap:
+      #    server:
+      #      - dev: eth0
+      #
+      ################################################################################
+      # 3GPP Specification
+      ################################################################################
+      #  o GUAMI
+      #  guami:
+      #    - plmn_id:
+      #        mcc: 999
+      #        mnc: 70
+      #      amf_id:
+      #        region: 2
+      #        set: 1
+      #        pointer: 4
+      #    - plmn_id:
+      #        mcc: 001
+      #        mnc: 01
+      #      amf_id:
+      #        region: 5
+      #        set: 2
+      #
+      #  o TAI
+      #  tai:
+      #    - plmn_id:
+      #        mcc: 001
+      #        mnc: 01
+      #      tac: [1, 3, 5]
+      #  tai:
+      #    - plmn_id:
+      #        mcc: 002
+      #        mnc: 02
+      #      tac: [6-10, 15-18]
+      #  tai:
+      #    - plmn_id:
+      #        mcc: 003
+      #        mnc: 03
+      #      tac: 20
+      #    - plmn_id:
+      #        mcc: 004
+      #        mnc: 04
+      #      tac: 21
+      #  tai:
+      #    - plmn_id:
+      #        mcc: 005
+      #        mnc: 05
+      #      tac: [22, 28]
+      #    - plmn_id:
+      #        mcc: 006
+      #        mnc: 06
+      #      tac: [30-32, 34, 36-38, 40-42, 44, 46, 48]
+      #    - plmn_id:
+      #        mcc: 007
+      #        mnc: 07
+      #      tac: 50
+      #    - plmn_id:
+      #        mcc: 008
+      #        mnc: 08
+      #      tac: 60
+      #    - plmn_id:
+      #        mcc: 009
+      #        mnc: 09
+      #      tac: [70, 80]
+      #
+      #  o PLMN Support
+      #  plmn_support:
+      #    - plmn_id:
+      #        mcc: 999
+      #        mnc: 70
+      #      s_nssai:
+      #        - sst: 1
+      #          sd: 010000
+      #    - plmn_id:
+      #        mcc: 999
+      #        mnc: 70
+      #      s_nssai:
+      #        - sst: 1
+      #
+      #  o Access Control
+      #  access_control:
+      #    - default_reject_cause: 13
+      #    - plmn_id:
+      #        reject_cause: 15
+      #        mcc: 001
+      #        mnc: 01
+      #    - plmn_id:
+      #        mcc: 002
+      #        mnc: 02
+      #    - plmn_id:
+      #        mcc: 999
+      #        mnc: 70
+      #
+      #  o Relative Capacity
+      #  relative_capacity: 100
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: amf
+      helm.sh/chart: amf-2.2.5
+    name: open5gs-amf
+    namespace: default
+    resourceVersion: "13747410"
+    uid: 9a0e54de-1c50-402e-8579-631b61702c40
+- apiVersion: v1
+  data:
+    ausf.yaml: |2
+
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      ausf:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-ausf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/ausf.key
+      #        cert: @sysconfdir@/open5gs/tls/ausf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: ausf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/ausf.key
+      #        cert: @sysconfdir@/open5gs/tls/ausf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/ausf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/ausf.crt
+      #  sbi:
+      #    server:
+      #      - address: ausf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ausf
+      helm.sh/chart: ausf-2.2.5
+    name: open5gs-ausf
+    namespace: default
+    resourceVersion: "13747412"
+    uid: 8203fc52-e95a-408a-b04d-9f11ef048ac6
+- apiVersion: v1
+  data:
+    bsf.yaml: |2
+
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      bsf:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-bsf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/bsf.key
+      #        cert: @sysconfdir@/open5gs/tls/bsf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: bsf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/bsf.key
+      #        cert: @sysconfdir@/open5gs/tls/bsf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/bsf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/bsf.crt
+      #  sbi:
+      #    server:
+      #      - address: bsf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: bsf
+      helm.sh/chart: bsf-2.2.5
+    name: open5gs-bsf
+    namespace: default
+    resourceVersion: "13747414"
+    uid: 6c459679-ac7b-4b00-9a92-8210b448e4db
+- apiVersion: v1
+  data:
+    ping-mongodb.sh: |
+      #!/bin/bash
+      mongosh  $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval "db.adminCommand('ping')"
+    readiness-probe.sh: |
+      #!/bin/bash
+      # Run the proper check depending on the version
+      [[ $(mongod -version | grep "db version") =~ ([0-9]+\.[0-9]+\.[0-9]+) ]] && VERSION=${BASH_REMATCH[1]}
+      . /opt/bitnami/scripts/libversion.sh
+      VERSION_MAJOR="$(get_sematic_version "$VERSION" 1)"
+      VERSION_MINOR="$(get_sematic_version "$VERSION" 2)"
+      VERSION_PATCH="$(get_sematic_version "$VERSION" 3)"
+      if [[ ( "$VERSION_MAJOR" -ge 5 ) || ( "$VERSION_MAJOR" -ge 4 && "$VERSION_MINOR" -ge 4 && "$VERSION_PATCH" -ge 2 ) ]]; then
+          mongosh $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval 'db.hello().isWritablePrimary || db.hello().secondary' | grep -q 'true'
+      else
+          mongosh  $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval 'db.isMaster().ismaster || db.isMaster().secondary' | grep -q 'true'
+      fi
+    startup-probe.sh: |
+      #!/bin/bash
+      mongosh  $TLS_OPTIONS --port $MONGODB_PORT_NUMBER --eval 'db.hello().isWritablePrimary || db.hello().secondary' | grep -q 'true'
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/component: mongodb
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: mongodb
+      helm.sh/chart: mongodb-12.1.31
+    name: open5gs-mongodb-common-scripts
+    namespace: default
+    resourceVersion: "2589225"
+    uid: 5feb3d77-4d11-4c7b-8a88-640ae947ad6a
+- apiVersion: v1
+  data:
+    nrf.yaml: |
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      nrf:
+        serving: # 5G roaming requires PLMN in NRF
+          -
+            plmn_id:
+              mcc: 999
+              mnc: 70
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-nrf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/nrf.key
+      #        cert: @sysconfdir@/open5gs/tls/nrf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/nrf.key
+      #        cert: @sysconfdir@/open5gs/tls/nrf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/nrf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/nrf.crt
+      #  sbi:
+      #    server:
+      #      - address: nrf.localdomain
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nrf
+      helm.sh/chart: nrf-2.2.5
+    name: open5gs-nrf
+    namespace: default
+    resourceVersion: "2589226"
+    uid: 766df3c0-d403-43c9-9cfe-2b9431126fc5
+- apiVersion: v1
+  data:
+    nssf.yaml: |2
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+        max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      nssf:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+            nsi:
+            - uri: http://open5gs-nrf-sbi:7777
+              s_nssai:
+                sst: "1"
+                sd: "0x111111"
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-nssf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Network Slice Instance(NSI)
+      #   1. NRF[http://::1:7777/nnrf-nfm/v1/nf-instances]
+      #      S-NSSAI[SST:1]
+      #   2. NRF[http://127.0.0.19:7777/nnrf-nfm/v1/nf-instances]
+      #      NSSAI[SST:1, SD:000080]
+      #   3. NRF[http://127.0.0.10:7777/nnrf-nfm/v1/nf-instances]
+      #      NSSAI[SST:1, SD:009000]
+      #
+      #  sbi:
+      #    client:
+      #      nsi:
+      #        - uri: http://[::1]:7777
+      #          s_nssai:
+      #            sst: 1
+      #        - uri: http://127.0.0.19:7777
+      #          s_nssai:
+      #            sst: 1
+      #            sd: 000080
+      #        - uri: http://127.0.0.10:7777
+      #          s_nssai:
+      #            sst: 1
+      #            sd: 009000
+      #
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/nssf.key
+      #        cert: @sysconfdir@/open5gs/tls/nssf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: nssf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #      nsi:
+      #        - uri: https://nrf.localdomain
+      #          s_nssai:
+      #            sst: 1
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/nssf.key
+      #        cert: @sysconfdir@/open5gs/tls/nssf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/nssf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/nssf.crt
+      #  sbi:
+      #    server:
+      #      - address: nssf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #      nsi:
+      #        - uri: https://nrf.localdomain
+      #          s_nssai:
+      #            sst: 1
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: nssf
+      helm.sh/chart: nssf-2.2.5
+    name: open5gs-nssf
+    namespace: default
+    resourceVersion: "13747415"
+    uid: af6f4239-8202-4e83-97e5-f205a0f04198
+- apiVersion: v1
+  data:
+    pcf.yaml: |2
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      pcf:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+        metrics:
+          server:
+          - dev: "eth0"
+            port: 9090
+
+      ################################################################################
+      # Locally configured policy
+      # - The PCF in the VPLMN uses locally configured policies
+      #   according to the roaming agreement with the HPLMN operator
+      #   as input for PCC Rule generation.
+      ################################################################################
+      #
+      #  o You don't have to use MongoDB if you use the policy configuration as below.
+      #
+      #  policy:
+      #    - plmn_id:
+      #        mcc: 999
+      #        mnc: 70
+      #      slice:
+      #        - sst: 1  # 1,2,3,4
+      #          default_indicator: true
+      #          session:
+      #            - name: internet
+      #              type: 3  # 1:IPv4, 2:IPv6, 3:IPv4v6
+      #              ambr:
+      #                downlink:
+      #                  value: 1
+      #                  unit: 3  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                uplink:
+      #                  value: 1
+      #                  unit: 3
+      #              qos:
+      #                index: 9  # 1, 2, 3, 4, 65, 66, 67, 75, 71, 72, 73, 74, 76, 5, 6, 7, 8, 9, 69, 70, 79, 80, 82, 83, 84, 85, 86
+      #                arp:
+      #                  priority_level: 8  # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+      #                  pre_emption_vulnerability: 1  # 1: Disabled, 2:Enabled
+      #                  pre_emption_capability: 1  # 1: Disabled, 2:Enabled
+      #            - name: ims
+      #              type: 3  # 1:IPv4, 2:IPv6, 3:IPv4v6
+      #              ambr:
+      #                downlink:
+      #                  value: 1
+      #                  unit: 3  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                uplink:
+      #                  value: 1
+      #                  unit: 3  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #              qos:
+      #                index: 5  # 1, 2, 3, 4, 65, 66, 67, 75, 71, 72, 73, 74, 76, 5, 6, 7, 8, 9, 69, 70, 79, 80, 82, 83, 84, 85, 86
+      #                arp:
+      #                  priority_level: 1  # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+      #                  pre_emption_vulnerability: 1  # 1: Disabled, 2:Enabled
+      #                  pre_emption_capability: 1  # 1: Disabled, 2:Enabled
+      #              pcc_rule:
+      #                - qos:
+      #                    index: 1  # 1, 2, 3, 4, 65, 66, 67, 75, 71, 72, 73, 74, 76, 5, 6, 7, 8, 9, 69, 70, 79, 80, 82, 83, 84, 85, 86
+      #                    arp:
+      #                      priority_level: 1  # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+      #                      pre_emption_vulnerability: 1   # 1: Disabled, 2:Enabled
+      #                      pre_emption_capability: 1   # 1: Disabled, 2:Enabled
+      #                    mbr:
+      #                      downlink:
+      #                        value: 82
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                      uplink:
+      #                        value: 82
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                    gbr:
+      #                      downlink:
+      #                        value: 82
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                      uplink:
+      #                        value: 82
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                  flow:
+      #                    - direction: 2
+      #                      description: "permit out icmp from any to assigned"
+      #                    - direction: 1
+      #                      description: "permit out icmp from any to assigned"
+      #                    - direction: 2
+      #                      description: "permit out udp from 10.200.136.98/32 23455 to assigned 1-65535"
+      #                    - direction: 1
+      #                      description: "permit out udp from 10.200.136.98/32 1-65535 to assigned 50021"
+      #                - qos:
+      #                    index: 2  # 1, 2, 3, 4, 65, 66, 67, 75, 71, 72, 73, 74, 76, 5, 6, 7, 8, 9, 69, 70, 79, 80, 82, 83, 84, 85, 86
+      #                    arp:
+      #                      priority_level: 4  # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+      #                      pre_emption_vulnerability: 2   # 1: Disabled, 2:Enabled
+      #                      pre_emption_capability: 2   # 1: Disabled, 2:Enabled
+      #                    mbr:
+      #                      downlink:
+      #                        value: 802
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                      uplink:
+      #                        value: 802
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                    gbr:
+      #                      downlink:
+      #                        value: 802
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                      uplink:
+      #                        value: 802
+      #                        unit: 1  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #    - plmn_id:
+      #        mcc: 001
+      #        mnc: 01
+      #      slice:
+      #        - sst: 1  # 1,2,3,4
+      #          sd: 000001
+      #          default_indicator: true
+      #          session:
+      #            - name: internet
+      #              type: 3  # 1:IPv4, 2:IPv6, 3:IPv4v6
+      #              ambr:
+      #                downlink:
+      #                  value: 1
+      #                  unit: 3  # 0:bps, 1:Kbps, 2:Mbps, 3:Gbps, 4:Tbps
+      #                uplink:
+      #                  value: 1
+      #                  unit: 3
+      #              qos:
+      #                index: 9  # 1, 2, 3, 4, 65, 66, 67, 75, 71, 72, 73, 74, 76, 5, 6, 7, 8, 9, 69, 70, 79, 80, 82, 83, 84, 85, 86
+      #                arp:
+      #                  priority_level: 8  # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+      #                  pre_emption_vulnerability: 1  # 1: Disabled, 2:Enabled
+      #                  pre_emption_capability: 1  # 1: Disabled, 2:Enabled
+      #
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-pcf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/pcf.key
+      #        cert: @sysconfdir@/open5gs/tls/pcf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: pcf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/pcf.key
+      #        cert: @sysconfdir@/open5gs/tls/pcf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/pcf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/pcf.crt
+      #  sbi:
+      #    server:
+      #      - address: pcf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: pcf
+      helm.sh/chart: pcf-2.2.5
+    name: open5gs-pcf
+    namespace: default
+    resourceVersion: "13747416"
+    uid: 5660c1bd-f2f6-4337-a03b-1891d9229dca
+- apiVersion: v1
+  data:
+    scp.yaml: |2
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      scp:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+
+      ################################################################################
+      # SCP Info
+      ################################################################################
+      #  o SCP port number(s) WITHOUT SCP Domain
+      #   - If no SCP port information is present in ScpInfo or
+      #     in ScpDomainInfo for a specific SCP domain,
+      #     the HTTP client shall use the default HTTP port number,
+      #     i.e. TCP port 80 for "http" URIs or TCP port 443
+      #     for "https" URIs as specified in IETF RFC 7540 [9]
+      #     when sending a request to the SCP within the specific SCP domain.
+      #  info:
+      #    port:
+      #      http: 7777
+      #      https: 8888
+      #
+      #  o SCP port number(s) WITH SCP Domain
+      #   - If this attribute is present,
+      #     it has precedence over the scpPorts attribute of ScpInfo.
+      #  info:
+      #    domain:
+      #      - name: SCP_Domain_1
+      #        fqdn: scp.localdomain
+      #        port:
+      #          http: 7777
+      #          https: 8888
+      #
+      #  o Complex Example
+      #  info:
+      #    port:
+      #      http: 7777
+      #      https: 8888
+      #    domain:
+      #      - name: SCP_Domain_1
+      #        fqdn: scp.hplmndomain
+      #        port:
+      #          http: 3333
+      #          https: 4444
+      #      - name: SCP_Domain_2
+      #        fqdn: scp.vplmndomain
+      #        port:
+      #          http: 5555
+      #          https: 6666
+      #
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-scp.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: scp
+      helm.sh/chart: scp-2.2.5
+    name: open5gs-scp
+    namespace: default
+    resourceVersion: "2589234"
+    uid: ddc035b1-ff8b-4daa-8089-64e8aa3ec978
+- apiVersion: v1
+  data:
+    smf.yaml: |2
+
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      smf:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+        pfcp:
+          server:
+          - dev: eth0
+          client:
+            upf:
+            - address: open5gs-upf-pfcp
+        gtpc:
+          server:
+          - dev: eth0
+        gtpu:
+          server:
+          - dev: eth0
+        metrics:
+          server:
+          - dev: eth0
+            port: 9090
+        session:
+          -
+            dnn: internet
+            gateway: 10.45.0.1
+            subnet: 10.45.0.0/16
+        dns:
+          -
+            8.8.8.8
+          -
+            8.8.4.4
+          -
+            2001:4860:4860::8888
+          -
+            2001:4860:4860::8844
+        mtu: 1400
+        #  p-cscf:
+        #    - 127.0.0.1
+        #    - ::1
+        ctf:
+          enabled: auto # auto(default)|yes|no
+      ################################################################################
+      # SMF Info
+      ################################################################################
+      #  <SMF Selection - 5G Core only>
+      #  1. SMF sends SmfInfo(S-NSSAI, DNN, TAI) to the NRF
+      #  2. NRF responds to AMF with SmfInfo during NF-Discovery.
+      #  3. AMF selects SMF based on S-NSSAI, DNN and TAI in SmfInfo.
+      #
+      #  Note that if there is no SmfInfo, any AMF can select this SMF.
+      #
+      #  o S-NSSAI[SST:1] and DNN[internet] - At least 1 DNN is required in S-NSSAI
+      #  info:
+      #    - s_nssai:
+      #        - sst: 1
+      #          dnn:
+      #            - internet
+      #
+      #  o S-NSSAI[SST:1 SD:009000] and DNN[internet or ims]
+      #  info:
+      #    - s_nssai:
+      #        - sst: 1
+      #          sd: 009000
+      #          dnn:
+      #            - internet
+      #            - ims
+      #
+      #  o S-NSSAI[SST:1] and DNN[internet] and TAI[PLMN-ID:99970 TAC:1]
+      #  info:
+      #    - s_nssai:
+      #        - sst: 1
+      #          dnn:
+      #            - internet
+      #      tai:
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac: 1
+      #
+      #  o If any of conditions below are met:
+      #   - S-NSSAI[SST:1] and DNN[internet] and TAI[PLMN-ID:99970 TAC:1-9]
+      #   - S-NSSAI[SST:2 SD:000080] and DNN[internet or ims]
+      #   - S-NSSAI[SST:4] and DNN[internet] and TAI[PLMN-ID:99970 TAC:10-20,30-40]
+      #  info:
+      #    - s_nssai:
+      #        - sst: 1
+      #          dnn:
+      #            - internet
+      #      tai:
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac:
+      #            - 1-9
+      #    - s_nssai:
+      #        - sst: 2
+      #          sd: 000080
+      #          dnn:
+      #            - internet
+      #            - ims
+      #    - s_nssai:
+      #        - sst: 4
+      #          dnn:
+      #            - internet
+      #      tai:
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac:
+      #            - 10-20
+      #            - 30-40
+      #
+      #  o Complex Example
+      #  info:
+      #    - s_nssai:
+      #        - sst: 1
+      #          dnn:
+      #            - internet
+      #        - sst: 1
+      #          sd: 000080
+      #          dnn:
+      #            - internet
+      #            - ims
+      #        - sst: 1
+      #          sd: 009000
+      #          dnn:
+      #            [internet, ims]
+      #        - sst: 2
+      #          dnn:
+      #            - internet
+      #        - sst: 3
+      #          sd: 123456
+      #          dnn:
+      #            - internet
+      #      tai:
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac: [1, 2, 3]
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac: 4
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac:
+      #            - 5
+      #            - 6
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac:
+      #            - 100-200
+      #            - 300-400
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac:
+      #            - 500-600
+      #            - 700-800
+      #            - 900-1000
+      #    - s_nssai:
+      #        - sst: 4
+      #          dnn:
+      #            - internet
+      #      tai:
+      #        - plmn_id:
+      #            mcc: 999
+      #            mnc: 70
+      #          tac: 99
+      #
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-smf.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/smf.key
+      #        cert: @sysconfdir@/open5gs/tls/smf.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: smf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/smf.key
+      #        cert: @sysconfdir@/open5gs/tls/smf.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/smf.key
+      #        client_cert: @sysconfdir@/open5gs/tls/smf.crt
+      #  sbi:
+      #    server:
+      #      - address: smf.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      ################################################################################
+      # PFCP Server
+      ################################################################################
+      #  o Override PFCP address to be advertised to UPF in PFCP association
+      #  pfcp:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-smf.svc.local
+      #
+      ################################################################################
+      # PFCP Client
+      ################################################################################
+      #  o UPF selection by eNodeB TAC
+      #   (either single TAC or multiple TACs, DECIMAL representation)
+      #  pfcp:
+      #    client:
+      #      upf:
+      #        - address: 127.0.0.7
+      #          tac: 1
+      #        - address: 127.0.0.12
+      #          tac: [3,5,8]
+      #
+      #  o UPF selection by UE's DNN/APN (either single DNN/APN or multiple DNNs/APNs)
+      #  pfcp:
+      #    client:
+      #      upf:
+      #        - address: 127.0.0.7
+      #          dnn: ims
+      #        - address: 127.0.0.12
+      #          dnn: [internet, web]
+      #
+      #  o UPF selection by CellID(e_cell_id: 28bit, nr_cell_id: 36bit)
+      #    (either single enb_id or multiple enb_ids, HEX representation)
+      #  pfcp:
+      #    client:
+      #      upf:
+      #        - address: 127.0.0.7
+      #          e_cell_id: 463
+      #        - address: 127.0.0.12
+      #          nr_cell_id: [123456789, 9413]
+      #
+      ################################################################################
+      # GTP-C Server
+      ################################################################################
+      #  o Listen on IPv4 and IPv6
+      #  gtpc:
+      #    server:
+      #      - address: 127.0.0.4
+      #      - address: fd69:f21d:873c:fa::3
+      #
+      ################################################################################
+      # GTP-U Server
+      ################################################################################
+      #  o Listen on IPv4 and IPv6
+      #  gtpu:
+      #    server:
+      #      - address: 127.0.0.4
+      #      - address: ::1
+      #
+      ################################################################################
+      # 3GPP Specification
+      ################################################################################
+      #  o Specific DNN/APN(e.g 'ims') uses 10.46.0.1/16, 2001:db8:babe::1/48
+      #   (If the UE has unknown DNN/APN(not internet/ims), SMF/UPF will crash.)
+      #  session:
+      #    - subnet: 10.45.0.1/16
+      #      dnn: internet
+      #    - subnet: 2001:db8:cafe::1/48
+      #      dnn: internet
+      #    - subnet: 10.46.0.1/16
+      #      dnn: ims
+      #    - subnet: 2001:db8:babe::1/48
+      #      dnn: ims
+      #
+      #  o Pool Range
+      #  session:
+      #    - subnet: 10.45.0.1/16
+      #      range:
+      #        - 10.45.0.100-10.45.0.200
+      #        - 10.45.1.100-
+      #        - -10.45.0.200
+      #    - subnet: 2001:db8:cafe::1/48
+      #      range:
+      #        - 2001:db8:cafe:a0::0-2001:db8:cafe:b0::0
+      #        - 2001:db8:cafe:c0::0-2001:db8:cafe:d0::0
+      #
+      #  o Security Indication(5G Core only)
+      #  security_indication:
+      #    integrity_protection_indication: required|preferred|not-needed
+      #    confidentiality_protection_indication: required|preferred|not-needed
+      #    maximum_integrity_protected_data_rate_uplink: bitrate64kbs|maximum-UE-rate
+      #    maximum_integrity_protected_data_rate_downlink: bitrate64kbs|maximum-UE-rate
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: smf
+      helm.sh/chart: smf-2.2.6
+    name: open5gs-smf
+    namespace: default
+    resourceVersion: "13747417"
+    uid: 5c3ef590-f757-4819-9795-4afbfb627774
+- apiVersion: v1
+  data:
+    udm.yaml: |2
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      udm:
+        hnet:
+        - id: 1
+          scheme: 1
+          key: /opt/open5gs/etc/open5gs/hnet/curve25519-1.key
+        - id: 2
+          scheme: 2
+          key: /opt/open5gs/etc/open5gs/hnet/secp256r1-2.key
+        - id: 3
+          scheme: 1
+          key: /opt/open5gs/etc/open5gs/hnet/curve25519-3.key
+        - id: 4
+          scheme: 2
+          key: /opt/open5gs/etc/open5gs/hnet/secp256r1-4.key
+        - id: 5
+          scheme: 1
+          key: /opt/open5gs/etc/open5gs/hnet/curve25519-5.key
+        - id: 6
+          scheme: 2
+          key: /opt/open5gs/etc/open5gs/hnet/secp256r1-6.key
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+
+      #
+      ################################################################################
+      # Home Network Public Key
+      ################################################################################
+      #  o Generate the private key as below.
+      #  $ openssl genpkey -algorithm X25519 -out /etc/open5gs/hnet/curve25519-1.key
+      #  $ openssl ecparam -name prime256v1 -genkey -conv_form compressed -out /etc/open5gs/hnet/secp256r1-2.key
+      #
+      #  o The private and public keys can be viewed with the command.
+      #    The public key is used when creating the SIM.
+      #  $ openssl pkey -in /etc/open5gs/hnet/curve25519-1.key -text
+      #  $ openssl ec -in /etc/open5gs/hnet/secp256r1-2.key -conv_form compressed -text
+      #
+      #  o Home network public key identifier(PKI) value : 1
+      #    Protection scheme identifier : ECIES scheme profile A
+      #  hnet:
+      #    - id: 1
+      #      scheme: 1
+      #      key: /etc/open5gs/hnet/curve25519-1.key
+      #
+      #  o Home network public key identifier(PKI) value : 2
+      #    Protection scheme identifier : ECIES scheme profile B
+      #  hnet:
+      #    - id: 2
+      #      scheme: 2
+      #      key: /etc/open5gs/hnet/secp256r1-2.key
+      #
+      #  o Home network public key identifier(PKI) value : 3
+      #    Protection scheme identifier : ECIES scheme profile A
+      #  hnet:
+      #    - id: 3
+      #      scheme: 1
+      #      key: /etc/open5gs/hnet/curve25519-1.key
+      #
+      #  o Home network public key identifier(PKI) value : 4
+      #    Protection scheme identifier : ECIES scheme profile B
+      #  hnet:
+      #    - id: 4
+      #      scheme: 2
+      #      key: /etc/open5gs/hnet/secp256r1-2.key
+      #
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-udm.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/udm.key
+      #        cert: @sysconfdir@/open5gs/tls/udm.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: udm.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/udm.key
+      #        cert: @sysconfdir@/open5gs/tls/udm.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/udm.key
+      #        client_cert: @sysconfdir@/open5gs/tls/udm.crt
+      #  sbi:
+      #    server:
+      #      - address: udm.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udm
+      helm.sh/chart: udm-2.2.5
+    name: open5gs-udm
+    namespace: default
+    resourceVersion: "13747418"
+    uid: 6cca022e-bc00-4a30-903f-9c9e6ab9e91e
+- apiVersion: v1
+  data:
+    udr.yaml: |2
+
+      logger:
+        level: info
+      #  level: info   # fatal|error|warn|info(default)|debug|trace
+
+      global:
+      # max:
+      #   ue: 1024 # The number of UE can be increased depending on memory size.
+      #    peer: 64
+
+      udr:
+        sbi:
+          server:
+          - dev: eth0
+            port: 7777
+          client:
+            nrf:
+            - uri: http://open5gs-nrf-sbi:7777
+
+      ################################################################################
+      # SBI Server
+      ################################################################################
+      #  o Override SBI address to be advertised to NRF
+      #  sbi:
+      #    server:
+      #      - dev: eth0
+      #        advertise: open5gs-udr.svc.local
+      #
+      #  sbi:
+      #    server:
+      #      - address: localhost
+      #        advertise:
+      #          - 127.0.0.99
+      #          - ::1
+      #
+      ################################################################################
+      # SBI Client
+      ################################################################################
+      #  o Direct communication with NRF interaction
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #
+      #  o Indirect communication with delegated discovery
+      #  sbi:
+      #    client:
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #
+      #  o Indirect communication without delegated discovery
+      #  sbi:
+      #    client:
+      #      nrf:
+      #        - uri: http://127.0.0.10:7777
+      #      scp:
+      #        - uri: http://127.0.0.200:7777
+      #  discovery:
+      #    delegated: no
+      #
+      ################################################################################
+      # HTTPS scheme with TLS
+      ################################################################################
+      #  o Set as default if not individually set
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/udr.key
+      #        cert: @sysconfdir@/open5gs/tls/udr.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #  sbi:
+      #    server:
+      #      - address: udr.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+      #
+      #  o Add client TLS verification
+      #  default:
+      #    tls:
+      #      server:
+      #        scheme: https
+      #        private_key: @sysconfdir@/open5gs/tls/udr.key
+      #        cert: @sysconfdir@/open5gs/tls/udr.crt
+      #        verify_client: true
+      #        verify_client_cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #      client:
+      #        scheme: https
+      #        cacert: @sysconfdir@/open5gs/tls/ca.crt
+      #        client_private_key: @sysconfdir@/open5gs/tls/udr.key
+      #        client_cert: @sysconfdir@/open5gs/tls/udr.crt
+      #  sbi:
+      #    server:
+      #      - address: udr.localdomain
+      #    client:
+      #      nrf:
+      #        - uri: https://nrf.localdomain
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: udr
+      helm.sh/chart: udr-2.2.5
+    name: open5gs-udr
+    namespace: default
+    resourceVersion: "13747419"
+    uid: 47440c33-7e02-4310-9c95-3b38b5e70eea
+- apiVersion: v1
+  data:
+    upf.yaml: "\n\nlogger:\n  level: info\n#  level: info   # fatal|error|warn|info(default)|debug|trace\n\nglobal:\n#
+      max:\n#   ue: 1024  # The number of UE can be increased depending on memory
+      size.\n#    peer: 64\n\nupf:\n  pfcp:\n    server:\n    - dev: eth0\n    client:\n
+      \ gtpu:\n    server:\n    - dev: eth0\n  session:\n    -\n      dev: ogstun\n
+      \     dnn: internet\n      gateway: 10.45.0.1\n      subnet: 10.45.0.0/16\n
+      \ metrics:\n    server:\n    - dev: eth0\n      port: 9090\n\n################################################################################\n#
+      PFCP Server\n################################################################################\n#
+      o Override PFCP address to be advertised to SMF in PFCP association\n#  pfcp:\n#
+      \   server:\n#      - dev: eth0\n#        advertise: open5gs-upf.svc.local\n#\n################################################################################\n#
+      GTP-U Server\n################################################################################\n#
+      \ o Override SGW-U GTP-U address to be advertised inside S1AP messages \n#  gtpu:\n#
+      \   server:\n#      - dev: ens3\n#        advertise: upf1.5gc.mnc001.mcc001.3gppnetwork.org\n#\n#
+      \ o User Plane IP Resource information\n#  gtpu:\n#    server:\n#      - address:\n#
+      \       - 127.0.0.7\n#        - ::1\n#        teid_range_indication: 4\n#        teid_range:
+      10\n#        network_instance: internet\n#        source_interface: 0\n#      -
+      address: 127.0.10.4\n#        teid_range_indication: 4\n#        teid_range:
+      5\n#        network_instance: ims\n#        source_interface: 1\n#\n################################################################################\n#
+      3GPP Specification\n################################################################################\n#\n#
+      \ o Specific DNN/APN(e.g 'ims') uses 10.46.0.1/16, 2001:db8:babe::1/48\n#  $
+      sudo ip addr add 10.45.0.1/16 dev ogstun\n#  $ sudo ip addr add 2001:db8:cafe::1/48
+      dev ogstun2\n#  $ sudo ip addr add 10.46.0.1/16 dev ogstun3\n#  $ sudo ip addr
+      add 2001:db8:babe::1/48 dev ogstun3\n#\n#  session:\n#    - subnet: 10.45.0.1/16\n#
+      \     dnn: internet\n#    - subnet: 2001:db8:cafe::1/48\n#      dnn: internet\n#
+      \     dev: ogstun2\n#    - subnet: 10.46.0.1/16\n#      dnn: ims\n#      dev:
+      ogstun3\n#    - subnet: 2001:db8:babe::1/48\n#      dnn: ims\n#      dev: ogstun3\n"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      helm.sh/chart: upf-2.2.6
+    name: open5gs-upf
+    namespace: default
+    resourceVersion: "2589235"
+    uid: bce07681-9877-4418-acf9-c01d8e65265f
+- apiVersion: v1
+  data:
+    k8s-entrypoint.sh: |
+      #!/bin/bash
+      set -e
+
+      echo "Executing k8s customized entrypoint.sh"
+      echo "Creating net device ogstun"
+      if grep "ogstun" /proc/net/dev > /dev/null; then
+          echo "Warnin: Net device ogstun already exists! may you need to set createDev: false";
+          exit 1
+      fi
+
+      ip tuntap add name ogstun mode tun
+      ip link set ogstun up
+      echo "Setting IP 10.45.0.1 to device ogstun"
+      ip addr add 10.45.0.1/16 dev ogstun;
+      sysctl -w net.ipv4.ip_forward=1;
+      echo "Enable NAT for 10.45.0.0/16 and device ogstun"
+      iptables -t nat -A POSTROUTING -s 10.45.0.0/16 ! -o ogstun -j MASQUERADE;
+
+      $@
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: upf
+      helm.sh/chart: upf-2.2.6
+    name: open5gs-upf-entrypoint
+    namespace: default
+    resourceVersion: "2589232"
+    uid: 453f30ab-a725-425a-965d-6e21f35cf150
+- apiVersion: v1
+  data:
+    add_admin.sh: |-
+      #!/bin/bash
+
+      set -e
+
+      echo "add admin user with password 1423 if no users"
+
+      cat << EOF > /tmp/account.js
+      db = db.getSiblingDB('open5gs')
+      cursor = db.accounts.find()
+      if ( cursor.count() == 0 ) {
+          db.accounts.insert({ salt: 'f5c15fa72622d62b6b790aa8569b9339729801ab8bda5d13997b5db6bfc1d997', hash: '402223057db5194899d2e082aeb0802f6794622e1cbc47529c419e5a603f2cc592074b4f3323b239ffa594c8b756d5c70a4e1f6ecd3f9f0d2d7328c4cf8b1b766514effff0350a90b89e21eac54cd4497a169c0c7554a0e2cd9b672e5414c323f76b8559bc768cba11cad2ea3ae704fb36abc8abc2619231ff84ded60063c6e1554a9777a4a464ef9cfdfa90ecfdacc9844e0e3b2f91b59d9ff024aec4ea1f51b703a31cda9afb1cc2c719a09cee4f9852ba3cf9f07159b1ccf8133924f74df770b1a391c19e8d67ffdcbbef4084a3277e93f55ac60d80338172b2a7b3f29cfe8a36738681794f7ccbe9bc98f8cdeded02f8a4cd0d4b54e1d6ba3d11792ee0ae8801213691848e9c5338e39485816bb0f734b775ac89f454ef90992003511aa8cceed58a3ac2c3814f14afaaed39cbaf4e2719d7213f81665564eec02f60ede838212555873ef742f6666cc66883dcb8281715d5c762fb236d72b770257e7e8d86c122bb69028a34cf1ed93bb973b440fa89a23604cd3fefe85fbd7f55c9b71acf6ad167228c79513f5cfe899a2e2cc498feb6d2d2f07354a17ba74cecfbda3e87d57b147e17dcc7f4c52b802a8e77f28d255a6712dcdc1519e6ac9ec593270bfcf4c395e2531a271a841b1adefb8516a07136b0de47c7fd534601b16f0f7a98f1dbd31795feb97da59e1d23c08461cf37d6f2877d0f2e437f07e25015960f63', username: 'admin', roles: [ 'admin' ], "__v" : 0})
+      }
+      EOF
+
+      mongo $DB_URI /tmp/account.js
+      rm -f /tmp/account.js
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: open5gs
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-01-19T23:55:01Z"
+    labels:
+      app.kubernetes.io/instance: open5gs
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: webui
+      helm.sh/chart: webui-2.2.5
+    name: open5gs-webui
+    namespace: default
+    resourceVersion: "2589223"
+    uid: 2812f9ab-6e0d-43ee-a86d-52ada95bcb12
+- apiVersion: v1
+  data:
+    gnb.yaml: |
+      mcc: 999 # Mobile Country Code value
+      mnc: 70 # Mobile Network Code value (2 or 3 digits)
+
+      nci: '0x0000000100'  # NR Cell Identity (36-bit)
+      idLength: 32        # NR gNB ID length in bits [22...32]
+      tac: 0001             # Tracking Area Code
+
+      linkIp: ${RADIO_BIND_IP}   # gNB's local IP address for Radio Link Simulation (Usually same with local IP)
+      ngapIp: ${N2_BIND_IP}  # gNB's local IP address for N2 Interface (Usually same with local IP)
+      gtpIp: ${N3_BIND_IP}   # gNB's local IP address for N3 Interface (Usually same with local IP)
+
+      # List of AMF address information
+      amfConfigs:
+        - address: ${AMF_IP}
+          port: 38412
+
+      # List of supported S-NSSAIs by this gNB
+      slices:
+        - sst: 1
+          sd: 0x111111
+
+      # Indicates whether or not SCTP stream number errors should be ignored.
+      ignoreStreamIds: true
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: ueransim-gnb
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-07-16T22:08:51Z"
+    labels:
+      app.kubernetes.io/component: gnb
+      app.kubernetes.io/instance: ueransim-gnb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-gnb
+      helm.sh/chart: ueransim-gnb-0.2.6
+    name: ueransim-gnb
+    namespace: default
+    resourceVersion: "13462747"
+    uid: 36dcc01e-88ed-4123-a99a-75f1477c1af8
+- apiVersion: v1
+  data:
+    ue.yaml: "# IMSI number of the UE. IMSI = [MCC|MNC|MSISDN] (In total 15 or 16
+      digits)\n\nsupi: 'imsi-999700000000001'\nmcc: '999'\nmnc: '70'\n\n# Permanent
+      subscription key\nkey: '465B5CE8B199B49FAA5F0A2EE238A6BC'\n# Operator code (OP
+      or OPC) of the UE\nop: 'E8ED289DEBA952E4283B54E88E6183CA'\n# This value specifies
+      the OP type and it can be either 'OP' or 'OPC'\nopType: 'OPC'\n# Authentication
+      Management Field (AMF) value\namf: '8000'\n# IMEI number of the device. It is
+      used if no SUPI is provided\nimei: '356938035643803'\n# IMEISV number of the
+      device. It is used if no SUPI and IMEI is provided\nimeiSv: '4370816125816151'\n\n#
+      List of gNB IP addresses for Radio Link Simulation\ngnbSearchList:\n  - ${GNB_IP}\n\n
+      \ # UAC Access Identities Configuration\nuacAic:\n  mps: false\n  mcs: false\n\n#
+      UAC Access Control Class\nuacAcc:\n  normalClass: 0\n  class11: false\n  class12:
+      false\n  class13: false\n  class14: false\n  class15: false\n  \n# Initial PDU
+      sessions to be established\nsessions:\n  -\n    apn: internet\n    emergency:
+      false\n    slice:\n      sd: \"0x111111\"\n      sst: 1\n    type: IPv4\n\n#
+      Configured NSSAI for this UE by HPLMN\nconfigured-nssai:\n  - sst: 1\n    sd:
+      0x111111\n\n# Default Configured NSSAI for this UE\ndefault-nssai:\n  - sst:
+      1\n    sd: 0x111111\n\n# Supported encryption algorithms by this UE\nintegrity:\n
+      \ IA1: true\n  IA2: true\n  IA3: true\n\n# Supported integrity algorithms by
+      this UE\nciphering:\n  EA1: true\n  EA2: true\n  EA3: true\n\n# Integrity protection
+      maximum data rate for user plane\nintegrityMaxRate:\n  uplink: 'full'\n  downlink:
+      'full'\n"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: ueransim-gnb-ues
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-07-16T22:09:23Z"
+    labels:
+      app.kubernetes.io/component: ues
+      app.kubernetes.io/instance: ueransim-gnb-ues
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-ues
+      helm.sh/chart: ueransim-ues-0.1.2
+    name: ueransim-gnb-ues
+    namespace: default
+    resourceVersion: "13462881"
+    uid: bbd1723f-36f7-40ab-bb98-6bbfac64e98b
+- apiVersion: v1
+  data:
+    ue.yaml: "# IMSI number of the UE. IMSI = [MCC|MNC|MSISDN] (In total 15 or 16
+      digits)\n\nsupi: 'imsi-999700000000011'\nmcc: '999'\nmnc: '70'\n\n# Permanent
+      subscription key\nkey: '465B5CE8B199B49FAA5F0A2EE238A6BC'\n# Operator code (OP
+      or OPC) of the UE\nop: 'E8ED289DEBA952E4283B54E88E6183CA'\n# This value specifies
+      the OP type and it can be either 'OP' or 'OPC'\nopType: 'OPC'\n# Authentication
+      Management Field (AMF) value\namf: '8000'\n# IMEI number of the device. It is
+      used if no SUPI is provided\nimei: '356938035643803'\n# IMEISV number of the
+      device. It is used if no SUPI and IMEI is provided\nimeiSv: '4370816125816151'\n\n#
+      List of gNB IP addresses for Radio Link Simulation\ngnbSearchList:\n  - ${GNB_IP}\n\n
+      \ # UAC Access Identities Configuration\nuacAic:\n  mps: false\n  mcs: false\n\n#
+      UAC Access Control Class\nuacAcc:\n  normalClass: 0\n  class11: false\n  class12:
+      false\n  class13: false\n  class14: false\n  class15: false\n  \n# Initial PDU
+      sessions to be established\nsessions:\n  -\n    apn: internet\n    emergency:
+      false\n    slice:\n      sd: \"0x111111\"\n      sst: 1\n    type: IPv4\n\n#
+      Configured NSSAI for this UE by HPLMN\nconfigured-nssai:\n  - sst: 1\n    sd:
+      0x111111\n\n# Default Configured NSSAI for this UE\ndefault-nssai:\n  - sst:
+      1\n    sd: 0x111111\n\n# Supported encryption algorithms by this UE\nintegrity:\n
+      \ IA1: true\n  IA2: true\n  IA3: true\n\n# Supported integrity algorithms by
+      this UE\nciphering:\n  EA1: true\n  EA2: true\n  EA3: true\n\n# Integrity protection
+      maximum data rate for user plane\nintegrityMaxRate:\n  uplink: 'full'\n  downlink:
+      'full'\n"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      meta.helm.sh/release-name: ueransim-ues-additional
+      meta.helm.sh/release-namespace: default
+    creationTimestamp: "2026-07-26T17:40:42Z"
+    labels:
+      app.kubernetes.io/component: ues
+      app.kubernetes.io/instance: ueransim-ues-additional
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: ueransim-ues
+      helm.sh/chart: ueransim-ues-0.1.2
+    name: ueransim-ues-additional
+    namespace: default
+    resourceVersion: "14143524"
+    uid: 4c54dbfc-663d-4f8c-8f3a-382644f18aef
+kind: List
+metadata:
+  resourceVersion: ""

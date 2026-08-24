@@ -1,0 +1,58 @@
+COMPUTED VALUES:
+affinity: {}
+apnList:
+- apn: internet
+  emergency: false
+  slice:
+    sd: "0x111111"
+    sst: 1
+  type: IPv4
+args: []
+clusterDomain: cluster.local
+command: []
+common:
+  exampleValue: common-chart
+  global:
+    imagePullSecrets: []
+    imageRegistry: ""
+    storageClass: ""
+commonAnnotations: {}
+commonLabels: {}
+containerSecurityContext:
+  enabled: false
+count: 45
+extraDeploy: []
+fullnameOverride: ""
+global:
+  imagePullSecrets: []
+  imageRegistry: ""
+  storageClass: ""
+gnb:
+  hostname: ueransim-gnb
+image:
+  debug: false
+  pullPolicy: Always
+  pullSecrets: []
+  registry: docker.io
+  repository: gradiant/ueransim
+  tag: 3.2.6
+initialMSISDN: "0000000011"
+key: 465B5CE8B199B49FAA5F0A2EE238A6BC
+kubeVersion: ""
+mcc: "999"
+mnc: "70"
+name: ueransim-ues
+nameOverride: ""
+nodeSelector: {}
+op: E8ED289DEBA952E4283B54E88E6183CA
+opType: OPC
+podAnnotations: {}
+podLabels: {}
+podSecurityContext:
+  enabled: false
+resources:
+  limits: {}
+  requests: {}
+sd: "0x111111"
+sst: 1
+tolerations: []

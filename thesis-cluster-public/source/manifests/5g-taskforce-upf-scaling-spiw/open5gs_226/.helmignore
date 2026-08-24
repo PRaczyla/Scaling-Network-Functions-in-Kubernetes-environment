@@ -1,0 +1,7 @@
+*.log
+upf_*.log
+*progress*.log
+*.csv
+*.xlsx
+*.png
+*.docx

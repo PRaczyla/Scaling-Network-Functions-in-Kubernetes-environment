@@ -1,0 +1,318 @@
+apiVersion: v1
+items:
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/5xWb4/auBP+Kj9Z6qtfEpKw/IvUFymbPbiyEAFd3alaIWMm4MOxI9uhRSu++8lOdgllu93eO+LM82RmnmfGPCFc0AeQigqOIrTGmuxahwA5aE/5BkXoT7FGDspB4w3WGEVPCHMuNNZUcGUexfofIFqB9iQVHsFaM/CoaFGD3gHLXSK4loIxkC7ZYaldCVuqtLQcyPkpg/jGQbrbw74marw6BM7/PlO++TgClg8N6S95OM4BRUhLDBndvytcFZgYzL5cg6uOSkOOTg5ieA3M1m6ysiUp74cE7em7PrfDaociRPxs0APcw2EH2hsgvWDQ6ZEeboc3AW73szZ0MgydzCRQl2KbS7nSmDH3/KGfZe4gW9kcMpDACSgUff1B/qsuIwetmSD7mUHeAgMrWZRhpsBBZ2FfjmrXNGW5anxprXHTDtcB9Adup0va7s1Nht0+7gVuux92+/1eQKA9QKfHk4NUAcR0e43JXmTZhOZUoyjwfd9BGvKCYQ3m/RsmfUMowTO6HVUiLEZx2Ol+DPq927jTDfzbYDDotnvJXT/w+92g2+90496we9f+dBOGw15nGCaDu7gfforjYaffb/9Xd5waVZqmYspB1vrIrfmBap2Rg1xXgXaVlpRvkYO2TKwx8yqRbyHDJdPzasCOH9Gjg4AfLFOtwzS+T5CDDpiVTVlOzkvEQzJfjGfT5tE8SWfN51EyuV/dzscPybzBpYBI0M244SieL1fmk4s0Hja/ezlTl4BG2E7rQkWt1oenz18+JfNpskwWqzgdnz60lNGXVL1UrboOt93zAi/4f1nYH/5V0q8Ut4znfyS/lWX8ZTlapfFisRrOk9tkuhzHk0UDZoehCRhPF8nwyzxZLT6P09VysjB5jO/+fguTTuLxdDVaLtO3oqazVTqf/dVk8tSBOB5hpdIgPSYIZk7gezeh53t+K+jah3b90OS6i8cTk2Q6m4yHTUYJz/Y7PTqI5nhrTzEnO5CtPaNFAdI1Jo8OvjfwgtBdl5RtQj/sBGHQQTUoLRlLBaPkaHqSTYVOJSjgjTVhSJCDJChRSruknsxwACkl1ceh4Bq+azvhjIlvqaQHymALiSKY4cvthAu8poxqalnQRorCTFI8mSCzViTgzYyz41wIfUcZ1DJHWpZwctBBsDKHe1FyXU1ibn6mWJtF0dqJHC4Kb3l15nUdzXe2x7+CE0x2cI2vjt9FYDfZKwzV+RWFzovGds6L64gfGa0d1Ctxl5vebDCj6enRuIWLDSyAAdFCGhnMSEkOGpS9bBWKEKO8/I6sJEpjqV8sMuN3mLJSmr68YgFZ8lhNBTcKVrrZMCLyIpUio8xeC/pY2BVWck1zqDdktXJBHiiBmBBTzbRxq54vq8oGlQMgL/TxlsrqstnQMkcRuodcyGPjWr5S/vdgZ8F/E3eW+X3AZ8kvxXVQIYX5pwIbA3+Zwq9Pz+s9ekJUQ16d7eHYvO4fLMmwNoCDisohFbfru77vuy/B7kW0d8R5tV+ebWRjauj5pnw8maSrau9xYdK5ANTuOyNe86VVX2Nd2v1y+jcAAP//de/cRAYLAAA
+      objectset.rio.cattle.io/id: helm-controller-chart-registration
+      objectset.rio.cattle.io/owner-gvk: helm.cattle.io/v1, Kind=HelmChart
+      objectset.rio.cattle.io/owner-name: traefik
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2026-01-12T23:56:02Z"
+    generation: 1
+    labels:
+      helmcharts.helm.cattle.io/chart: traefik
+      objectset.rio.cattle.io/hash: c0f97ea7a25e3dec71957c7a3241a38f3e5fae5f
+    name: helm-install-traefik
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: helm.cattle.io/v1
+      blockOwnerDeletion: false
+      controller: false
+      kind: HelmChart
+      name: traefik
+      uid: 432b1e89-56c3-44fa-8a71-38268871ce39
+    resourceVersion: "2167595"
+    uid: b5bb6411-5d74-44ec-9870-636deedd7fa6
+  spec:
+    backoffLimit: 1000
+    completionMode: NonIndexed
+    completions: 1
+    manualSelector: false
+    parallelism: 1
+    podReplacementPolicy: TerminatingOrFailed
+    selector:
+      matchLabels:
+        batch.kubernetes.io/controller-uid: b5bb6411-5d74-44ec-9870-636deedd7fa6
+    suspend: false
+    template:
+      metadata:
+        annotations:
+          helmcharts.helm.cattle.io/configHash: SHA256=187DA5610D199637EF8108616856A7C6F3B422C75C2E9FA82BAAC5883310F505
+        labels:
+          batch.kubernetes.io/controller-uid: b5bb6411-5d74-44ec-9870-636deedd7fa6
+          batch.kubernetes.io/job-name: helm-install-traefik
+          controller-uid: b5bb6411-5d74-44ec-9870-636deedd7fa6
+          helmcharts.helm.cattle.io/chart: traefik
+          job-name: helm-install-traefik
+      spec:
+        containers:
+        - args:
+          - install
+          - --set-string
+          - global.systemDefaultRegistry=
+          env:
+          - name: NAME
+            value: traefik
+          - name: VERSION
+          - name: REPO
+          - name: HELM_DRIVER
+            value: secret
+          - name: CHART_NAMESPACE
+            value: kube-system
+          - name: CHART
+            value: https://%{KUBERNETES_API}%/static/charts/traefik-37.1.1+up37.1.0.tgz
+          - name: HELM_VERSION
+          - name: TARGET_NAMESPACE
+            value: kube-system
+          - name: AUTH_PASS_CREDENTIALS
+            value: "false"
+          - name: INSECURE_SKIP_TLS_VERIFY
+            value: "false"
+          - name: PLAIN_HTTP
+            value: "false"
+          - name: NO_PROXY
+            value: .svc,.cluster.local,10.42.0.0/16,10.43.0.0/16
+          - name: FAILURE_POLICY
+            value: reinstall
+          image: rancher/klipper-helm:v0.9.12-build20251215
+          imagePullPolicy: IfNotPresent
+          name: helm
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /home/klipper-helm/.helm
+            name: klipper-helm
+          - mountPath: /home/klipper-helm/.cache
+            name: klipper-cache
+          - mountPath: /home/klipper-helm/.config
+            name: klipper-config
+          - mountPath: /tmp
+            name: tmp
+          - mountPath: /config
+            name: values
+          - mountPath: /chart
+            name: content
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: OnFailure
+        schedulerName: default-scheduler
+        securityContext:
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: helm-traefik
+        serviceAccountName: helm-traefik
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir:
+            medium: Memory
+          name: klipper-helm
+        - emptyDir:
+            medium: Memory
+          name: klipper-cache
+        - emptyDir:
+            medium: Memory
+          name: klipper-config
+        - emptyDir:
+            medium: Memory
+          name: tmp
+        - name: values
+          projected:
+            defaultMode: 420
+            sources:
+            - secret:
+                items:
+                - key: HelmChartValuesContent
+                  path: values-0-000-HelmChart-ValuesContent.yaml
+                name: chart-values-traefik
+        - configMap:
+            defaultMode: 420
+            name: chart-content-traefik
+          name: content
+  status:
+    completionTime: "2026-01-12T23:58:30Z"
+    conditions:
+    - lastProbeTime: "2026-01-12T23:58:30Z"
+      lastTransitionTime: "2026-01-12T23:58:30Z"
+      message: Reached expected number of succeeded pods
+      reason: CompletionsReached
+      status: "True"
+      type: SuccessCriteriaMet
+    - lastProbeTime: "2026-01-12T23:58:30Z"
+      lastTransitionTime: "2026-01-12T23:58:30Z"
+      message: Reached expected number of succeeded pods
+      reason: CompletionsReached
+      status: "True"
+      type: Complete
+    ready: 0
+    startTime: "2026-01-12T23:56:03Z"
+    succeeded: 1
+    terminating: 0
+    uncountedTerminatedPods: {}
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    annotations:
+      objectset.rio.cattle.io/applied: H4sIAAAAAAAA/6RWX2/iuBf9Kj9ZmqdfEkgIpYk0DykNCzsUImBGuxpVyDg3xYtjR7bDDKr47is7TCeUTqfVvsV/zvG99xxf5xHhin4BqajgKEYbrMm2s/eRg3aU5yhGf4oNclAJGudYYxQ/Isy50FhTwZUZis0/QLQC7UkqPIK1ZuBR0aEGvQVWukRwLQVjIF2yxVK7Eh6o0tJyIOeXDOIbB+k+7HcnotbS3nf+94ny/OMYWDk0pL/l4bgEFCMtMRR05xKZvwmiKkwMbldvwFUHpaFERwcxvAFm8zeR2bSU9yxIO/vmI7dYbVGMwuui6OV90vP9waY3CAqSE9zvRoOoX0RFMOgGuOj2o8AEcUrJFplypTFj7vlhv8rAQTbDBRQggRNQKP76zAoXFUcO2jBBdnODvAUGVr64wEyBg36K/DR1clBbohdFqK1V+lE/zDG+cjchKdywT7AbbTahe+2THEIy6F/nATreHx2kKiCm8htMdqIoprSkGsV+t9t1kIayYliDWX/FtK+IJnhBH8aNGMtxEvSvPqa9m+4wDIPoejT0h34YJaObUTi8jqKr0U0UhMEgSUM/Da/C6CbqhcMkjPpR5N8M/otTjq1MTXEx5SBPOskH84FOmqN7BwHf26VTgWfJXYoctMesfl7vo/O060u6WE7ms/bUIs3m7fE4nd6tbxeTL+mixaeASNDtfcNxslitzbHLLBm2zz6/OOeA1rat1pWKO50Pj58+36SLWbpKl+skmxw/dJQRjjRFUp1WLm5v4Pme//+66g0ugn4huVWy+CN9V5TJ59V4nSXL5Xq4SG/T2WqSTJctmHV6GzCZLdPh50W6Xn6aZOvVdGnimIz+fg2TTZPJbD1erbLXds3m62wx/6vN5Kk9cTzCaqVBekwQzBy/64WB1/W6Hf/KDnqnQZtrlEymJshsPp0M24wSfnjqeO8gWuIHO4s52YLs7BitKpCucW+873qR5wfupqYsD7pB3w/8PjqBspqxTDBKDqYmxUzoTIIC3uoBhgQ5SIIStbQd6NE4HkgtqT4MBdfwXdury5j4lkm6pwweIFUEM3zeenCFN5RRTS0LyqWozPVIplNk+oUEnM85OyyE0CPK4CRzrGUNRwftBatLuBM11831Ks1nhrXpAJ2tKOEs8Y53ivyUR3vN1vh3cILJFi7xzfSbCGyLeoGhmb+g0GXVar1ldbnjOaO1g3ph33kbN23JaHq8N27hIoclMCBaSCODuVKSgwZlX1SFYsQor78jK4nSWOoni8z5CFNWS1OXFywga56omeBGwUY3u42IssqkKCiz/V4fKtvCaq5pCbdQ4Jrppo+C3FMCCSEmm1nr2Tx/iRorNC6AstKHWyqblySndYlidAelkIfW23uh/vtgP0V/J+6n1G8D/pD9XGAHVVKY3xHIDfzpJn59/NHi4ydI8+vWAN3zh+r+aKibmO5wdQE6+eQc9ZKLrFYa69p2g+O/AQAA//9La0a8nQoAAA
+      objectset.rio.cattle.io/id: helm-controller-chart-registration
+      objectset.rio.cattle.io/owner-gvk: helm.cattle.io/v1, Kind=HelmChart
+      objectset.rio.cattle.io/owner-name: traefik-crd
+      objectset.rio.cattle.io/owner-namespace: kube-system
+    creationTimestamp: "2026-01-12T23:56:11Z"
+    generation: 1
+    labels:
+      helmcharts.helm.cattle.io/chart: traefik-crd
+      objectset.rio.cattle.io/hash: 48ff3d5c3117b372fcdca509795f9f2702af0592
+    name: helm-install-traefik-crd
+    namespace: kube-system
+    ownerReferences:
+    - apiVersion: helm.cattle.io/v1
+      blockOwnerDeletion: false
+      controller: false
+      kind: HelmChart
+      name: traefik-crd
+      uid: 5954daa6-b4cf-45ca-9bb4-81cde4c758d2
+    resourceVersion: "2167375"
+    uid: 751892f4-5e60-41f2-8be5-37a269fd0dd5
+  spec:
+    backoffLimit: 1000
+    completionMode: NonIndexed
+    completions: 1
+    manualSelector: false
+    parallelism: 1
+    podReplacementPolicy: TerminatingOrFailed
+    selector:
+      matchLabels:
+        batch.kubernetes.io/controller-uid: 751892f4-5e60-41f2-8be5-37a269fd0dd5
+    suspend: false
+    template:
+      metadata:
+        annotations:
+          helmcharts.helm.cattle.io/configHash: SHA256=E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+        labels:
+          batch.kubernetes.io/controller-uid: 751892f4-5e60-41f2-8be5-37a269fd0dd5
+          batch.kubernetes.io/job-name: helm-install-traefik-crd
+          controller-uid: 751892f4-5e60-41f2-8be5-37a269fd0dd5
+          helmcharts.helm.cattle.io/chart: traefik-crd
+          job-name: helm-install-traefik-crd
+      spec:
+        containers:
+        - args:
+          - install
+          env:
+          - name: NAME
+            value: traefik-crd
+          - name: VERSION
+          - name: REPO
+          - name: HELM_DRIVER
+            value: secret
+          - name: CHART_NAMESPACE
+            value: kube-system
+          - name: CHART
+            value: https://%{KUBERNETES_API}%/static/charts/traefik-crd-37.1.1+up37.1.0.tgz
+          - name: HELM_VERSION
+          - name: TARGET_NAMESPACE
+            value: kube-system
+          - name: AUTH_PASS_CREDENTIALS
+            value: "false"
+          - name: INSECURE_SKIP_TLS_VERIFY
+            value: "false"
+          - name: PLAIN_HTTP
+            value: "false"
+          - name: NO_PROXY
+            value: .svc,.cluster.local,10.42.0.0/16,10.43.0.0/16
+          - name: FAILURE_POLICY
+            value: reinstall
+          image: rancher/klipper-helm:v0.9.12-build20251215
+          imagePullPolicy: IfNotPresent
+          name: helm
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /home/klipper-helm/.helm
+            name: klipper-helm
+          - mountPath: /home/klipper-helm/.cache
+            name: klipper-cache
+          - mountPath: /home/klipper-helm/.config
+            name: klipper-config
+          - mountPath: /tmp
+            name: tmp
+          - mountPath: /config
+            name: values
+          - mountPath: /chart
+            name: content
+        dnsPolicy: ClusterFirst
+        nodeSelector:
+          kubernetes.io/os: linux
+        restartPolicy: OnFailure
+        schedulerName: default-scheduler
+        securityContext:
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        serviceAccount: helm-traefik-crd
+        serviceAccountName: helm-traefik-crd
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - emptyDir:
+            medium: Memory
+          name: klipper-helm
+        - emptyDir:
+            medium: Memory
+          name: klipper-cache
+        - emptyDir:
+            medium: Memory
+          name: klipper-config
+        - emptyDir:
+            medium: Memory
+          name: tmp
+        - name: values
+          projected:
+            defaultMode: 420
+            sources:
+            - secret:
+                name: chart-values-traefik-crd
+        - configMap:
+            defaultMode: 420
+            name: chart-content-traefik-crd
+          name: content
+  status:
+    completionTime: "2026-01-12T23:56:29Z"
+    conditions:
+    - lastProbeTime: "2026-01-12T23:56:29Z"
+      lastTransitionTime: "2026-01-12T23:56:29Z"
+      message: Reached expected number of succeeded pods
+      reason: CompletionsReached
+      status: "True"
+      type: SuccessCriteriaMet
+    - lastProbeTime: "2026-01-12T23:56:29Z"
+      lastTransitionTime: "2026-01-12T23:56:29Z"
+      message: Reached expected number of succeeded pods
+      reason: CompletionsReached
+      status: "True"
+      type: Complete
+    ready: 0
+    startTime: "2026-01-12T23:56:11Z"
+    succeeded: 1
+    terminating: 0
+    uncountedTerminatedPods: {}
+kind: List
+metadata:
+  resourceVersion: ""

@@ -1,0 +1,983 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      flannel.alpha.coreos.com/backend-data: '{"VNI":1,"VtepMAC":"c2:b6:6b:a5:d9:8d"}'
+      flannel.alpha.coreos.com/backend-type: vxlan
+      flannel.alpha.coreos.com/kube-subnet-manager: "true"
+      flannel.alpha.coreos.com/public-ip: 192.168.1.101
+      k3s.io/node-args: '["server","--node-taint","CriticalAddonsOnly=true:NoExecute","--write-kubeconfig-mode","644","--disable","servicelb","--disable-cloud-controller"]'
+      k3s.io/node-config-hash: AM2YGQOGBX4JYFUKYZ4WE2JDI4WMJ3NESBZ223LQHOGXL4L5EDCA====
+      k3s.io/node-env: '{}'
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2025-03-19T21:28:30Z"
+    finalizers:
+    - wrangler.cattle.io/node
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpimaster
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/control-plane: "true"
+      node-role.kubernetes.io/master: "true"
+    name: rpimaster
+    resourceVersion: "15369606"
+    uid: c8b671b0-f7a8-48b9-b963-43afc3eda106
+  spec:
+    podCIDR: 10.42.0.0/24
+    podCIDRs:
+    - 10.42.0.0/24
+    taints:
+    - effect: NoExecute
+      key: CriticalAddonsOnly
+      value: "true"
+  status:
+    addresses:
+    - address: 192.168.1.101
+      type: InternalIP
+    - address: rpimaster
+      type: Hostname
+    allocatable:
+      cpu: "4"
+      ephemeral-storage: "59152072863"
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 3874896Ki
+      pods: "110"
+    capacity:
+      cpu: "4"
+      ephemeral-storage: 60805996Ki
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 3874896Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2026-08-23T22:54:54Z"
+      lastTransitionTime: "2025-03-19T21:28:30Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2026-08-23T22:54:54Z"
+      lastTransitionTime: "2025-03-19T21:28:30Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2026-08-23T22:54:54Z"
+      lastTransitionTime: "2025-03-19T21:28:30Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2026-08-23T22:54:54Z"
+      lastTransitionTime: "2025-03-19T21:28:31Z"
+      message: kubelet is posting ready status
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    features:
+      supplementalGroupsPolicy: true
+    images:
+    - names:
+      - docker.io/rancher/mirrored-library-traefik@sha256:25df7bff0b414867f16a74c571c0dc84920404e45cc7780976cec77809230e09
+      - docker.io/rancher/mirrored-library-traefik:2.11.18
+      sizeBytes: 46474327
+    - names:
+      - docker.io/rancher/mirrored-library-traefik@sha256:c56901603318ee375477ee5c3f50d175d3ec42dc102efc2f1158f0756ba4dffa
+      - docker.io/rancher/mirrored-library-traefik:3.5.1
+      sizeBytes: 45990039
+    - names:
+      - quay.io/brancz/kube-rbac-proxy@sha256:c2ef3c3fcb4ffcfab30088b19c8ef18931aac8cf072c75ef72c654457e1d632b
+      - quay.io/brancz/kube-rbac-proxy:v0.19.0
+      sizeBytes: 30626204
+    - names:
+      - docker.io/rancher/mirrored-coredns-coredns@sha256:9b9128672209474da07c91439bf15ed704ae05ad918dd6454e5b6ae14e35fee6
+      - docker.io/rancher/mirrored-coredns-coredns:1.13.1
+      sizeBytes: 21168808
+    - names:
+      - docker.io/rancher/mirrored-metrics-server@sha256:89258156d0e9af60403eafd44da9676fd66f600c7934d468ccc17e42b199aee2
+      - docker.io/rancher/mirrored-metrics-server:v0.8.0
+      sizeBytes: 20582732
+    - names:
+      - docker.io/rancher/local-path-provisioner@sha256:9289da488b07912cb4128eb96928a331a5f3e60c28c5cfc5790f354a4ad0cc68
+      - docker.io/rancher/local-path-provisioner:v0.0.32
+      sizeBytes: 20048530
+    - names:
+      - docker.io/rancher/mirrored-coredns-coredns@sha256:82979ddf442c593027a57239ad90616deb874e90c365d1a96ad508c2104bdea5
+      - docker.io/rancher/mirrored-coredns-coredns:1.12.0
+      sizeBytes: 19148178
+    - names:
+      - docker.io/rancher/mirrored-metrics-server@sha256:dccf8474fb910fef261d31d9483d7e4c1df7b86cf4d638fb6a7d7c88bd51600a
+      - docker.io/rancher/mirrored-metrics-server:v0.7.2
+      sizeBytes: 17862421
+    - names:
+      - docker.io/rancher/local-path-provisioner@sha256:9b914881170048f80ae9302f36e5b99b4a6b18af73a38adc1c66d12f65d360be
+      - docker.io/rancher/local-path-provisioner:v0.0.30
+      sizeBytes: 17807097
+    - names:
+      - quay.io/prometheus/node-exporter@sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848
+      - quay.io/prometheus/node-exporter:v1.9.0
+      sizeBytes: 12267500
+    - names:
+      - docker.io/rancher/mirrored-pause@sha256:74c4244427b7312c5b901fe0f67cbc53683d06f4f24c6faee65d4182bf0fa893
+      - docker.io/rancher/mirrored-pause:3.6
+      sizeBytes: 253243
+    nodeInfo:
+      architecture: arm64
+      bootID: 7ca4325d-40b0-4073-91fe-6bd5479d3fb6
+      containerRuntimeVersion: containerd://2.1.5-k3s1
+      kernelVersion: 6.8.0-1060-raspi
+      kubeProxyVersion: ""
+      kubeletVersion: v1.35.0+k3s1
+      machineID: 5edb73d14c4d4a99ba04808e8109616c
+      operatingSystem: linux
+      osImage: Ubuntu 24.04.2 LTS
+      systemUUID: 5edb73d14c4d4a99ba04808e8109616c
+    runtimeHandlers:
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: ""
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: runc
+    - features:
+        recursiveReadOnlyMounts: false
+        userNamespaces: false
+      name: runhcs-wcow-process
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      flannel.alpha.coreos.com/backend-data: '{"VNI":1,"VtepMAC":"e6:73:8c:27:37:25"}'
+      flannel.alpha.coreos.com/backend-type: vxlan
+      flannel.alpha.coreos.com/kube-subnet-manager: "true"
+      flannel.alpha.coreos.com/public-ip: 192.168.1.102
+      k3s.io/node-args: '["agent"]'
+      k3s.io/node-config-hash: 2KWGQZRPZIFZ7ALZGPTX7YLTNCYX4UYADKOQPK5NO6YCE4KVOFQQ====
+      k3s.io/node-env: '{"K3S_KUBECONFIG_MODE":"644","K3S_TOKEN":"********","K3S_URL":"https://192.168.1.101:6443"}'
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2025-03-19T21:38:45Z"
+    finalizers:
+    - wrangler.cattle.io/node
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpislave2
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/worker: "true"
+      test-role: upf
+    name: rpislave2
+    resourceVersion: "15368494"
+    uid: 4505f73c-5738-4780-9a1d-d7ba456825a8
+  spec:
+    podCIDR: 10.42.2.0/24
+    podCIDRs:
+    - 10.42.2.0/24
+  status:
+    addresses:
+    - address: 192.168.1.102
+      type: InternalIP
+    - address: rpislave2
+      type: Hostname
+    allocatable:
+      cpu: "4"
+      ephemeral-storage: "59152072863"
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 7989304Ki
+      pods: "110"
+    capacity:
+      cpu: "4"
+      ephemeral-storage: 60805996Ki
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 7989304Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2026-08-22T01:05:44Z"
+      lastTransitionTime: "2026-08-21T19:26:08Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2026-08-22T01:05:44Z"
+      lastTransitionTime: "2026-08-21T19:26:08Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2026-08-22T01:05:44Z"
+      lastTransitionTime: "2026-08-21T19:26:08Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2026-08-22T01:05:44Z"
+      lastTransitionTime: "2026-08-21T19:26:08Z"
+      message: kubelet is posting ready status
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    features:
+      supplementalGroupsPolicy: true
+    images:
+    - names:
+      - docker.io/library/mongo@sha256:0a83b2f824b29c94c5284a49b018db2e3166d9879d1edda5cce545d899ef2bbb
+      - docker.io/library/mongo:6
+      sizeBytes: 255563724
+    - names:
+      - docker.io/dburszty/mongodb-raspberrypi@sha256:c51af19b20452241c441befd08977c031771a0dd8a6a4a69230cbe22b46e919e
+      - docker.io/dburszty/mongodb-raspberrypi:7.0.4
+      sizeBytes: 233338617
+    - names:
+      - docker.io/dburszty/mongodb-raspberrypi@sha256:ca6450d2f4d0a94b45ea482a5e30581d478ca53d26434de48202378d9b369725
+      - docker.io/dburszty/mongodb-raspberrypi:7.0.14
+      sizeBytes: 229884426
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:b09d9b21381f47a79b3cbcb30da25266dc17186ea00ae65e99fdc51396f48e70
+      - docker.io/nicolaka/netshoot:latest
+      sizeBytes: 213323436
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
+      sizeBytes: 208398825
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:7f08c4aff13ff61a35d30e30c5c1ea8396eac6ab4ce19fd02d5a4b3b5d0d09a2
+      - ghcr.io/nicolaka/netshoot@sha256:7f08c4aff13ff61a35d30e30c5c1ea8396eac6ab4ce19fd02d5a4b3b5d0d09a2
+      - ghcr.io/nicolaka/netshoot:latest
+      sizeBytes: 203934215
+    - names:
+      - docker.io/bitnami/mongodb@sha256:05340efb263317c5495b47c934c44c9802ffe2bd211ee0f710af8299fc175371
+      - docker.io/bitnami/mongodb:4.4.1-debian-10-r39
+      sizeBytes: 180030886
+    - names:
+      - quay.io/prometheus/prometheus@sha256:5888c188cf09e3f7eebc97369c3b2ce713e844cdbd88ccf36f5047c958aea120
+      - quay.io/prometheus/prometheus:v3.2.0
+      sizeBytes: 110910826
+    - names:
+      - docker.io/gradiant/ueransim@sha256:764d12d1706f475d3104ed1b2dc51325c0ba84900ba0dd831ce8c99d54312c97
+      - docker.io/gradiant/ueransim:dev-b68de9b
+      sizeBytes: 101984295
+    - names:
+      - docker.io/gradiant/open5gs-webui@sha256:600e23d31222734ef12a9f3ff10e65c31043e565fd6e84bfa8c9592c16f07bf3
+      - docker.io/gradiant/open5gs-webui:2.7.2
+      sizeBytes: 94404714
+    - names:
+      - docker.io/gradiant/ueransim@sha256:015b30d5fa0f9fa847cfa254ba48a336195c2a77a25122cea71114d8b09265ab
+      - docker.io/gradiant/ueransim:3.2.6
+      sizeBytes: 89960879
+    - names:
+      - docker.io/gradiant/open5gs@sha256:f8a3aa0115c5cf97a7a757e35a7ee78f5f8dae0d842e0f09c14d4d7597ad6ff3
+      - docker.io/gradiant/open5gs:2.7.2
+      sizeBytes: 89586393
+    - names:
+      - docker.io/rancher/klipper-helm@sha256:9fbadb1e55ea0030dacc82d7c8c744f350b4be82305df3757950348a25393533
+      - docker.io/rancher/klipper-helm:v0.9.12-build20251215
+      sizeBytes: 60871613
+    - names:
+      - quay.io/metallb/speaker@sha256:b09a1dfcf330938950b65115cd58f6989108c0c21d3c096040e7fe9a25a92993
+      - quay.io/metallb/speaker:v0.14.9
+      sizeBytes: 51787062
+    - names:
+      - docker.io/rancher/mirrored-library-traefik@sha256:25df7bff0b414867f16a74c571c0dc84920404e45cc7780976cec77809230e09
+      - docker.io/rancher/mirrored-library-traefik:2.11.18
+      sizeBytes: 46474327
+    - names:
+      - registry.k8s.io/prometheus-adapter/prometheus-adapter@sha256:932eae60e2bcf9c4660d6442da066ef1a79b4ea7cc232c61c7303069216ca006
+      - registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0
+      sizeBytes: 35923047
+    - names:
+      - quay.io/prometheus/alertmanager@sha256:d5155cfac40a6d9250ffc97c19db2c5e190c7bc57c6b67125c94903358f8c7d8
+      - quay.io/prometheus/alertmanager:v0.28.0
+      sizeBytes: 32985516
+    - names:
+      - docker.io/networkstatic/iperf3@sha256:aaa9e59dcd624990c2493449c65da4aae0d9c7fed6f205c4d2152283abc5410e
+      sizeBytes: 30875437
+    - names:
+      - docker.io/networkstatic/iperf3@sha256:25bce1d02f5e1c0acb4a4376815b87059ad730cd9a1c18ce8a9cb9babd7ad05f
+      - docker.io/networkstatic/iperf3:latest
+      sizeBytes: 30875436
+    - names:
+      - docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+      sizeBytes: 30809528
+    - names:
+      - quay.io/brancz/kube-rbac-proxy@sha256:c2ef3c3fcb4ffcfab30088b19c8ef18931aac8cf072c75ef72c654457e1d632b
+      - quay.io/brancz/kube-rbac-proxy:v0.19.0
+      sizeBytes: 30626204
+    - names:
+      - docker.io/library/debian@sha256:b1a741487078b369e78119849663d7f1a5341ef2768798f7b7406c4240f86aef
+      - docker.io/library/debian:12-slim
+      sizeBytes: 28092070
+    - names:
+      - quay.io/metallb/controller@sha256:86261567e5ff03978893bf03ea865275283ad1e3f0f20dd342ed501b651fdf78
+      - quay.io/metallb/controller:v0.14.9
+      sizeBytes: 27501333
+    - names:
+      - registry.k8s.io/autoscaling/vpa-recommender@sha256:da4060c2ea9b71bde8d0f226af66bb84632bc5b263c21e5c6f8285236036e642
+      - registry.k8s.io/autoscaling/vpa-recommender:1.2.0
+      sizeBytes: 24126067
+    - names:
+      - registry.k8s.io/autoscaling/vpa-updater@sha256:592639951c48ae2db79777b08b797b82083f9dd8f87f2c7e45ab938f33c47c27
+      - registry.k8s.io/autoscaling/vpa-updater:1.2.0
+      sizeBytes: 23897425
+    - names:
+      - registry.k8s.io/autoscaling/vpa-admission-controller@sha256:4d212706c2bedbd485ca5300bc54f614cd31b28986e2c8c9d7e25883fc218eea
+      - registry.k8s.io/autoscaling/vpa-admission-controller:1.2.0
+      sizeBytes: 23736961
+    - names:
+      - docker.io/library/python@sha256:236173eb74001afe2f60862de935b74fcbd00adfca247b2c27051a70a6a39a2d
+      - docker.io/library/python:3.12-alpine
+      sizeBytes: 18564452
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:f128a6969e458a58cc51befebe98bf78a18060be0f7bf62ca91a271505eb7875
+      - quay.io/prometheus-operator/prometheus-operator:v0.84.0
+      sizeBytes: 17842301
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:8de6e72a81ceaa61abda085d7177e85ae43a36a4f2301a12537fb532c281438a
+      - quay.io/prometheus-operator/prometheus-operator:v0.79.0
+      sizeBytes: 17564311
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:4636654efb15f52de0f2f07a97673492bd06b6688b9fcbb10ba147fd596d7949
+      - quay.io/prometheus-operator/prometheus-operator:v0.80.1
+      sizeBytes: 17110941
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:fa92de738a8aefb879eddbbef5c3ffcd701dfc90e47aa83061392e137a4ec936
+      - quay.io/prometheus-operator/prometheus-operator:v0.76.0
+      sizeBytes: 16244131
+    - names:
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics@sha256:db384bf43222b066c378e77027a675d4cd9911107adba46c2922b3a55e10d6fb
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.15.0
+      sizeBytes: 13952975
+    - names:
+      - quay.io/prometheus-operator/prometheus-config-reloader@sha256:125886af6555c1d9726bef0ebc845e922e0f227bba68e0c70fb661295da96bfe
+      - quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1
+      sizeBytes: 13203405
+    - names:
+      - quay.io/prometheus/node-exporter@sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848
+      - quay.io/prometheus/node-exporter:v1.9.0
+      sizeBytes: 12267500
+    - names:
+      - quay.io/prometheus/blackbox-exporter@sha256:b04a9fef4fa086a02fc7fcd8dcdbc4b7b35cc30cdee860fdc6a19dd8b208d63e
+      - quay.io/prometheus/blackbox-exporter:v0.25.0
+      sizeBytes: 12006177
+    - names:
+      - registry.k8s.io/autoscaling/vpa-recommender@sha256:e629c61b75ebec1c2db0a9657de975b116458e4e4b5d847fa402159d993dfd3b
+      - registry.k8s.io/autoscaling/vpa-recommender:1.5.1
+      sizeBytes: 10325223
+    - names:
+      - registry.k8s.io/autoscaling/vpa-updater@sha256:cba2aa4b323968de80a3d77429ee67fb456d8eaf3487475ab75a5d705539f018
+      - registry.k8s.io/autoscaling/vpa-updater:1.5.1
+      sizeBytes: 10247620
+    - names:
+      - registry.k8s.io/autoscaling/vpa-admission-controller@sha256:9928d59477fb27e511f545aba976b4f5196ac4ca9779f26fc50fc7228986f013
+      - registry.k8s.io/autoscaling/vpa-admission-controller:1.5.1
+      sizeBytes: 10208532
+    - names:
+      - docker.io/curlimages/curl@sha256:935d9100e9ba842cdb060de42472c7ca90cfe9a7c96e4dacb55e79e560b3ff40
+      - docker.io/curlimages/curl:latest
+      sizeBytes: 10184433
+    - names:
+      - docker.io/curlimages/curl@sha256:08e466006f0860e54fc299378de998935333e0e130a15f6f98482e9f8dab3058
+      - docker.io/curlimages/curl:8.5.0
+      sizeBytes: 9555436
+    - names:
+      - docker.io/curlimages/curl@sha256:c3b8bee303c6c6beed656cfc921218c529d65aa61114eb9e27c62047a1271b9b
+      - docker.io/curlimages/curl:8.6.0
+      sizeBytes: 7548838
+    - names:
+      - ghcr.io/jimmidyson/configmap-reload@sha256:a35b35f5bd5c5dc59d6885a60ac325235d873defbc819cd1e16f52f897752c85
+      - ghcr.io/jimmidyson/configmap-reload:v0.14.0
+      sizeBytes: 4247271
+    - names:
+      - docker.io/library/alpine@sha256:51183f2cfa6320055da30872f211093f9ff1d3cf06f39a0bdb212314c5dc7375
+      - docker.io/library/alpine:latest
+      sizeBytes: 4206070
+    - names:
+      - docker.io/library/alpine@sha256:765942a4039992336de8dd5db680586e1a206607dd06170ff0a37267a9e01958
+      - docker.io/library/alpine:3.20
+      sizeBytes: 4100217
+    - names:
+      - docker.io/library/alpine@sha256:3be987e6cde1d07e873c012bf6cfe941e6e85d16ca5fc5b8bedc675451d2de67
+      - docker.io/library/alpine:3.19
+      sizeBytes: 3362802
+    - names:
+      - docker.io/rancher/mirrored-library-busybox@sha256:101b4afd76732482eff9b95cae5f94bcf295e521fbec4e01b69c5421f3f3f3e5
+      - docker.io/rancher/mirrored-library-busybox:1.37.0
+      sizeBytes: 1850819
+    - names:
+      - docker.io/rancher/mirrored-library-busybox@sha256:8a45424ddf949bbe9bb3231b05f9032a45da5cd036eb4867b511b00734756d6f
+      - docker.io/rancher/mirrored-library-busybox:1.36.1
+      sizeBytes: 1847165
+    - names:
+      - ghcr.io/jqlang/jq@sha256:096b83865ad59b5b02841f103f83f45c51318394331bf1995e187ea3be937432
+      - ghcr.io/jqlang/jq:1.7.1
+      sizeBytes: 830037
+    - names:
+      - docker.io/rancher/mirrored-pause@sha256:74c4244427b7312c5b901fe0f67cbc53683d06f4f24c6faee65d4182bf0fa893
+      - docker.io/rancher/mirrored-pause:3.6
+      sizeBytes: 253243
+    nodeInfo:
+      architecture: arm64
+      bootID: b921224a-827d-4d17-96b0-758812459aea
+      containerRuntimeVersion: containerd://2.1.5-k3s1
+      kernelVersion: 6.8.0-1060-raspi
+      kubeProxyVersion: ""
+      kubeletVersion: v1.35.0+k3s1
+      machineID: 6dbdebe0db89418bbb9343c6dcb794a2
+      operatingSystem: linux
+      osImage: Ubuntu 24.04.2 LTS
+      systemUUID: 6dbdebe0db89418bbb9343c6dcb794a2
+    runtimeHandlers:
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: ""
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: runc
+    - features:
+        recursiveReadOnlyMounts: false
+        userNamespaces: false
+      name: runhcs-wcow-process
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      flannel.alpha.coreos.com/backend-data: '{"VNI":1,"VtepMAC":"fa:49:a6:b1:44:87"}'
+      flannel.alpha.coreos.com/backend-type: vxlan
+      flannel.alpha.coreos.com/kube-subnet-manager: "true"
+      flannel.alpha.coreos.com/public-ip: 192.168.1.103
+      k3s.io/node-args: '["agent"]'
+      k3s.io/node-config-hash: 2KWGQZRPZIFZ7ALZGPTX7YLTNCYX4UYADKOQPK5NO6YCE4KVOFQQ====
+      k3s.io/node-env: '{"K3S_KUBECONFIG_MODE":"644","K3S_TOKEN":"********","K3S_URL":"https://192.168.1.101:6443"}'
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2025-03-19T21:38:45Z"
+    finalizers:
+    - wrangler.cattle.io/node
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpislave3
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/worker: "true"
+      test-role: ran
+    name: rpislave3
+    resourceVersion: "15368415"
+    uid: f3895f27-2787-4752-bd98-50c650fdafeb
+  spec:
+    podCIDR: 10.42.3.0/24
+    podCIDRs:
+    - 10.42.3.0/24
+  status:
+    addresses:
+    - address: 192.168.1.103
+      type: InternalIP
+    - address: rpislave3
+      type: Hostname
+    allocatable:
+      cpu: "4"
+      ephemeral-storage: "59152072863"
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 3874896Ki
+      pods: "110"
+    capacity:
+      cpu: "4"
+      ephemeral-storage: 60805996Ki
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 3874896Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2026-08-22T01:06:05Z"
+      lastTransitionTime: "2026-08-21T19:28:04Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2026-08-22T01:06:05Z"
+      lastTransitionTime: "2026-08-21T19:28:04Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2026-08-22T01:06:05Z"
+      lastTransitionTime: "2026-08-21T19:28:04Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2026-08-22T01:06:05Z"
+      lastTransitionTime: "2026-08-21T19:28:04Z"
+      message: kubelet is posting ready status
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    features:
+      supplementalGroupsPolicy: true
+    images:
+    - names:
+      - docker.io/gradiant/open5gs-dbctl@sha256:1cbd7bc0d8891f6295131b11d5355e05e9a4ef43987e0e67a3789341929778e4
+      - docker.io/gradiant/open5gs-dbctl:0.10.2
+      sizeBytes: 258175232
+    - names:
+      - docker.io/library/mongo@sha256:0a83b2f824b29c94c5284a49b018db2e3166d9879d1edda5cce545d899ef2bbb
+      - docker.io/library/mongo:6
+      sizeBytes: 255563724
+    - names:
+      - docker.io/dburszty/mongodb-raspberrypi@sha256:c51af19b20452241c441befd08977c031771a0dd8a6a4a69230cbe22b46e919e
+      - docker.io/dburszty/mongodb-raspberrypi:7.0.4
+      sizeBytes: 233338617
+    - names:
+      - docker.io/dburszty/mongodb-raspberrypi@sha256:ca6450d2f4d0a94b45ea482a5e30581d478ca53d26434de48202378d9b369725
+      - docker.io/dburszty/mongodb-raspberrypi:7.0.14
+      sizeBytes: 229884426
+    - names:
+      - docker.io/bitnami/mongodb@sha256:916202d7af766dd88c2fff63bf711162c9d708ac7a3ffccd2aa812e3f03ae209
+      - docker.io/bitnami/mongodb:4.4.15-debian-10-r8
+      sizeBytes: 217014677
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:b09d9b21381f47a79b3cbcb30da25266dc17186ea00ae65e99fdc51396f48e70
+      - docker.io/nicolaka/netshoot:latest
+      sizeBytes: 213323436
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:7f08c4aff13ff61a35d30e30c5c1ea8396eac6ab4ce19fd02d5a4b3b5d0d09a2
+      sizeBytes: 203934215
+    - names:
+      - docker.io/bitnami/mongodb@sha256:95abfb776bb4e6ee34f7b5b1c811f978d132136035deacdb7143f798f0343a31
+      - docker.io/bitnami/mongodb:4.4.4-debian-10-r0
+      sizeBytes: 177160025
+    - names:
+      - docker.io/grafana/grafana@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+      - docker.io/grafana/grafana:11.5.2
+      sizeBytes: 138634574
+    - names:
+      - docker.io/gradiant/ueransim@sha256:764d12d1706f475d3104ed1b2dc51325c0ba84900ba0dd831ce8c99d54312c97
+      - docker.io/gradiant/ueransim:dev-b68de9b
+      sizeBytes: 101984295
+    - names:
+      - docker.io/gradiant/open5gs-webui@sha256:600e23d31222734ef12a9f3ff10e65c31043e565fd6e84bfa8c9592c16f07bf3
+      - docker.io/gradiant/open5gs-webui:2.7.2
+      sizeBytes: 94404714
+    - names:
+      - docker.io/gradiant/ueransim@sha256:015b30d5fa0f9fa847cfa254ba48a336195c2a77a25122cea71114d8b09265ab
+      - docker.io/gradiant/ueransim:3.2.6
+      sizeBytes: 89960879
+    - names:
+      - docker.io/gradiant/open5gs@sha256:f8a3aa0115c5cf97a7a757e35a7ee78f5f8dae0d842e0f09c14d4d7597ad6ff3
+      - docker.io/gradiant/open5gs:2.7.2
+      sizeBytes: 89586393
+    - names:
+      - docker.io/rancher/klipper-helm@sha256:9fbadb1e55ea0030dacc82d7c8c744f350b4be82305df3757950348a25393533
+      - docker.io/rancher/klipper-helm:v0.9.12-build20251215
+      sizeBytes: 60871613
+    - names:
+      - quay.io/metallb/speaker@sha256:b09a1dfcf330938950b65115cd58f6989108c0c21d3c096040e7fe9a25a92993
+      - quay.io/metallb/speaker:v0.14.9
+      sizeBytes: 51787062
+    - names:
+      - registry.k8s.io/prometheus-adapter/prometheus-adapter@sha256:932eae60e2bcf9c4660d6442da066ef1a79b4ea7cc232c61c7303069216ca006
+      - registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0
+      sizeBytes: 35923047
+    - names:
+      - quay.io/prometheus/alertmanager@sha256:d5155cfac40a6d9250ffc97c19db2c5e190c7bc57c6b67125c94903358f8c7d8
+      - quay.io/prometheus/alertmanager:v0.28.0
+      sizeBytes: 32985516
+    - names:
+      - docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+      - docker.io/networkstatic/iperf3:latest
+      sizeBytes: 30809528
+    - names:
+      - quay.io/brancz/kube-rbac-proxy@sha256:c2ef3c3fcb4ffcfab30088b19c8ef18931aac8cf072c75ef72c654457e1d632b
+      - quay.io/brancz/kube-rbac-proxy:v0.19.0
+      sizeBytes: 30626204
+    - names:
+      - quay.io/metallb/controller@sha256:86261567e5ff03978893bf03ea865275283ad1e3f0f20dd342ed501b651fdf78
+      - quay.io/metallb/controller:v0.14.9
+      sizeBytes: 27501333
+    - names:
+      - registry.k8s.io/autoscaling/vpa-recommender@sha256:da4060c2ea9b71bde8d0f226af66bb84632bc5b263c21e5c6f8285236036e642
+      - registry.k8s.io/autoscaling/vpa-recommender:1.2.0
+      sizeBytes: 24126067
+    - names:
+      - registry.k8s.io/autoscaling/vpa-updater@sha256:592639951c48ae2db79777b08b797b82083f9dd8f87f2c7e45ab938f33c47c27
+      - registry.k8s.io/autoscaling/vpa-updater:1.2.0
+      sizeBytes: 23897425
+    - names:
+      - registry.k8s.io/autoscaling/vpa-admission-controller@sha256:4d212706c2bedbd485ca5300bc54f614cd31b28986e2c8c9d7e25883fc218eea
+      - registry.k8s.io/autoscaling/vpa-admission-controller:1.2.0
+      sizeBytes: 23736961
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:b6a89b8ec08f4cca759b2d579e8545f97ffb897973fcd68148c153f2e936c8b3
+      - quay.io/prometheus-operator/prometheus-operator:v0.83.0
+      sizeBytes: 17721911
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:4636654efb15f52de0f2f07a97673492bd06b6688b9fcbb10ba147fd596d7949
+      - quay.io/prometheus-operator/prometheus-operator:v0.80.1
+      sizeBytes: 17110941
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:fa92de738a8aefb879eddbbef5c3ffcd701dfc90e47aa83061392e137a4ec936
+      - quay.io/prometheus-operator/prometheus-operator:v0.76.0
+      sizeBytes: 16244131
+    - names:
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics@sha256:db384bf43222b066c378e77027a675d4cd9911107adba46c2922b3a55e10d6fb
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.15.0
+      sizeBytes: 13952975
+    - names:
+      - quay.io/prometheus-operator/prometheus-config-reloader@sha256:125886af6555c1d9726bef0ebc845e922e0f227bba68e0c70fb661295da96bfe
+      - quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1
+      sizeBytes: 13203405
+    - names:
+      - quay.io/prometheus/node-exporter@sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848
+      - quay.io/prometheus/node-exporter:v1.9.0
+      sizeBytes: 12267500
+    - names:
+      - quay.io/prometheus/blackbox-exporter@sha256:b04a9fef4fa086a02fc7fcd8dcdbc4b7b35cc30cdee860fdc6a19dd8b208d63e
+      - quay.io/prometheus/blackbox-exporter:v0.25.0
+      sizeBytes: 12006177
+    - names:
+      - registry.k8s.io/autoscaling/vpa-recommender@sha256:e629c61b75ebec1c2db0a9657de975b116458e4e4b5d847fa402159d993dfd3b
+      - registry.k8s.io/autoscaling/vpa-recommender:1.5.1
+      sizeBytes: 10325223
+    - names:
+      - registry.k8s.io/autoscaling/vpa-updater@sha256:cba2aa4b323968de80a3d77429ee67fb456d8eaf3487475ab75a5d705539f018
+      - registry.k8s.io/autoscaling/vpa-updater:1.5.1
+      sizeBytes: 10247620
+    - names:
+      - registry.k8s.io/autoscaling/vpa-admission-controller@sha256:9928d59477fb27e511f545aba976b4f5196ac4ca9779f26fc50fc7228986f013
+      - registry.k8s.io/autoscaling/vpa-admission-controller:1.5.1
+      sizeBytes: 10208532
+    - names:
+      - docker.io/curlimages/curl@sha256:935d9100e9ba842cdb060de42472c7ca90cfe9a7c96e4dacb55e79e560b3ff40
+      - docker.io/curlimages/curl:latest
+      sizeBytes: 10184433
+    - names:
+      - docker.io/curlimages/curl@sha256:08e466006f0860e54fc299378de998935333e0e130a15f6f98482e9f8dab3058
+      - docker.io/curlimages/curl:8.5.0
+      sizeBytes: 9555436
+    - names:
+      - ghcr.io/jimmidyson/configmap-reload@sha256:a35b35f5bd5c5dc59d6885a60ac325235d873defbc819cd1e16f52f897752c85
+      - ghcr.io/jimmidyson/configmap-reload:v0.14.0
+      sizeBytes: 4247271
+    - names:
+      - docker.io/library/alpine@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+      - docker.io/library/alpine:latest
+      sizeBytes: 4141590
+    - names:
+      - docker.io/library/alpine@sha256:b3119ef930faabb6b7b976780c0c7a9c1aa24d0c75e9179ac10e6bc9ac080d0d
+      - docker.io/library/alpine:3.20
+      sizeBytes: 4099208
+    - names:
+      - docker.io/library/alpine@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1
+      - docker.io/library/alpine:3.19
+      sizeBytes: 3369000
+    - names:
+      - docker.io/library/busybox@sha256:303337d3d52898b33018796d760d3a01c2dcc87973dd66ec22fe78ae1e8429c9
+      - docker.io/library/busybox:1.36
+      sizeBytes: 1908240
+    - names:
+      - docker.io/rancher/mirrored-library-busybox@sha256:8a45424ddf949bbe9bb3231b05f9032a45da5cd036eb4867b511b00734756d6f
+      - docker.io/rancher/mirrored-library-busybox:1.36.1
+      sizeBytes: 1847165
+    - names:
+      - docker.io/rancher/mirrored-pause@sha256:74c4244427b7312c5b901fe0f67cbc53683d06f4f24c6faee65d4182bf0fa893
+      - docker.io/rancher/mirrored-pause:3.6
+      sizeBytes: 253243
+    nodeInfo:
+      architecture: arm64
+      bootID: e4d83666-206e-4ae4-b686-19f692b92822
+      containerRuntimeVersion: containerd://2.1.5-k3s1
+      kernelVersion: 6.8.0-1060-raspi
+      kubeProxyVersion: ""
+      kubeletVersion: v1.35.0+k3s1
+      machineID: 1f9acb78ec6d4fd9a2ba707c9998f08f
+      operatingSystem: linux
+      osImage: Ubuntu 24.04.2 LTS
+      systemUUID: 1f9acb78ec6d4fd9a2ba707c9998f08f
+    runtimeHandlers:
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: ""
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: runc
+    - features:
+        recursiveReadOnlyMounts: false
+        userNamespaces: false
+      name: runhcs-wcow-process
+- apiVersion: v1
+  kind: Node
+  metadata:
+    annotations:
+      flannel.alpha.coreos.com/backend-data: '{"VNI":1,"VtepMAC":"fa:01:5f:a6:cf:4a"}'
+      flannel.alpha.coreos.com/backend-type: vxlan
+      flannel.alpha.coreos.com/kube-subnet-manager: "true"
+      flannel.alpha.coreos.com/public-ip: 192.168.1.104
+      k3s.io/node-args: '["agent"]'
+      k3s.io/node-config-hash: 2KWGQZRPZIFZ7ALZGPTX7YLTNCYX4UYADKOQPK5NO6YCE4KVOFQQ====
+      k3s.io/node-env: '{"K3S_KUBECONFIG_MODE":"644","K3S_TOKEN":"********","K3S_URL":"https://192.168.1.101:6443"}'
+      node.alpha.kubernetes.io/ttl: "0"
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2025-03-19T21:38:31Z"
+    finalizers:
+    - wrangler.cattle.io/node
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpislave4
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/worker: "true"
+      test-role: ue
+    name: rpislave4
+    resourceVersion: "15368410"
+    uid: f8d74a77-8f91-45ad-9223-39178b1e2611
+  spec:
+    podCIDR: 10.42.1.0/24
+    podCIDRs:
+    - 10.42.1.0/24
+  status:
+    addresses:
+    - address: 192.168.1.104
+      type: InternalIP
+    - address: rpislave4
+      type: Hostname
+    allocatable:
+      cpu: "4"
+      ephemeral-storage: "59152072863"
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 3874896Ki
+      pods: "110"
+    capacity:
+      cpu: "4"
+      ephemeral-storage: 60805996Ki
+      hugepages-1Gi: "0"
+      hugepages-2Mi: "0"
+      hugepages-32Mi: "0"
+      hugepages-64Ki: "0"
+      memory: 3874896Ki
+      pods: "110"
+    conditions:
+    - lastHeartbeatTime: "2026-08-22T01:06:02Z"
+      lastTransitionTime: "2026-08-21T19:26:27Z"
+      message: kubelet has sufficient memory available
+      reason: KubeletHasSufficientMemory
+      status: "False"
+      type: MemoryPressure
+    - lastHeartbeatTime: "2026-08-22T01:06:02Z"
+      lastTransitionTime: "2026-08-21T19:26:27Z"
+      message: kubelet has no disk pressure
+      reason: KubeletHasNoDiskPressure
+      status: "False"
+      type: DiskPressure
+    - lastHeartbeatTime: "2026-08-22T01:06:02Z"
+      lastTransitionTime: "2026-08-21T19:26:27Z"
+      message: kubelet has sufficient PID available
+      reason: KubeletHasSufficientPID
+      status: "False"
+      type: PIDPressure
+    - lastHeartbeatTime: "2026-08-22T01:06:02Z"
+      lastTransitionTime: "2026-08-21T19:26:27Z"
+      message: kubelet is posting ready status
+      reason: KubeletReady
+      status: "True"
+      type: Ready
+    daemonEndpoints:
+      kubeletEndpoint:
+        Port: 10250
+    features:
+      supplementalGroupsPolicy: true
+    images:
+    - names:
+      - docker.io/library/mongo@sha256:4510cf3d7050003e958745adb25d2deb3fb907430716162d9cc1a92eda2a6047
+      - docker.io/library/mongo:7
+      sizeBytes: 270366621
+    - names:
+      - docker.io/gradiant/open5gs-dbctl@sha256:1cbd7bc0d8891f6295131b11d5355e05e9a4ef43987e0e67a3789341929778e4
+      - docker.io/gradiant/open5gs-dbctl:0.10.2
+      sizeBytes: 258175232
+    - names:
+      - docker.io/dburszty/mongodb-raspberrypi@sha256:ca6450d2f4d0a94b45ea482a5e30581d478ca53d26434de48202378d9b369725
+      - docker.io/dburszty/mongodb-raspberrypi:7.0.14
+      sizeBytes: 229884426
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:b09d9b21381f47a79b3cbcb30da25266dc17186ea00ae65e99fdc51396f48e70
+      - docker.io/nicolaka/netshoot:latest
+      sizeBytes: 213323436
+    - names:
+      - docker.io/nicolaka/netshoot@sha256:7f08c4aff13ff61a35d30e30c5c1ea8396eac6ab4ce19fd02d5a4b3b5d0d09a2
+      - ghcr.io/nicolaka/netshoot@sha256:7f08c4aff13ff61a35d30e30c5c1ea8396eac6ab4ce19fd02d5a4b3b5d0d09a2
+      - ghcr.io/nicolaka/netshoot:latest
+      sizeBytes: 203934215
+    - names:
+      - docker.io/grafana/grafana@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+      - docker.io/grafana/grafana:11.5.2
+      sizeBytes: 138634574
+    - names:
+      - quay.io/prometheus/prometheus@sha256:5888c188cf09e3f7eebc97369c3b2ce713e844cdbd88ccf36f5047c958aea120
+      - quay.io/prometheus/prometheus:v3.2.0
+      sizeBytes: 110910826
+    - names:
+      - docker.io/gradiant/ueransim@sha256:764d12d1706f475d3104ed1b2dc51325c0ba84900ba0dd831ce8c99d54312c97
+      - docker.io/gradiant/ueransim:dev-b68de9b
+      sizeBytes: 101984295
+    - names:
+      - docker.io/gradiant/open5gs-webui@sha256:600e23d31222734ef12a9f3ff10e65c31043e565fd6e84bfa8c9592c16f07bf3
+      - docker.io/gradiant/open5gs-webui:2.7.2
+      sizeBytes: 94404714
+    - names:
+      - docker.io/gradiant/ueransim@sha256:015b30d5fa0f9fa847cfa254ba48a336195c2a77a25122cea71114d8b09265ab
+      - docker.io/gradiant/ueransim:3.2.6
+      sizeBytes: 89960879
+    - names:
+      - docker.io/gradiant/open5gs@sha256:f8a3aa0115c5cf97a7a757e35a7ee78f5f8dae0d842e0f09c14d4d7597ad6ff3
+      - docker.io/gradiant/open5gs:2.7.2
+      sizeBytes: 89586393
+    - names:
+      - docker.io/rancher/klipper-helm@sha256:73ff7ef399717ba8339559054557bd427bdafb47db112165a8c0c358d1ca0283
+      - docker.io/rancher/klipper-helm:v0.9.3-build20241008
+      sizeBytes: 65893717
+    - names:
+      - docker.io/rancher/klipper-helm@sha256:9fbadb1e55ea0030dacc82d7c8c744f350b4be82305df3757950348a25393533
+      - docker.io/rancher/klipper-helm:v0.9.12-build20251215
+      sizeBytes: 60871613
+    - names:
+      - quay.io/metallb/speaker@sha256:b09a1dfcf330938950b65115cd58f6989108c0c21d3c096040e7fe9a25a92993
+      - quay.io/metallb/speaker:v0.14.9
+      sizeBytes: 51787062
+    - names:
+      - registry.k8s.io/prometheus-adapter/prometheus-adapter@sha256:932eae60e2bcf9c4660d6442da066ef1a79b4ea7cc232c61c7303069216ca006
+      - registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0
+      sizeBytes: 35923047
+    - names:
+      - quay.io/prometheus/alertmanager@sha256:d5155cfac40a6d9250ffc97c19db2c5e190c7bc57c6b67125c94903358f8c7d8
+      - quay.io/prometheus/alertmanager:v0.28.0
+      sizeBytes: 32985516
+    - names:
+      - docker.io/networkstatic/iperf3@sha256:07dcca91c0e47d82d83d91de8c3d46b840eef4180499456b4fa8d6dadb46b6c8
+      - docker.io/networkstatic/iperf3:latest
+      sizeBytes: 30809528
+    - names:
+      - quay.io/brancz/kube-rbac-proxy@sha256:c2ef3c3fcb4ffcfab30088b19c8ef18931aac8cf072c75ef72c654457e1d632b
+      - quay.io/brancz/kube-rbac-proxy:v0.19.0
+      sizeBytes: 30626204
+    - names:
+      - quay.io/metallb/controller@sha256:86261567e5ff03978893bf03ea865275283ad1e3f0f20dd342ed501b651fdf78
+      - quay.io/metallb/controller:v0.14.9
+      sizeBytes: 27501333
+    - names:
+      - docker.io/rancher/mirrored-coredns-coredns@sha256:9b9128672209474da07c91439bf15ed704ae05ad918dd6454e5b6ae14e35fee6
+      - docker.io/rancher/mirrored-coredns-coredns:1.13.1
+      sizeBytes: 21168808
+    - names:
+      - quay.io/prometheus-operator/prometheus-operator@sha256:4636654efb15f52de0f2f07a97673492bd06b6688b9fcbb10ba147fd596d7949
+      - quay.io/prometheus-operator/prometheus-operator:v0.80.1
+      sizeBytes: 17110941
+    - names:
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics@sha256:db384bf43222b066c378e77027a675d4cd9911107adba46c2922b3a55e10d6fb
+      - registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.15.0
+      sizeBytes: 13952975
+    - names:
+      - quay.io/prometheus-operator/prometheus-config-reloader@sha256:125886af6555c1d9726bef0ebc845e922e0f227bba68e0c70fb661295da96bfe
+      - quay.io/prometheus-operator/prometheus-config-reloader:v0.80.1
+      sizeBytes: 13203405
+    - names:
+      - quay.io/prometheus/node-exporter@sha256:c99d7ee4d12a38661788f60d9eca493f08584e2e544bbd3b3fca64749f86b848
+      - quay.io/prometheus/node-exporter:v1.9.0
+      sizeBytes: 12267500
+    - names:
+      - quay.io/prometheus/blackbox-exporter@sha256:b04a9fef4fa086a02fc7fcd8dcdbc4b7b35cc30cdee860fdc6a19dd8b208d63e
+      - quay.io/prometheus/blackbox-exporter:v0.25.0
+      sizeBytes: 12006177
+    - names:
+      - registry.k8s.io/autoscaling/vpa-admission-controller@sha256:9928d59477fb27e511f545aba976b4f5196ac4ca9779f26fc50fc7228986f013
+      - registry.k8s.io/autoscaling/vpa-admission-controller:1.5.1
+      sizeBytes: 10208532
+    - names:
+      - docker.io/curlimages/curl@sha256:935d9100e9ba842cdb060de42472c7ca90cfe9a7c96e4dacb55e79e560b3ff40
+      - docker.io/curlimages/curl:latest
+      sizeBytes: 10184433
+    - names:
+      - ghcr.io/jimmidyson/configmap-reload@sha256:a35b35f5bd5c5dc59d6885a60ac325235d873defbc819cd1e16f52f897752c85
+      - ghcr.io/jimmidyson/configmap-reload:v0.14.0
+      sizeBytes: 4247271
+    - names:
+      - docker.io/rancher/mirrored-library-busybox@sha256:101b4afd76732482eff9b95cae5f94bcf295e521fbec4e01b69c5421f3f3f3e5
+      - docker.io/rancher/mirrored-library-busybox:1.37.0
+      sizeBytes: 1850819
+    - names:
+      - docker.io/rancher/mirrored-library-busybox@sha256:8a45424ddf949bbe9bb3231b05f9032a45da5cd036eb4867b511b00734756d6f
+      - docker.io/rancher/mirrored-library-busybox:1.36.1
+      sizeBytes: 1847165
+    - names:
+      - registry.k8s.io/pause@sha256:9001185023633d17a2f98ff69b6ff2615b8ea02a825adffa40422f51dfdcde9d
+      - registry.k8s.io/pause:3.8
+      sizeBytes: 268403
+    - names:
+      - docker.io/rancher/mirrored-pause@sha256:74c4244427b7312c5b901fe0f67cbc53683d06f4f24c6faee65d4182bf0fa893
+      - docker.io/rancher/mirrored-pause:3.6
+      sizeBytes: 253243
+    nodeInfo:
+      architecture: arm64
+      bootID: f725d8c4-a0ff-4015-b20d-0d849854b6f5
+      containerRuntimeVersion: containerd://2.1.5-k3s1
+      kernelVersion: 6.8.0-1060-raspi
+      kubeProxyVersion: ""
+      kubeletVersion: v1.35.0+k3s1
+      machineID: 93658aa354684779844e4c0f8a29f6c4
+      operatingSystem: linux
+      osImage: Ubuntu 24.04.2 LTS
+      systemUUID: 93658aa354684779844e4c0f8a29f6c4
+    runtimeHandlers:
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: ""
+    - features:
+        recursiveReadOnlyMounts: true
+        userNamespaces: true
+      name: runc
+    - features:
+        recursiveReadOnlyMounts: false
+        userNamespaces: false
+      name: runhcs-wcow-process
+kind: List
+metadata:
+  resourceVersion: ""

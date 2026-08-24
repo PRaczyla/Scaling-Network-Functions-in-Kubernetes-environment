@@ -1,0 +1,77 @@
+apiVersion: v1
+items:
+- apiVersion: metrics.k8s.io/v1beta1
+  kind: NodeMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:55:20Z"
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpimaster
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/control-plane: "true"
+      node-role.kubernetes.io/master: "true"
+    name: rpimaster
+  timestamp: "2026-08-23T22:55:11Z"
+  usage:
+    cpu: 445051940n
+    memory: 1636536Ki
+  window: 20.119s
+- apiVersion: metrics.k8s.io/v1beta1
+  kind: NodeMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:55:20Z"
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpislave2
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/worker: "true"
+      test-role: upf
+    name: rpislave2
+  timestamp: "2026-08-23T22:55:14Z"
+  usage:
+    cpu: 396203155n
+    memory: 1658188Ki
+  window: 20.28s
+- apiVersion: metrics.k8s.io/v1beta1
+  kind: NodeMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:55:20Z"
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpislave3
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/worker: "true"
+      test-role: ran
+    name: rpislave3
+  timestamp: "2026-08-23T22:55:08Z"
+  usage:
+    cpu: 453004926n
+    memory: 1683464Ki
+  window: 10.15s
+- apiVersion: metrics.k8s.io/v1beta1
+  kind: NodeMetrics
+  metadata:
+    creationTimestamp: "2026-08-23T22:55:20Z"
+    labels:
+      beta.kubernetes.io/arch: arm64
+      beta.kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
+      kubernetes.io/hostname: rpislave4
+      kubernetes.io/os: linux
+      node-role.kubernetes.io/worker: "true"
+      test-role: ue
+    name: rpislave4
+  timestamp: "2026-08-23T22:55:07Z"
+  usage:
+    cpu: 330060497n
+    memory: 1161884Ki
+  window: 10.083s
+kind: List
+metadata:
+  resourceVersion: ""
