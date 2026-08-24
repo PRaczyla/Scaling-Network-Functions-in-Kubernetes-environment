@@ -1,8 +1,32 @@
-- name: UPF TCP scaling load test with adaptive in-flight UE replacement v13 with idle 25m wait and late-timeout accept
+# ==========================================================================================
+# The executable logic is unchanged. Comments explain sections, functions, state machines,
+# and important design decisions instead of numbering and commenting every individual line.
+#
+# HIGH-LEVEL EXECUTION FLOW
+# 1. Ansible starts one Bash test controller on localhost.
+# 2. The controller verifies the existing UERANSIM UE pod, the registered UE tunnel pool,
+#    and basic iperf3 server reachability.
+# 3. The VPA recommender history is reset and the script waits until the real UPF CPU request
+#    returns to the known idle value (25m) before traffic starts.
+# 4. A background control monitor records UPF CPU/RAM usage, resource requests, VPA
+#    recommendations, pod UID and restart count throughout the experiment.
+# 5. Scenarios are executed with 1, 3, 5, ... 35 active logical UE traffic slots.
+# 6. Inside the UERANSIM pod, each logical slot runs its own iperf3 TCP client bound to one
+#    uesimtun interface/IP. RX byte counters are used to detect connection failures and stalls.
+# 7. A supervisor can replace a problematic UE in-flight. "Server is busy" is handled by
+#    rebinding the same UE to a fresh port instead of blacklisting the UE.
+# 8. A scenario succeeds only when every required logical slot reaches the "done" state.
+# 9. Before and after every scenario, the UPF pod UID and restart count are compared so a
+#    recreation/restart during vertical scaling is detected immediately.
+# ==========================================================================================
+
+- name: UPF TCP scaling load test with adaptive in-flight UE replacement
   hosts: localhost
   gather_facts: false
 
+  # Test configuration. Values in this section are injected into the Bash controller below.
   vars:
+    # Kubernetes location and remote iperf3 server addressing.
     k8s_namespace: default
     iperf_host: "192.168.1.211"
     iperf_base_port: 5201
@@ -10,12 +34,13 @@
     # Limit TCP bitrate per UE.
     iperf_tcp_bitrate: "1M"
 
-    # Ramp-up między startem kolejnych klientów iperf.
+    # Small delay between consecutive iperf3 client starts to avoid an instantaneous launch burst.
     iperf_client_start_delay: "0.05"
 
-    # Ile błędnych klientów wypisać szczegółowo w logu scenariusza.
+    # Maximum number of failed-client log excerpts printed for one scenario.
     failed_clients_log_limit: 10
 
+    # Scenario timing. TEST_DURATION is the nominal lifetime of every traffic slot.
     test_duration: 80
     iperf_timeout_extra: 10
     pause_between: 0
@@ -23,51 +48,65 @@
     tunnel_timeout: 20
     pod_timeout: 20
 
+    # UE pool and load-ramp definition. All 50 UEs stay registered; only the number carrying
+    # iperf3 traffic changes from scenario to scenario.
     required_registered_ues: 50
     scenarios: "1 3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35"
 
     precheck_ports_count: 1
 
-    # In-flight UE replacement. Nie wpływa na deklaracje testu powyżej.
+    # In-flight UE replacement settings.
+    # Replacement policy. A slot is supervised through RX counters on its uesimtun interface.
+    # A UE that never receives traffic or later stalls can be replaced without restarting the scenario.
     ue_connect_timeout: 4
     ue_stall_seconds: 5
     ue_replacement_limit_per_scenario: 15
     ue_replacement_min_remaining_seconds: 0
     ue_replacement_min_duration: 5
     ue_adaptive_extension_max: 1
-    # Po planowanym końcu slotu nie robimy już replacementu/stall detection.
-    # Czekamy na realny exit iperf3; fail następuje dopiero po twardym timeout procesu.
+    # After the planned slot end, no new stall detection or UE replacement is started.
+    # The script waits for the real iperf3 exit; failure is declared only after the hard process timeout.
     iperf_exit_grace_seconds: 3
     supervisor_interval: 1
-    # Nie czekamy po SIGTERM przy podmianie, bo replacement używa innego UE i innego portu.
-    # To usuwa 1 s opóźnienia na każdej podmianie.
+    # No extra wait is needed after SIGTERM during replacement because the new attempt uses a different UE and port.
+    # This removes an unnecessary one-second delay from every replacement.
     slot_kill_grace_seconds: 0
 
-    # Jeżeli iperf3 zwróci "server is busy", nie oznaczamy UE jako złe.
-    # To zwykle stan po stronie Windowsowego iperf servera / portu, więc robimy rebind na świeży port.
+    # If iperf3 reports "server is busy", the UE itself is not marked as problematic.
+    # This is treated as a server/port-side condition, so the same UE is retried on a fresh replacement port.
+    # iperf3 server-side recovery. A busy server port is treated differently from a bad UE.
     iperf_server_busy_retries: 1
     iperf_server_busy_retry_delay: 2
 
-    # Po restarcie VPA nie używamy stałego sleep.
-    # Skrypt czeka łopatologicznie, aż request CPU UPF wróci do wartości idle.
-    # Dla tego środowiska idle VPA/request CPU = 25m.
+    # The script explicitly waits until the actual UPF CPU request returns to the configured idle value.
+    # In this lab environment, the expected idle VPA/UPF CPU request is 25m.
+    # Reproducible VPA starting state. Traffic is not started until the actual UPF request
+    # has returned to the configured idle baseline after the recommender reset.
     upf_vpa_request_change_wait_enabled: 1
     upf_vpa_request_change_wait_timeout: 180
     upf_vpa_request_change_wait_interval: 1
     upf_vpa_idle_request_cpu: "25m"
 
-    # Control-plane observability. Monitoruje UPF i VPA w czasie scenariuszy.
-    # Interwał 1 s daje dobrą korelację czasową dla zmian request/rekomendacji.
+    # Control-plane observability settings for monitoring UPF resources and VPA recommendations during the test.
+    # A one-second polling interval provides fine time correlation for request and recommendation changes.
+    # High-frequency local observability used to correlate VPA recommendations with actual
+    # resource-request changes and with pod continuity. Prometheus/Grafana remain external sources.
     upf_control_monitor_enabled: 1
     upf_control_monitor_interval: 1
     upf_control_history_window_seconds: 5
 
+  # The playbook has one main task: run the complete experiment as a Bash controller.
   tasks:
     - name: Run UPF TCP scenarios with adaptive in-flight UE replacement
       ansible.builtin.shell: |
+        # Strict shell behavior for the outer controller:
+        # - undefined variables are errors;
+        # - a pipeline fails when any command in it fails.
         set -u
         set -o pipefail
 
+        # Copy Ansible/Jinja configuration into ordinary Bash variables. From this point,
+        # the controller no longer needs to refer directly to the YAML variable names.
         NS="{{ k8s_namespace }}"
 
         IPERF_HOST="{{ iperf_host }}"
@@ -112,6 +151,8 @@
 
         # Replacement ports start after the registered UE pool.
         # For 50 registered UE and base 5201 this starts from 5251.
+        # Port layout: initial slots use IPERF_BASE_PORT + slot_number. Replacement attempts
+        # use a separate port range starting immediately after the registered UE pool.
         IPERF_REPLACEMENT_BASE_PORT=$((IPERF_BASE_PORT + REQUIRED_REGISTERED_UES))
 
         ADD_RELEASE="ueransim-gnb-ues"
@@ -120,6 +161,8 @@
         UPF_SELECTOR="app.kubernetes.io/instance=open5gs,app.kubernetes.io/name=upf"
         UPF_VPA_NAME="open5gs-upf-vpa"
 
+        # Per-run state and log files. RUN_ID prevents one execution from overwriting another.
+        # A stable symlink (upf_iperf_per_ue.log) always points to the newest detailed log.
         RUN_ID="$(date +%Y%m%d_%H%M%S)"
         PROGRESS_LOG="$PWD/upf_iperf_per_ue_${RUN_ID}.log"
         CURRENT_SCENARIO_FILE="$PWD/upf_current_scenario_${RUN_ID}.state"
@@ -132,15 +175,22 @@
         echo "prechecks" > "$CURRENT_SCENARIO_FILE"
         rm -f "$CONTROL_MONITOR_STOP_FILE" "$CONTROL_MONITOR_HISTORY_FILE"
 
+        # Central logger for the outer controller. Every message is timestamped, appended to
+        # the persistent progress log and also written to stderr so Ansible displays it live.
         log() {
           echo "[$(date -Iseconds)] $*" | tee -a "$PROGRESS_LOG" >&2
         }
 
+        # Fatal-error helper. It records a clear ERROR entry and terminates the outer test.
         fail_exit() {
           log "ERROR: $*"
           exit 1
         }
 
+        # Reset the VPA recommender history before the measurement run. The function records
+        # the current UPF request, stops the recommender, deletes VPA checkpoint objects, starts
+        # the recommender again and logs its fresh status.
+        # the separate idle-wait function later verifies the real 25m request.
         hard_reset_upf_vpa_history() {
           local label="$1"
 
@@ -197,6 +247,8 @@
           log "================================================================"
         }
 
+        # Return the first Running UERANSIM UE pod matching ADD_SELECTOR. No pod is created here;
+        # the test deliberately reuses the already registered UE population.
         get_additional_pod() {
           kubectl -n "$NS" get pod \
             -l "$ADD_SELECTOR" \
@@ -204,6 +256,7 @@
             | awk '$2=="Running" {print $1; exit}'
         }
 
+        # Poll get_additional_pod() until a Running UE pod appears or POD_TIMEOUT expires.
         wait_additional_pod() {
           local timeout_sec="$1"
           local start
@@ -232,20 +285,27 @@
           done
         }
 
+        # Resolve the currently selected Open5GS UPF pod name from Kubernetes labels.
         get_upf_pod() {
           kubectl -n "$NS" get pod \
             -l "$UPF_SELECTOR" \
             -o jsonpath='{.items[0].metadata.name}'
         }
 
+        # Read the immutable Kubernetes pod UID. A changed UID means the pod was recreated.
         get_pod_uid() {
           kubectl -n "$NS" get pod "$1" -o jsonpath='{.metadata.uid}'
         }
 
+        # Read restartCount from the first regular container status. In the current UPF pod
+        # layout this is used as the container-restart continuity signal.
         get_pod_restarts() {
           kubectl -n "$NS" get pod "$1" -o jsonpath='{.status.containerStatuses[0].restartCount}'
         }
 
+        # Read the UPF container's current CPU/RAM requests and limits from the live pod spec.
+        # The function normalizes missing values to "none" and unavailable data to "NA" so logs
+        # remain machine-readable even during transient Kubernetes/API conditions.
         get_upf_container_resources() {
           local pod="$1"
           local line
@@ -271,6 +331,8 @@
           }'
         }
 
+        # Read current UPF CPU and memory usage through `kubectl top pod --containers`. These
+        # values are used for local correlation;
         get_upf_current_usage() {
           local pod="$1"
           local line
@@ -290,6 +352,8 @@
           echo "$line" | awk -F'|' '{printf "usage_cpu=%s usage_mem=%s", $1, $2}'
         }
 
+        # Read VPA target, uncapped target, lower bound and upper bound for the open5gs-upf
+        # container and return them as key=value fields for consistent logging/comparison.
         get_upf_vpa_recommendation() {
           local line
 
@@ -309,6 +373,8 @@
           }'
         }
 
+        # Retrieve the newest control-monitor sample at or before a requested epoch. This makes
+        # change events include a reference sample from approximately N seconds earlier.
         get_control_history_sample_before() {
           local target_epoch="$1"
           local sample
@@ -331,6 +397,8 @@
           fi
         }
 
+        # Append one control sample to the short rolling history file and prune entries older
+        # than 120 seconds. The history is only temporary and exists for change correlation.
         append_control_history_sample() {
           local sample_epoch="$1"
           local sample_payload="$2"
@@ -344,6 +412,7 @@
           awk -F'|' -v min="$min_epoch" '$1 >= min {print $0}' "$CONTROL_MONITOR_HISTORY_FILE" > "$tmp_file" 2>/dev/null && mv "$tmp_file" "$CONTROL_MONITOR_HISTORY_FILE" || rm -f "$tmp_file"
         }
 
+        # Extract one value from a space-separated key=value payload used throughout the log.
         extract_kv_field() {
           local payload="$1"
           local field="$2"
@@ -351,11 +420,16 @@
           echo "$payload" | tr ' ' '\n' | awk -F'=' -v k="$field" '$1==k {print $2; exit}'
         }
 
+        # Count checkpoint objects belonging to this UPF VPA. This helper supports VPA-reset
+        # diagnostics without changing the workload itself.
         get_vpa_checkpoint_count() {
           kubectl -n "$NS" get verticalpodautoscalercheckpoints.autoscaling.k8s.io --no-headers 2>/dev/null \
             | awk '$1 ~ /^open5gs-upf-vpa-open5gs-upf/ {c++} END {print c+0}'
         }
 
+        # Wait for the ACTUAL UPF CPU request to equal the configured idle baseline (25m).
+        # This is the reproducibility gate between the VPA reset and the first traffic scenario.
+        # The current usage and VPA recommendation are logged periodically while waiting.
         wait_for_upf_idle_request_after_vpa_reset() {
           local baseline="$1"
           local timeout_sec="$2"
@@ -413,6 +487,10 @@
             sleep "$interval_sec"
           done
         }
+        # Start a background observer that runs throughout the traffic scenarios. Every sample
+        # contains scenario label, pod name/UID/restarts, actual CPU/RAM usage, current requests
+        # and the VPA recommendation. Separate change events are emitted when the pod identity,
+        # request values or VPA recommendation changes.
         start_upf_control_monitor() {
           local first_sample="1"
           local last_request_key=""
@@ -488,6 +566,7 @@
           log "UPF_CONTROL_MONITOR_START timestamp=$(date -Iseconds) pid=$CONTROL_MONITOR_PID interval_s=$UPF_CONTROL_MONITOR_INTERVAL"
         }
 
+        # Ask the background monitor to stop, wait for its process to exit and clear its PID.
         stop_upf_control_monitor() {
           if [ -n "${CONTROL_MONITOR_PID:-}" ]; then
             touch "$CONTROL_MONITOR_STOP_FILE" 2>/dev/null || true
@@ -497,6 +576,8 @@
           fi
         }
 
+        # EXIT-trap cleanup. It guarantees that the background monitor and temporary state
+        # files are removed even when the playbook aborts because a scenario fails.
         cleanup_on_exit() {
           stop_upf_control_monitor || true
           rm -f "$CONTROL_MONITOR_STOP_FILE" "$CONTROL_MONITOR_HISTORY_FILE" "$CURRENT_SCENARIO_FILE" 2>/dev/null || true
@@ -504,6 +585,8 @@
 
         trap cleanup_on_exit EXIT
 
+        # Count IPv4 uesimtun interfaces inside the existing UE pod. Each interface represents
+        # one registered UE data tunnel available to the traffic manager.
         count_tunnels() {
           local pod="$1"
 
@@ -513,6 +596,8 @@
             | tr -d ' '
         }
 
+        # Wait until at least the required number of UE tunnels exists. The test never starts
+        # with a partially registered pool because that would invalidate the declared UE counts.
         verify_registered_ues() {
           local pod="$1"
           local required="$2"
@@ -544,6 +629,8 @@
           done
         }
 
+        # Validate the requested load levels against the registered UE pool and log the initial
+        # and replacement port ranges that each scenario is expected to use.
         validate_scenarios() {
           local scenario
           local max_port
@@ -563,6 +650,9 @@
           done
         }
 
+        # Lightweight reachability check executed from the UE pod before the real experiment.
+        # It binds a short iperf3 client to the first uesimtun IP and verifies the configured
+        # server port(s), catching server/network problems before a long measurement begins.
         precheck_iperf_ports() {
           local pod="$1"
           local check_count="$2"
@@ -632,6 +722,11 @@
           return "$rc"
         }
 
+        # Execute one complete traffic scenario INSIDE the UERANSIM UE pod. The outer controller
+        # passes all scenario parameters as environment variables, then sends a self-contained Bash
+        # supervisor through stdin. That remote supervisor creates logical slots, starts iperf3
+        # clients, monitors RX progress, performs replacements and returns 0 only when every slot
+        # finishes successfully.
         start_iperf_per_ue() {
           local pod="$1"
           local tag="$2"
@@ -661,6 +756,10 @@
             IPERF_SERVER_BUSY_RETRIES="$IPERF_SERVER_BUSY_RETRIES" \
             IPERF_SERVER_BUSY_RETRY_DELAY="$IPERF_SERVER_BUSY_RETRY_DELAY" \
             bash -s <<'REMOTE_SCRIPT'
+        # The remote supervisor intentionally does not use `set -e`: individual iperf3 commands
+        # are expected to fail occasionally and their return codes must be interpreted by the
+        # slot state machine instead of terminating the whole remote script immediately.
+        
         set +e
         
         # Safety fallbacks. These must be passed from the outer script, but keeping defaults
@@ -672,6 +771,8 @@
         SUPERVISOR_INTERVAL="${SUPERVISOR_INTERVAL:-1}"
         UE_REPLACEMENT_MIN_REMAINING_SECONDS="${UE_REPLACEMENT_MIN_REMAINING_SECONDS:-0}"
         
+        # Validate numeric environment variables before using them in Bash arithmetic. This turns
+        # a missing/malformed parameter into an explicit configuration error (rc=90).
         is_nonnegative_int() {
           case "$1" in
             ''|*[!0-9]*) return 1 ;;
@@ -691,6 +792,9 @@
           fi
         done
         
+        # Per-scenario working files live inside the UE pod. GLOBAL_BAD_UE_FILE is intentionally
+        # outside WORK so the soft suspect list survives across scenarios within the same run; the
+        # scenario-bad and used-UE files are recreated for each individual load level.
         WORK="/tmp/upf_iperf_adaptive_${RUN_ID}_${TAG}"
         GLOBAL_BAD_UE_FILE="/tmp/upf_iperf_global_suspect_ues_${RUN_ID}.txt"
         SCENARIO_BAD_UE_FILE="$WORK/scenario_bad_ues.txt"
@@ -710,15 +814,24 @@
           sleep 1
         fi
         
+        # Tunnel pool arrays hold UE index, interface name and IP address in numeric UE order.
         declare -a POOL_IDX
         declare -a POOL_IF
         declare -a POOL_IP
         POOL_SIZE=0
         
+        # UE-level sets:
+        # - USED_UE prevents assigning one UE to two logical slots in the same scenario;
+        # - SCENARIO_BAD_UE is a hard exclusion for the current scenario;
+        # - GLOBAL_BAD_UE is a soft suspect list carried across scenarios in this run.
         declare -A USED_UE
         declare -A SCENARIO_BAD_UE
         declare -A GLOBAL_BAD_UE
         
+        # Slot-level state machine. Every logical traffic slot owns its current process, UE, port,
+        # timing, RX progress, retry counters and final result. A slot moves mainly through
+        # running -> done or running -> replacement -> running, and finally to failed if recovery
+        # is impossible within the allowed time.
         declare -A SLOT_STATE
         declare -A SLOT_PID
         declare -A SLOT_UE_IDX
@@ -741,6 +854,7 @@
         declare -A SLOT_SERVER_BUSY_RETRIES
         declare -A SLOT_STALL_DEFERRED
         
+        # Scenario-wide diagnostic counters used in TRAFFIC_SUMMARY and failure analysis.
         REPLACEMENT_PORT_COUNTER=0
         REPLACEMENTS_TOTAL=0
         PROBLEMATIC_TOTAL=0
@@ -754,19 +868,24 @@
         FAILED_PRINTED=0
         STARTED_SLOTS=0
         
+        # Small helper returning Unix epoch seconds for all slot timing calculations.
         now_epoch() {
           date +%s
         }
         
+        # Keep UE-index files deduplicated and numerically sorted for deterministic diagnostics.
         unique_sort_file() {
           local file="$1"
           sort -n -u "$file" -o "$file" 2>/dev/null || true
         }
         
+        # Read the kernel RX byte counter of a uesimtun interface. RX progress is the primary
+        # liveness signal and avoids relying on buffered iperf3 stdout.
         get_if_rx_bytes() {
           cat "/sys/class/net/$1/statistics/rx_bytes" 2>/dev/null || echo 0
         }
         
+        # Load the persistent (within this run) soft suspect list into an associative array.
         load_global_bad_ues() {
           local idx
           while read -r idx; do
@@ -775,6 +894,8 @@
           done < "$GLOBAL_BAD_UE_FILE"
         }
         
+        # Discover every uesimtun interface and its IPv4 address, extract the numeric UE index,
+        # sort the pool and populate the in-memory arrays used by the allocator.
         build_tunnel_pool() {
           local idx
           local ifname
@@ -795,12 +916,15 @@
           done < "$ALL_TUNNELS_FILE"
         }
         
+        # Mark a UE as already assigned during the current scenario.
         mark_used() {
           local idx="$1"
           USED_UE[$idx]=1
           echo "$idx" >> "$USED_UE_FILE"
         }
         
+        # Mark a problematic UE as both scenario-bad and globally suspect, persist both records
+        # and emit a diagnostic event describing why the UE was rejected.
         mark_bad() {
           local idx="$1"
           local reason="${2:-unknown}"
@@ -811,6 +935,9 @@
           echo "UE_MARKED_PROBLEMATIC timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES ue_idx=$idx reason=$reason scope=scenario_and_global_suspect"
         }
         
+        # Allocate the next candidate UE using a two-pass policy. Pass 1 avoids global suspects;
+        # pass 2 may reuse them only when necessary to avoid exhausting the pool. A UE already used
+        # or marked bad in the CURRENT scenario is never selected again in that scenario.
         pick_next_ue() {
           local allow_global
           local n
@@ -851,6 +978,8 @@
           return 1
         }
         
+        # Print only the first part of a failed client's log, capped by FAILED_CLIENTS_LOG_LIMIT,
+        # so diagnostics remain useful without flooding the main experiment log.
         print_short_failure_log() {
           local slot="$1"
           local logfile="$2"
@@ -863,6 +992,8 @@
           fi
         }
         
+        # Stop the current iperf3 process for a slot. SIGTERM is attempted first, followed by
+        # SIGKILL only if the process is still alive after the configured grace period.
         kill_slot_process() {
           local slot="$1"
           local pid="${SLOT_PID[$slot]:-}"
@@ -876,11 +1007,15 @@
           fi
         }
         
+        # Detect the specific iperf3 "server is busy" condition in a client log.
         is_server_busy_log() {
           local logfile="$1"
           grep -qi 'server is busy' "$logfile" 2>/dev/null
         }
         
+        # Launch one iperf3 attempt for a logical slot. The client is bound to the selected UE IP,
+        # runs in the background under GNU timeout, and writes both its output and final rc to files.
+        # All slot metadata and initial RX counters are updated here so monitor_slot() can supervise it.
         start_slot_attempt() {
           local slot="$1"
           local ue_idx="$2"
@@ -957,6 +1092,8 @@
           return 0
         }
         
+        # Recover from a server-busy error without blaming the UE: stop the old process, allocate
+        # a fresh replacement port and restart the SAME UE for the time remaining in this slot.
         rebind_slot_after_server_busy() {
           local slot="$1"
           local now
@@ -1022,6 +1159,9 @@
           return "$?"
         }
 
+        # Decide whether a late stall should be deferred instead of killing/replacing the client.
+        # This prevents a nearly completed valid slot from being destroyed when too little time
+        # remains for a meaningful replacement.
         should_continue_instead_of_kill_stall() {
           local slot="$1"
           local reason="$2"
@@ -1032,6 +1172,10 @@
           esac
         }
         
+        # Core in-flight replacement algorithm. It evaluates the remaining slot time, optionally
+        # uses the small adaptive extension, obtains a new UE candidate and a fresh port, marks the
+        # old UE problematic, stops its process and starts the replacement for the remaining time.
+        # If recovery cannot be completed within policy limits, the slot is marked failed.
         replace_slot() {
           local slot="$1"
           local reason="$2"
@@ -1198,6 +1342,9 @@
           return "$?"
         }
         
+        # Validate the special rc=124 case after the planned duration. A timeout is accepted only
+        # when the client really transferred data and produced valid iperf interval output, while
+        # known connection/server errors are explicitly rejected.
         is_acceptable_late_timeout_log() {
           local logfile="$1"
 
@@ -1219,6 +1366,11 @@
           return 0
         }
 
+        # Main per-slot state machine. In priority order it:
+        # 1. consumes a finished process return code;
+        # 2. handles server-busy, valid late timeout or real process failure;
+        # 3. after planned end, waits only until the hard timeout (no new replacements);
+        # 4. before planned end, checks RX progress for initial connection timeout and later stalls.
         monitor_slot() {
           local slot="$1"
           local state="${SLOT_STATE[$slot]:-unset}"
@@ -1289,10 +1441,10 @@
           fi
         
           if [ "$now" -ge "$planned_end" ]; then
-            # Po planowanym końcu slotu nie robimy już stall detection ani replacementu.
-            # iperf3 może potrzebować kilku sekund na zamknięcie sesji i zapis rcfile.
-            # Nie traktujemy tego jako błąd testu. Błąd jest dopiero wtedy, gdy minie
-            # twardy timeout procesu: duration + iperf_timeout_extra + 5 s bufora.
+            # After the planned slot end, do not start stall detection or another replacement.
+            # iperf3 may need a few seconds to close the session and write the return-code file.
+            # This short teardown period is not considered a test failure. A failure is declared only after
+            # the hard process timeout: duration + iperf_timeout_extra + an additional 5-second buffer.
             if [ "$now" -lt "${SLOT_HARD_END_EPOCH[$slot]}" ]; then
               return 0
             fi
@@ -1338,6 +1490,7 @@
           return 0
         }
         
+        # Run one supervisor pass over every slot that has already been launched.
         monitor_started_slots_once() {
           local slot
           local max_slot=$((STARTED_SLOTS - 1))
@@ -1351,6 +1504,7 @@
           done
         }
         
+        # Count logical slots currently in a requested state such as running, done or failed.
         count_states() {
           local desired="$1"
           local count=0
@@ -1365,6 +1519,7 @@
           echo "$count"
         }
         
+        # Emergency cleanup used before aborting a scenario: terminate every still-running slot.
         cleanup_running_slots() {
           local slot
         
@@ -1375,6 +1530,9 @@
           done
         }
         
+        # ---------------------------- REMOTE SCENARIO START ----------------------------
+        # Build the candidate UE pool and verify that the pod contains enough tunnels for the
+        # requested logical load before launching any traffic.
         echo "REMOTE_IPERF_PER_UE_START timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES tag=$TAG iperf_host=$IPERF_HOST base_port=$IPERF_BASE_PORT replacement_base_port=$IPERF_REPLACEMENT_BASE_PORT duration=$TEST_DURATION bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY detection=no_rx_counter connect_timeout_s=$UE_CONNECT_TIMEOUT stall_seconds=$UE_STALL_SECONDS replacement_limit=$UE_REPLACEMENT_LIMIT_PER_SCENARIO replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max_s=$UE_ADAPTIVE_EXTENSION_MAX iperf_exit_grace_s=$IPERF_EXIT_GRACE_SECONDS server_busy_port_rebinds=$IPERF_SERVER_BUSY_RETRIES late_replacement_after_end=disabled wait_for_iperf_exit=until_timeout global_suspect_policy=soft_reuse ramp_supervision=after_initial_start"
         
         load_global_bad_ues
@@ -1391,6 +1549,8 @@
         
         echo "UE_POOL_STATUS timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS existing_global_suspect_ues=$EXISTING_GLOBAL_SUSPECTS used_ues=0 policy=soft_reuse_global_suspects"
         
+        # Initial ramp-up: assign one UE and one initial port to every logical slot. All initial
+        # clients are launched first; active supervision/replacement begins only after this phase.
         SLOT=0
         
         while [ "$SLOT" -lt "$ACTIVE_UES" ]; do
@@ -1433,6 +1593,9 @@
         
         echo "IPERF_MAPPING_SUMMARY timestamp=$(date -Iseconds) active_ues=$ACTIVE_UES registered_tunnels=$REGISTERED_TUNNELS initial_ports=${FIRST_PORT}-${LAST_INITIAL_PORT} replacement_ports=${IPERF_REPLACEMENT_BASE_PORT}-${LAST_REPLACEMENT_PORT} bitrate=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY detection=no_rx_counter replacement_min_duration_s=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max_s=$UE_ADAPTIVE_EXTENSION_MAX iperf_exit_grace_s=$IPERF_EXIT_GRACE_SECONDS server_busy_port_rebinds=$IPERF_SERVER_BUSY_RETRIES late_replacement_after_end=disabled wait_for_iperf_exit=until_timeout global_suspect_policy=soft_reuse ramp_supervision=after_initial_start"
         
+        # Supervisor phase. The loop repeatedly monitors all running slots until none remain.
+        # LOOP_GUARD_LIMIT is a final safety bound preventing a software bug or stuck process from
+        # keeping the scenario alive forever.
         LOOP_GUARD_START="$(now_epoch)"
         LOOP_GUARD_LIMIT=$((TEST_DURATION + IPERF_TIMEOUT_EXTRA + UE_CONNECT_TIMEOUT + UE_ADAPTIVE_EXTENSION_MAX + IPERF_EXIT_GRACE_SECONDS + (IPERF_SERVER_BUSY_RETRIES * IPERF_SERVER_BUSY_RETRY_DELAY) + 30))
         
@@ -1463,6 +1626,8 @@
           sleep "$SUPERVISOR_INTERVAL"
         done
         
+        # Finalize scenario accounting. A non-zero number of failed logical slots makes the remote
+        # script return rc=20; otherwise the scenario is reported as successful to the outer controller.
         COMPLETED_SLOTS="$(count_states done)"
         FINAL_FAILED_SLOTS="$(count_states failed)"
         unique_sort_file "$GLOBAL_BAD_UE_FILE"
@@ -1499,6 +1664,9 @@
         REMOTE_SCRIPT
         }
 
+        # =============================== MAIN TEST FLOW ===============================
+        # Phase 1: pre-checks. Resolve the existing UE pod, verify all registered tunnels,
+        # validate scenario sizes/ports and confirm basic iperf3 reachability.
         log "================================================================"
         log "TEST START run_id=$RUN_ID timestamp=$(date -Iseconds)"
         log "================================================================"
@@ -1540,17 +1708,19 @@
         log "IMPORTANT: global UE suspect list is soft; suspected UE are avoided first, but reused if the pool would otherwise be exhausted"
         log "IMPORTANT: initial ramp-up starts all slots first; supervisor/replacement starts after initial slots are launched"
         log "IMPORTANT: VPA hard reset is executed once before all scenarios"
-        log "IMPORTANT: after VPA restart there is no fixed sleep; script waits until UPF request_cpu equals idle value $UPF_VPA_IDLE_REQUEST_CPU before traffic"
         log "IMPORTANT: UPF/VPA control monitor logs request changes, VPA recommendation changes, current usage and previous ${UPF_CONTROL_HISTORY_WINDOW_SECONDS}s sample every ${UPF_CONTROL_MONITOR_INTERVAL}s"
-        log "IMPORTANT: Metrics are still collected externally by Prometheus and Grafana"
         log "Pre-checks END timestamp=$(date -Iseconds)"
 
+        # Phase 2: normalize VPA history. After the recommender reset, start the control monitor
+        # and wait for the live UPF CPU request to return to 25m before any measurement traffic.
         hard_reset_upf_vpa_history "before_test_run"
 
         start_upf_control_monitor
         echo "vpa_idle_request_wait" > "$CURRENT_SCENARIO_FILE"
         wait_for_upf_idle_request_after_vpa_reset "$UPF_REQUEST_BASELINE_BEFORE_VPA_RESET" "$UPF_VPA_REQUEST_CHANGE_WAIT_TIMEOUT" "$UPF_VPA_REQUEST_CHANGE_WAIT_INTERVAL" || fail_exit "UPF request_cpu did not reach idle value $UPF_VPA_IDLE_REQUEST_CPU after VPA reset before scenarios"
 
+        # Phase 3: load ramp. Each ACTIVE_UE value is a separate 80-second traffic scenario.
+        # The registered UE population stays unchanged; only the number of logical iperf3 slots grows.
         log "SCENARIO LOOP START timestamp=$(date -Iseconds) scenarios=\"$SCENARIOS\""
 
         for ACTIVE_UE in $SCENARIOS; do
@@ -1559,6 +1729,7 @@
           log "SCENARIO START timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE registered_ue_pool=$REQUIRED_REGISTERED_UES target_host=$IPERF_HOST ports=${IPERF_BASE_PORT}-$((IPERF_BASE_PORT + ACTIVE_UE - 1)) replacement_ports=${IPERF_REPLACEMENT_BASE_PORT}-$((IPERF_REPLACEMENT_BASE_PORT + UE_REPLACEMENT_LIMIT_PER_SCENARIO - 1)) bitrate_per_ue=$IPERF_TCP_BITRATE start_delay=$IPERF_CLIENT_START_DELAY replacement_min_duration=$UE_REPLACEMENT_MIN_DURATION adaptive_extension_max=$UE_ADAPTIVE_EXTENSION_MAX"
           log "================================================================"
 
+          # Revalidate the complete UE tunnel pool immediately before this load level.
           CURRENT_TUNNELS="$(count_tunnels "$UE_POD" || echo 0)"
           CURRENT_TUNNELS="${CURRENT_TUNNELS:-0}"
           log "SCENARIO TUNNEL CHECK timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE current_tunnels=$CURRENT_TUNNELS required=$REQUIRED_REGISTERED_UES"
@@ -1567,12 +1738,16 @@
             fail_exit "Tunnel count dropped before scenario active_ue=$ACTIVE_UE current=$CURRENT_TUNNELS required=$REQUIRED_REGISTERED_UES"
           fi
 
+          # Snapshot UPF identity before traffic. UID and restartCount are the continuity guards
+          # used to prove that resource changes did not recreate/restart the UPF pod.
           UPF_POD_BEFORE="$(get_upf_pod)"
           UPF_UID_BEFORE="$(get_pod_uid "$UPF_POD_BEFORE")"
           UPF_RESTARTS_BEFORE="$(get_pod_restarts "$UPF_POD_BEFORE")"
 
           log "SCENARIO UPF BEFORE timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE pod=$UPF_POD_BEFORE uid=$UPF_UID_BEFORE restarts=$UPF_RESTARTS_BEFORE"
 
+          # Run the remote slot supervisor. Its detailed stdout/stderr is fed line-by-line into
+          # the main timestamped log. PIPESTATUS[0] preserves the real remote return code.
           set +e
           start_iperf_per_ue "$UE_POD" "ue_${ACTIVE_UE}" "$ACTIVE_UE" 2>&1 | while IFS= read -r line; do
             log "$line"
@@ -1582,6 +1757,7 @@
 
           log "SCENARIO TRAFFIC COMMAND END timestamp=$(date -Iseconds) active_ue=$ACTIVE_UE rc=$TRAFFIC_RC"
 
+          # Snapshot UPF identity again and fail immediately if the pod UID or restart count changed.
           UPF_POD_AFTER="$(get_upf_pod)"
           UPF_UID_AFTER="$(get_pod_uid "$UPF_POD_AFTER")"
           UPF_RESTARTS_AFTER="$(get_pod_restarts "$UPF_POD_AFTER")"
@@ -1610,6 +1786,8 @@
           fi
         done
 
+        # Phase 4: successful completion of all scenarios. Stop the monitor, capture final UPF
+        # identity and write one final TEST END record for before/after comparison.
         echo "post_scenarios" > "$CURRENT_SCENARIO_FILE"
         stop_upf_control_monitor
 
