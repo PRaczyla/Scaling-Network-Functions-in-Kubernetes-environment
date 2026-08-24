@@ -17,6 +17,14 @@ helm/
 source/
     Original local source manifests, Helm charts, Ansible files and scripts.
 
+upf_scaling_v2.yaml
+   Script used for measurements and executing iperf test
+
+mongo.txt
+   Command to populate MongoDB database
+
+prepare-ran-once-before-playbook.sh
+   Restarting gNB and UE, togeter with clearing old policies to ensure proper UE registration
 
 IMPORTANT:
 The resources directory is a RAW snapshot of the Kubernetes API.
