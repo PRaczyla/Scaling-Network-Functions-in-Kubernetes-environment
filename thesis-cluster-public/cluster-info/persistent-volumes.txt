@@ -1,5 +1,0 @@
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                           STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE    VOLUMEMODE
-pvc-08584c2b-c2a9-4150-a733-28e392d8136f   2Gi        RWO            Delete           Bound    monitoring/prometheus-k8s-db-prometheus-k8s-1   local-path     <unset>                          518d   Filesystem
-pvc-0a7b4af4-41ab-4b13-9294-417f294bed87   8Gi        RWO            Delete           Bound    default/open5gs-mongodb                         local-path     <unset>                          215d   Filesystem
-pvc-59512779-fcc6-4f18-84be-e5a637b8ab28   2Gi        RWO            Delete           Bound    monitoring/prometheus-k8s-db-prometheus-k8s-0   local-path     <unset>                          518d   Filesystem
-pvc-9cb3103f-383d-45b3-8e74-506a22feb0a2   500Mi      RWO            Delete           Bound    monitoring/grafana-local-path-pvc               local-path     <unset>                          518d   Filesystem

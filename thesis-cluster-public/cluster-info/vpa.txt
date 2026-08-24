@@ -1,2 +1,0 @@
-NAMESPACE   NAME              MODE                CPU    MEM     PROVIDED   AGE
-default     open5gs-upf-vpa   InPlaceOrRecreate   476m   250Mi   True       216d

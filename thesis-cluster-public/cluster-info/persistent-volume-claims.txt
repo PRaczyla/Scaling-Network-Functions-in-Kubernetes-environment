@@ -1,5 +1,0 @@
-NAMESPACE    NAME                                 STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE    VOLUMEMODE
-default      open5gs-mongodb                      Bound    pvc-0a7b4af4-41ab-4b13-9294-417f294bed87   8Gi        RWO            local-path     <unset>                 215d   Filesystem
-monitoring   grafana-local-path-pvc               Bound    pvc-9cb3103f-383d-45b3-8e74-506a22feb0a2   500Mi      RWO            local-path     <unset>                 518d   Filesystem
-monitoring   prometheus-k8s-db-prometheus-k8s-0   Bound    pvc-59512779-fcc6-4f18-84be-e5a637b8ab28   2Gi        RWO            local-path     <unset>                 518d   Filesystem
-monitoring   prometheus-k8s-db-prometheus-k8s-1   Bound    pvc-08584c2b-c2a9-4150-a733-28e392d8136f   2Gi        RWO            local-path     <unset>                 518d   Filesystem

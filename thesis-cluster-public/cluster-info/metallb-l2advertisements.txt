@@ -1,2 +1,0 @@
-NAMESPACE        NAME      IPADDRESSPOOLS   IPADDRESSPOOL SELECTORS   INTERFACES
-metallb-system   12-pool   ["first-pool"]                             
