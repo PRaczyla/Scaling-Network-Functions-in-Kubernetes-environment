@@ -32,6 +32,3 @@ The resources directory is a RAW snapshot of the Kubernetes API.
 It contains runtime metadata such as UID, resourceVersion, status and
 managedFields. It is intended primarily for documentation and inspection,
 not for direct kubectl apply restoration.
-
-Secrets are also included if the current Kubernetes user has permission
-to read them.
