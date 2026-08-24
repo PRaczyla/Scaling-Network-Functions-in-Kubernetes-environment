@@ -18,8 +18,14 @@ helm/
 source/
     Original local source manifests, Helm charts, Ansible files and scripts.
 
-logs/failed-exports.txt
-    Resources which could not be exported.
+mongo.txt
+    Copy-paste population of mongoDB subscriber database
+
+prepare-ran-once-before-playbook.sh
+    Shell script to restart environment to ensure proper registration of UEs in the network
+
+upf_scaling_v2.yaml
+    Ansible playbook to automate iperf script execution
 
 IMPORTANT:
 The resources directory is a RAW snapshot of the Kubernetes API.
