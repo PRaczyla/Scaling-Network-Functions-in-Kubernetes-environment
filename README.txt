@@ -2,6 +2,9 @@ UPF Scaling laboratory export
 
 CONTENTS
 
+ansible/
+    Playbook and script used before execution of the test.
+
 cluster-info/
     Human-readable information about the running cluster.
 
@@ -20,14 +23,6 @@ source/
 used_grafana/
     Screenshots from Grafana used in the thesis.
 
-mongo.txt
-    Copy-paste population of mongoDB subscriber database
-
-prepare-ran-once-before-playbook.sh
-    Shell script to restart environment to ensure proper registration of UEs in the network
-
-upf_scaling_v2.yaml
-    Ansible playbook to automate iperf script execution
 
 IMPORTANT:
 The resources directory is a RAW snapshot of the Kubernetes API.
