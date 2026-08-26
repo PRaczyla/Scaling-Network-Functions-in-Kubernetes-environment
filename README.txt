@@ -2,6 +2,9 @@ UPF Scaling laboratory export
 
 CONTENTS
 
+Grafana/
+    JSON file with the view and screenshots from Grafana used in the thesis.
+
 ansible/
     Playbook and script used before execution of the test.
 
@@ -19,9 +22,6 @@ helm/
 
 source/
     Original local source manifests, Helm charts, Ansible files and scripts.
-
-used_grafana/
-    Screenshots from Grafana used in the thesis.
 
 
 IMPORTANT:
