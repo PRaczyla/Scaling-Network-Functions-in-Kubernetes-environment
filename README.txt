@@ -1,5 +1,4 @@
-Kubernetes/Open5GS thesis laboratory export
-Generated: Mon Aug 24 12:55:41 AM CEST 2026
+UPF Scaling laboratory export
 
 CONTENTS
 
@@ -18,6 +17,9 @@ helm/
 source/
     Original local source manifests, Helm charts, Ansible files and scripts.
 
+used_grafana/
+    Screenshots from Grafana used in the thesis.
+
 mongo.txt
     Copy-paste population of mongoDB subscriber database
 
@@ -30,5 +32,4 @@ upf_scaling_v2.yaml
 IMPORTANT:
 The resources directory is a RAW snapshot of the Kubernetes API.
 It contains runtime metadata such as UID, resourceVersion, status and
-managedFields. It is intended primarily for documentation and inspection,
-not for direct kubectl apply restoration.
+managedFields. It is intended primarily for documentation and inspection.
